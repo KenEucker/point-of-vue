@@ -1,0 +1,31 @@
+overwrite: true
+schema:
+  - ./src/schema/schema.gql
+generates:
+  ./src/schema/generated/types.d.ts:
+    plugins:
+      - add:
+          content:
+            - '/* eslint-disable */'
+      - typescript
+      - typescript-resolvers
+    config:
+      constEnums: true
+      enumsAsConst: true
+      enumsAsTypes: true
+      immutableTypes: true
+      useImplementingTypes: true
+  # ./src/schema/generated/apollo.ts:
+  #   plugins:
+  #     - typescript-operations
+  #     - typescript-apollo-client-helpers
+  #     - typescript-vue-apollo
+  #     - named-operations-object
+  #   config:
+  #     enumsAsTypes: true
+  #     withCompositionFunctions: true
+  #     vueApolloComposableImportFrom: '@vue/apollo-composable'
+  #     vueCompositionApiImportFrom: vue
+  ./src/schema/generated/graphql.schema.json:
+    plugins:
+      - 'introspection'
