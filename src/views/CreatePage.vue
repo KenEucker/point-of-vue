@@ -1,62 +1,71 @@
 <script setup lang="ts">
-import ArrowBack from 'vue-ionicons/dist/md-arrow-back.vue'
-import LoadingSpinner from '../components/atomic/LoadingSpinner.vue'
-import ErrorMessage from '../components/atomic/ErrorMessage.vue'
-import { reactive, watch, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useQuery } from '@vue/apollo-composable'
-import { gql } from '@apollo/client/core'
-import { useRouteParams } from '@vueuse/router'
+import ComponentEditor from '../components/editor/ComponentEditor.vue'
+import CreatorDeveloperCard from '../components/creator/CreatorDeveloperCard.vue'
 import { useCreatorState } from '../store/state'
-import CodeEditor from 'simple-code-editor'
-
-const loading = ref(false)
-const error = ref()
 const creatorState = useCreatorState()
-const router = useRouter()
-const handleParam = useRouteParams('handle')
-function goBack() {
-  router.back()
-}
 
-const state = reactive({
-  sec: ['Data', 'Code', 'Preview', 'Publish'],
-  selected: 0,
-})
-
-function selected(idx: number) {
-  state.selected = idx
-}
+const components = [
+  {
+    name: 'Import From Facebook',
+    category: 'Import',
+    vues: 3087682,
+    status: 'good',
+    icon: 'pull',
+    background: 'white',
+    publishedAt: new Date('10/22/2022'),
+    description: 'Imports all of your facebook data into the POV globe',
+  },
+  {
+    name: 'World News',
+    category: 'News',
+    vues: 3,
+    status: 'good',
+    icon: 'planet',
+    publishedAt: new Date('10/23/2022'),
+    description: 'Displays the mornings meetings for Workplace Zero employees',
+  },
+  {
+    name: 'Sportsball Feed',
+    category: 'Sports',
+    vues: 634398,
+    status: 'archived',
+    icon: 'baseball',
+    archivedAt: new Date('10/24/2022'),
+    description: 'Displays the mornings meetings for Workplace Zero employees',
+  },
+  {
+    name: 'Agile Mornings',
+    category: 'Workplace',
+    vues: 7,
+    status: 'error',
+    icon: 'hammer',
+    erroredAt: new Date('11/12/2022'),
+    description: 'Displays the mornings meetings for Workplace Zero employees',
+  },
+  {
+    name: 'Shopping List',
+    category: 'Shopping',
+    vues: 360,
+    status: 'good',
+    icon: 'basket',
+    publishedAt: new Date('1/12/2023'),
+    description: 'Displays the mornings meetings for Workplace Zero employees',
+  },
+  {
+    name: 'Visitors This Week',
+    category: 'Stats',
+    vues: 2413,
+    status: 'good',
+    icon: 'analytics',
+    publishedAt: new Date('1/16/2023'),
+    description: 'Displays the mornings meetings for Workplace Zero employees',
+  },
+]
 </script>
 
 <template>
-  <div>
-    <div v-if="loading">
-      <loading-spinner />
-    </div>
-    <div v-else-if="error">
-      <error-message title="Error Fetching Profile Data" :message="error.message" />
-    </div>
-    <div v-else class="w-full p-4 pr-6 max-w-[700px] mx-auto">
-      <div class="ml-10 md:ml-0">
-        <div class="flex p-1">
-          <arrow-back w="25" h="25" class="p-3 px-4 cursor-pointer" @click="goBack" />
-        </div>
-        <div class="flex">
-          <button
-            v-for="(section, index) in state.sec"
-            :key="index"
-            type="button"
-            class="flex-grow py-4 text-sm font-semibold transition duration-150 ease-in-out border-ll-border focus:outline-none"
-            @click="selected(index)"
-          >
-            {{ section }}
-          </button>
-        </div>
-      </div>
-      <div v-if="state.selected === 0" class="flex grid grid-cols-1">
-        <code-editor> // Start your first vue component here </code-editor>
-      </div>
-    </div>
-  </div>
+  <main class="border-t border-gray-200 dark:border-gray-700">
+    <creator-developer-card :creator="creatorState.getCreator" :components="components" />
+    <component-editor class="h-[100%]" />
+  </main>
 </template>
