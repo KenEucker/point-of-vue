@@ -1,5 +1,4 @@
-input CreatorAccountInput {
-  id: Int!
+input CreatorAccessRequest {
   token: String
 }
 
@@ -112,4 +111,16 @@ input UpdatePostInput {
   text: String
   status: String
   media: [String!]
+}
+
+input ImagesWhereInput {
+    albumId: String
+}
+
+input ImageAlbumsWhereInput {
+    userId: String
+}
+
+input VuesWhereInput {
+  oid: String
 }

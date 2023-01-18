@@ -39,6 +39,7 @@
     "@envelop/rate-limiter": "^4.0.4",
     "@escape.tech/graphql-armor": "^1.7.0",
     "@faker-js/faker": "^7.6.0",
+    "@github-graph/api": "^2.2.1",
     "@graphql-codegen/add": "^3.2.3",
     "@graphql-codegen/cli": "^2.16.4",
     "@graphql-codegen/client-preset": "^1.2.6",

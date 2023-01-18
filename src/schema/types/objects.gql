@@ -11,6 +11,42 @@ type CreatorAccount {
   authentication: Tokens
 }
 
+# Github Integration
+type VueComponent {
+  oid: String!
+  name: String
+  vue: String
+  template: String
+  script: String
+  query: String
+}
+
+# Imgur Integration
+type ImgurAlbum {
+  id: String!
+  link: String!
+  title: String
+  description: String
+  deleteHash: String
+  createdAt: Date
+}
+
+type ImgurImage {
+  id: String!
+  link: String!
+  title: String
+  description: String
+  deleteHash: String
+  createdAt: Date
+}
+
+# Google Integration
+type Docule {
+  id: String!
+  link: String!
+  title: String
+}
+
 type Creator {
   id: Int!
   handle: String!

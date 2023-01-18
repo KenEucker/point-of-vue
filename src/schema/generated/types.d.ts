@@ -66,15 +66,14 @@ export type Creator = {
   readonly website?: Maybe<Scalars['String']>;
 };
 
+export type CreatorAccessRequest = {
+  readonly token?: InputMaybe<Scalars['String']>;
+};
+
 export type CreatorAccount = {
   readonly __typename?: 'CreatorAccount';
   readonly authentication?: Maybe<Tokens>;
   readonly creator: Creator;
-};
-
-export type CreatorAccountInput = {
-  readonly id: Scalars['Int'];
-  readonly token?: InputMaybe<Scalars['String']>;
 };
 
 export type CreatorByInput = {
@@ -97,6 +96,13 @@ export type CreatorSubscriptionPayload = {
   readonly mutation: MutationType;
 };
 
+export type Docule = {
+  readonly __typename?: 'Docule';
+  readonly id: Scalars['String'];
+  readonly link: Scalars['String'];
+  readonly title?: Maybe<Scalars['String']>;
+};
+
 export type ForOptionsInput = {
   readonly cursor?: InputMaybe<Scalars['String']>;
   readonly orderById?: InputMaybe<Scalars['String']>;
@@ -110,6 +116,34 @@ export type GetPostInteractionsPayload = {
   readonly loves?: Maybe<Scalars['Int']>;
   readonly reposts?: Maybe<Scalars['Int']>;
   readonly shares?: Maybe<Scalars['Int']>;
+};
+
+export type ImageAlbumsWhereInput = {
+  readonly userId?: InputMaybe<Scalars['String']>;
+};
+
+export type ImagesWhereInput = {
+  readonly albumId?: InputMaybe<Scalars['String']>;
+};
+
+export type ImgurAlbum = {
+  readonly __typename?: 'ImgurAlbum';
+  readonly createdAt?: Maybe<Scalars['Date']>;
+  readonly deleteHash?: Maybe<Scalars['String']>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly id: Scalars['String'];
+  readonly link: Scalars['String'];
+  readonly title?: Maybe<Scalars['String']>;
+};
+
+export type ImgurImage = {
+  readonly __typename?: 'ImgurImage';
+  readonly createdAt?: Maybe<Scalars['Date']>;
+  readonly deleteHash?: Maybe<Scalars['String']>;
+  readonly description?: Maybe<Scalars['String']>;
+  readonly id: Scalars['String'];
+  readonly link: Scalars['String'];
+  readonly title?: Maybe<Scalars['String']>;
 };
 
 export type Interaction = {
@@ -306,15 +340,28 @@ export type PostSubscriptionPayload = {
 
 export type Query = {
   readonly __typename?: 'Query';
+  readonly albums?: Maybe<ReadonlyArray<ImgurImage>>;
   readonly creator?: Maybe<Creator>;
   readonly creators?: Maybe<ReadonlyArray<Maybe<Creator>>>;
+  readonly docs?: Maybe<ReadonlyArray<Docule>>;
   readonly getPostInteractions?: Maybe<GetPostInteractionsPayload>;
+  readonly github?: Maybe<CreatorAccount>;
+  readonly google?: Maybe<CreatorAccount>;
+  readonly images?: Maybe<ReadonlyArray<ImgurImage>>;
+  readonly imgur?: Maybe<CreatorAccount>;
   readonly interaction?: Maybe<Interaction>;
   readonly interactions?: Maybe<ReadonlyArray<Maybe<Interaction>>>;
   readonly post?: Maybe<Post>;
   readonly posts?: Maybe<ReadonlyArray<Maybe<Post>>>;
   readonly searchPosts?: Maybe<SearchPostsPayload>;
   readonly self?: Maybe<CreatorAccount>;
+  readonly vues?: Maybe<ReadonlyArray<VueComponent>>;
+};
+
+
+export type QueryAlbumsArgs = {
+  where?: InputMaybe<ImageAlbumsWhereInput>;
+  with: CreatorAccessRequest;
 };
 
 
@@ -330,8 +377,34 @@ export type QueryCreatorsArgs = {
 };
 
 
+export type QueryDocsArgs = {
+  with: CreatorAccessRequest;
+};
+
+
 export type QueryGetPostInteractionsArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryGithubArgs = {
+  with: CreatorAccessRequest;
+};
+
+
+export type QueryGoogleArgs = {
+  with: CreatorAccessRequest;
+};
+
+
+export type QueryImagesArgs = {
+  where?: InputMaybe<ImagesWhereInput>;
+  with: CreatorAccessRequest;
+};
+
+
+export type QueryImgurArgs = {
+  with: CreatorAccessRequest;
 };
 
 
@@ -366,7 +439,13 @@ export type QuerySearchPostsArgs = {
 
 
 export type QuerySelfArgs = {
-  with?: InputMaybe<CreatorAccountInput>;
+  with?: InputMaybe<CreatorAccessRequest>;
+};
+
+
+export type QueryVuesArgs = {
+  where?: InputMaybe<VuesWhereInput>;
+  with: CreatorAccessRequest;
 };
 
 export type SearchPostsInput = {
@@ -452,6 +531,20 @@ export type UpdatePostInput = {
   readonly title?: InputMaybe<Scalars['String']>;
 };
 
+export type VueComponent = {
+  readonly __typename?: 'VueComponent';
+  readonly name?: Maybe<Scalars['String']>;
+  readonly oid: Scalars['String'];
+  readonly query?: Maybe<Scalars['String']>;
+  readonly script?: Maybe<Scalars['String']>;
+  readonly template?: Maybe<Scalars['String']>;
+  readonly vue?: Maybe<Scalars['String']>;
+};
+
+export type VuesWhereInput = {
+  readonly oid?: InputMaybe<Scalars['String']>;
+};
+
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -526,14 +619,19 @@ export type ResolversTypes = {
   CreateInteractionInput: CreateInteractionInput;
   CreatePostInput: CreatePostInput;
   Creator: ResolverTypeWrapper<Creator>;
+  CreatorAccessRequest: CreatorAccessRequest;
   CreatorAccount: ResolverTypeWrapper<CreatorAccount>;
-  CreatorAccountInput: CreatorAccountInput;
   CreatorByInput: CreatorByInput;
   CreatorInput: CreatorInput;
   CreatorSubscriptionPayload: ResolverTypeWrapper<CreatorSubscriptionPayload>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
+  Docule: ResolverTypeWrapper<Docule>;
   ForOptionsInput: ForOptionsInput;
   GetPostInteractionsPayload: ResolverTypeWrapper<GetPostInteractionsPayload>;
+  ImageAlbumsWhereInput: ImageAlbumsWhereInput;
+  ImagesWhereInput: ImagesWhereInput;
+  ImgurAlbum: ResolverTypeWrapper<ImgurAlbum>;
+  ImgurImage: ResolverTypeWrapper<ImgurImage>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Interaction: ResolverTypeWrapper<Interaction>;
   InteractionByInput: InteractionByInput;
@@ -558,6 +656,8 @@ export type ResolversTypes = {
   UpdateCreatorInput: UpdateCreatorInput;
   UpdateInteractionInput: UpdateInteractionInput;
   UpdatePostInput: UpdatePostInput;
+  VueComponent: ResolverTypeWrapper<VueComponent>;
+  VuesWhereInput: VuesWhereInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -567,14 +667,19 @@ export type ResolversParentTypes = {
   CreateInteractionInput: CreateInteractionInput;
   CreatePostInput: CreatePostInput;
   Creator: Creator;
+  CreatorAccessRequest: CreatorAccessRequest;
   CreatorAccount: CreatorAccount;
-  CreatorAccountInput: CreatorAccountInput;
   CreatorByInput: CreatorByInput;
   CreatorInput: CreatorInput;
   CreatorSubscriptionPayload: CreatorSubscriptionPayload;
   Date: Scalars['Date'];
+  Docule: Docule;
   ForOptionsInput: ForOptionsInput;
   GetPostInteractionsPayload: GetPostInteractionsPayload;
+  ImageAlbumsWhereInput: ImageAlbumsWhereInput;
+  ImagesWhereInput: ImagesWhereInput;
+  ImgurAlbum: ImgurAlbum;
+  ImgurImage: ImgurImage;
   Int: Scalars['Int'];
   Interaction: Interaction;
   InteractionByInput: InteractionByInput;
@@ -596,6 +701,8 @@ export type ResolversParentTypes = {
   UpdateCreatorInput: UpdateCreatorInput;
   UpdateInteractionInput: UpdateInteractionInput;
   UpdatePostInput: UpdatePostInput;
+  VueComponent: VueComponent;
+  VuesWhereInput: VuesWhereInput;
 };
 
 export type CreatorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Creator'] = ResolversParentTypes['Creator']> = {
@@ -636,11 +743,38 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'Date';
 }
 
+export type DoculeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Docule'] = ResolversParentTypes['Docule']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type GetPostInteractionsPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['GetPostInteractionsPayload'] = ResolversParentTypes['GetPostInteractionsPayload']> = {
   likes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   loves?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   reposts?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   shares?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImgurAlbumResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImgurAlbum'] = ResolversParentTypes['ImgurAlbum']> = {
+  createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  deleteHash?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImgurImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImgurImage'] = ResolversParentTypes['ImgurImage']> = {
+  createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  deleteHash?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -718,15 +852,22 @@ export type PostSubscriptionPayloadResolvers<ContextType = any, ParentType exten
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  albums?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurImage']>>, ParentType, ContextType, RequireFields<QueryAlbumsArgs, 'with'>>;
   creator?: Resolver<Maybe<ResolversTypes['Creator']>, ParentType, ContextType, Partial<QueryCreatorArgs>>;
   creators?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Creator']>>>, ParentType, ContextType, Partial<QueryCreatorsArgs>>;
+  docs?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Docule']>>, ParentType, ContextType, RequireFields<QueryDocsArgs, 'with'>>;
   getPostInteractions?: Resolver<Maybe<ResolversTypes['GetPostInteractionsPayload']>, ParentType, ContextType, RequireFields<QueryGetPostInteractionsArgs, 'id'>>;
+  github?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryGithubArgs, 'with'>>;
+  google?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryGoogleArgs, 'with'>>;
+  images?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurImage']>>, ParentType, ContextType, RequireFields<QueryImagesArgs, 'with'>>;
+  imgur?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryImgurArgs, 'with'>>;
   interaction?: Resolver<Maybe<ResolversTypes['Interaction']>, ParentType, ContextType, Partial<QueryInteractionArgs>>;
   interactions?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Interaction']>>>, ParentType, ContextType, Partial<QueryInteractionsArgs>>;
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, Partial<QueryPostArgs>>;
   posts?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Post']>>>, ParentType, ContextType, Partial<QueryPostsArgs>>;
   searchPosts?: Resolver<Maybe<ResolversTypes['SearchPostsPayload']>, ParentType, ContextType, RequireFields<QuerySearchPostsArgs, 'search'>>;
   self?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QuerySelfArgs>>;
+  vues?: Resolver<Maybe<ReadonlyArray<ResolversTypes['VueComponent']>>, ParentType, ContextType, RequireFields<QueryVuesArgs, 'with'>>;
 };
 
 export type SearchPostsPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['SearchPostsPayload'] = ResolversParentTypes['SearchPostsPayload']> = {
@@ -751,12 +892,25 @@ export type TokensResolvers<ContextType = any, ParentType extends ResolversParen
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type VueComponentResolvers<ContextType = any, ParentType extends ResolversParentTypes['VueComponent'] = ResolversParentTypes['VueComponent']> = {
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  oid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  query?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  script?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  template?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  vue?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   Creator?: CreatorResolvers<ContextType>;
   CreatorAccount?: CreatorAccountResolvers<ContextType>;
   CreatorSubscriptionPayload?: CreatorSubscriptionPayloadResolvers<ContextType>;
   Date?: GraphQLScalarType;
+  Docule?: DoculeResolvers<ContextType>;
   GetPostInteractionsPayload?: GetPostInteractionsPayloadResolvers<ContextType>;
+  ImgurAlbum?: ImgurAlbumResolvers<ContextType>;
+  ImgurImage?: ImgurImageResolvers<ContextType>;
   Interaction?: InteractionResolvers<ContextType>;
   InteractionDelta?: InteractionDeltaResolvers<ContextType>;
   InteractionDeltaSubscriptionPayload?: InteractionDeltaSubscriptionPayloadResolvers<ContextType>;
@@ -768,5 +922,6 @@ export type Resolvers<ContextType = any> = {
   SearchPostsPayload?: SearchPostsPayloadResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
   Tokens?: TokensResolvers<ContextType>;
+  VueComponent?: VueComponentResolvers<ContextType>;
 };
 
