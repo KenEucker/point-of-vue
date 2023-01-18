@@ -1,0 +1,60 @@
+type Tokens {
+  creatorSubId: String!
+  auth0: String
+  github: String
+  imgur: String
+  google: String
+}
+
+type CreatorAccount {
+  creator: Creator!
+  authentication: Tokens
+}
+
+type Creator {
+  id: Int!
+  handle: String!
+  verified: Boolean
+  posts: [Post!]
+  permissions: [Permissions!]
+  interactions: [Interaction!]
+  email: String!
+  name: String!
+  avatar: String!
+  banner: String
+  status: String
+  bio: String
+  website: String
+  location: String
+  birthday: String
+  joined: String
+  createdAt: Date
+  updatedAt: Date
+}
+
+type Interaction {
+  id: Int!
+  creator: Creator!
+  post: Post!
+  text: String
+  like: Boolean
+  love: Boolean
+  repost: Boolean
+  share: Boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+type Post {
+  id: Int!
+  creator: Creator!
+  published: Boolean
+  interactions: [Interaction!]
+  title: String!
+  text: String
+  status: String
+  media: [String]
+  tags: [String]
+  createdAt: Date
+  updatedAt: Date
+}

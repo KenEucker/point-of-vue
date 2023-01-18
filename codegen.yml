@@ -1,6 +1,6 @@
 overwrite: true
 schema:
-  - ./src/schema/schema.gql
+  - ./src/schema/**/*.gql
 generates:
   ./src/schema/generated/types.d.ts:
     plugins:

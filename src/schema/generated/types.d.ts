@@ -66,6 +66,17 @@ export type Creator = {
   readonly website?: Maybe<Scalars['String']>;
 };
 
+export type CreatorAccount = {
+  readonly __typename?: 'CreatorAccount';
+  readonly authentication?: Maybe<Tokens>;
+  readonly creator: Creator;
+};
+
+export type CreatorAccountInput = {
+  readonly id: Scalars['Int'];
+  readonly token?: InputMaybe<Scalars['String']>;
+};
+
 export type CreatorByInput = {
   readonly email?: InputMaybe<Scalars['String']>;
   readonly first?: InputMaybe<Scalars['Int']>;
@@ -303,6 +314,7 @@ export type Query = {
   readonly post?: Maybe<Post>;
   readonly posts?: Maybe<ReadonlyArray<Maybe<Post>>>;
   readonly searchPosts?: Maybe<SearchPostsPayload>;
+  readonly self?: Maybe<CreatorAccount>;
 };
 
 
@@ -352,6 +364,11 @@ export type QuerySearchPostsArgs = {
   search: SearchPostsInput;
 };
 
+
+export type QuerySelfArgs = {
+  with?: InputMaybe<CreatorAccountInput>;
+};
+
 export type SearchPostsInput = {
   readonly text: Scalars['String'];
 };
@@ -393,6 +410,15 @@ export type SubscriptionInteractionDeltaArgs = {
 
 export type SubscriptionPostArgs = {
   where?: InputMaybe<PostByInput>;
+};
+
+export type Tokens = {
+  readonly __typename?: 'Tokens';
+  readonly auth0?: Maybe<Scalars['String']>;
+  readonly creatorSubId: Scalars['String'];
+  readonly github?: Maybe<Scalars['String']>;
+  readonly google?: Maybe<Scalars['String']>;
+  readonly imgur?: Maybe<Scalars['String']>;
 };
 
 export type UpdateCreatorInput = {
@@ -500,6 +526,8 @@ export type ResolversTypes = {
   CreateInteractionInput: CreateInteractionInput;
   CreatePostInput: CreatePostInput;
   Creator: ResolverTypeWrapper<Creator>;
+  CreatorAccount: ResolverTypeWrapper<CreatorAccount>;
+  CreatorAccountInput: CreatorAccountInput;
   CreatorByInput: CreatorByInput;
   CreatorInput: CreatorInput;
   CreatorSubscriptionPayload: ResolverTypeWrapper<CreatorSubscriptionPayload>;
@@ -526,6 +554,7 @@ export type ResolversTypes = {
   SearchPostsPayload: ResolverTypeWrapper<SearchPostsPayload>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
+  Tokens: ResolverTypeWrapper<Tokens>;
   UpdateCreatorInput: UpdateCreatorInput;
   UpdateInteractionInput: UpdateInteractionInput;
   UpdatePostInput: UpdatePostInput;
@@ -538,6 +567,8 @@ export type ResolversParentTypes = {
   CreateInteractionInput: CreateInteractionInput;
   CreatePostInput: CreatePostInput;
   Creator: Creator;
+  CreatorAccount: CreatorAccount;
+  CreatorAccountInput: CreatorAccountInput;
   CreatorByInput: CreatorByInput;
   CreatorInput: CreatorInput;
   CreatorSubscriptionPayload: CreatorSubscriptionPayload;
@@ -561,6 +592,7 @@ export type ResolversParentTypes = {
   SearchPostsPayload: SearchPostsPayload;
   String: Scalars['String'];
   Subscription: {};
+  Tokens: Tokens;
   UpdateCreatorInput: UpdateCreatorInput;
   UpdateInteractionInput: UpdateInteractionInput;
   UpdatePostInput: UpdatePostInput;
@@ -585,6 +617,12 @@ export type CreatorResolvers<ContextType = any, ParentType extends ResolversPare
   updatedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   verified?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CreatorAccountResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreatorAccount'] = ResolversParentTypes['CreatorAccount']> = {
+  authentication?: Resolver<Maybe<ResolversTypes['Tokens']>, ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['Creator'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -688,6 +726,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, Partial<QueryPostArgs>>;
   posts?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Post']>>>, ParentType, ContextType, Partial<QueryPostsArgs>>;
   searchPosts?: Resolver<Maybe<ResolversTypes['SearchPostsPayload']>, ParentType, ContextType, RequireFields<QuerySearchPostsArgs, 'search'>>;
+  self?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QuerySelfArgs>>;
 };
 
 export type SearchPostsPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['SearchPostsPayload'] = ResolversParentTypes['SearchPostsPayload']> = {
@@ -703,8 +742,18 @@ export type SubscriptionResolvers<ContextType = any, ParentType extends Resolver
   post?: SubscriptionResolver<Maybe<ResolversTypes['PostSubscriptionPayload']>, "post", ParentType, ContextType, Partial<SubscriptionPostArgs>>;
 };
 
+export type TokensResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tokens'] = ResolversParentTypes['Tokens']> = {
+  auth0?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  creatorSubId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  github?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  google?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  imgur?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   Creator?: CreatorResolvers<ContextType>;
+  CreatorAccount?: CreatorAccountResolvers<ContextType>;
   CreatorSubscriptionPayload?: CreatorSubscriptionPayloadResolvers<ContextType>;
   Date?: GraphQLScalarType;
   GetPostInteractionsPayload?: GetPostInteractionsPayloadResolvers<ContextType>;
@@ -718,5 +767,6 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   SearchPostsPayload?: SearchPostsPayloadResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
+  Tokens?: TokensResolvers<ContextType>;
 };
 

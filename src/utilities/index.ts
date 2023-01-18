@@ -49,6 +49,12 @@ export interface PovComponent {
   erroredAt?: Date
 }
 
+/// From Chatbot
+export const getRange = ({ start, end }: { start: number; end: number }): number[] => {
+  const result = Array.from({ length: end - start + 1 }, (_, i) => i + start)
+  return result
+}
+
 export const compileComponent = (
   payload: Record<string, any>
 ): Promise<{ output: string; logs: any }> => {

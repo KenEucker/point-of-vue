@@ -62,6 +62,7 @@
     "@vueuse/core": "^9.10.0",
     "@vueuse/motion": "^2.0.0-beta.12",
     "@vueuse/router": "^9.10.0",
+    "auth0": "^3.1.1",
     "concurrently": "^7.6.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
@@ -74,6 +75,7 @@
     "graphql-shield": "^7.6.5",
     "graphql-tag": "^2.12.6",
     "graphql-yoga": "^3.3.0",
+    "imgur": "^2.2.0",
     "monaco-editor": "^0.34.1",
     "nodemon": "^2.0.20",
     "nprogress": "^0.2.0",
@@ -109,6 +111,7 @@
     "ws": "^8.12.0"
   },
   "devDependencies": {
+    "@types/auth0": "^2.35.9",
     "@types/split.js": "^1.6.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-tailwindcss": "^3.8.0",

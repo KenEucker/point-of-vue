@@ -42,6 +42,16 @@ const routes: RouteRecordRaw[] = [
     beforeEnter: useAuthGuard,
   },
   {
+    path: '/images',
+    name: 'Images',
+    component: () => import('../views/ImagesPage.vue'),
+    meta: {
+      protected: true,
+      mainMenu: true,
+    },
+    beforeEnter: useAuthGuard,
+  },
+  {
     path: '/create',
     name: 'Create',
     component: () => import('../views/CreatePage.vue'),

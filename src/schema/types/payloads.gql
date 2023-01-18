@@ -1,0 +1,39 @@
+type SearchPostsPayload {
+  posts: [Post!]
+}
+
+type CreatorSubscriptionPayload {
+  mutation: MutationType!
+  data: Creator
+}
+
+type InteractionSubscriptionPayload {
+  mutation: MutationType!
+  data: Interaction
+}
+
+type InteractionDelta {
+  id: Int!
+  text: String
+  like: Int!
+  love: Int!
+  share: Int!
+  repost: Int!
+}
+
+type InteractionDeltaSubscriptionPayload {
+  mutation: MutationType!
+  data: InteractionDelta!
+}
+
+type PostSubscriptionPayload {
+  mutation: MutationType!
+  data: Post
+}
+
+type GetPostInteractionsPayload {
+  likes: Int
+  loves: Int
+  reposts: Int
+  shares: Int
+}

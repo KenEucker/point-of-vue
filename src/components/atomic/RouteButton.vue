@@ -10,6 +10,7 @@ import Saved from 'vue-ionicons/dist/md-bookmark.vue'
 import Profile from 'vue-ionicons/dist/md-person.vue'
 import Settings from 'vue-ionicons/dist/md-settings.vue'
 import Create from 'vue-ionicons/dist/md-color-palette.vue'
+import Images from 'vue-ionicons/dist/md-images.vue'
 import { RouterLink } from 'vue-router'
 
 const props = defineProps({
@@ -42,6 +43,7 @@ const props = defineProps({
       class="-mt-1 w-8 h-8 inline"
       src="/img/GraphQL_Logo.svg"
     />
+    <images v-else-if="props.text == 'Images'" w="30" h="30" class="text-purple-400" />
     <create v-else-if="props.text == 'Create'" w="30" h="30" class="text-yellow-600" />
     <explore v-else-if="props.text == 'Data'" w="30" h="30" class="text-blue-600" />
     <notifications v-else-if="props.text == 'Notifications'" w="30" h="30" />

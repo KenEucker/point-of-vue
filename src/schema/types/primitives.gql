@@ -1,0 +1,24 @@
+scalar Date
+
+enum Permissions {
+  READ
+  WRITE
+  LOGIN
+  INTERACT
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+  PUBLISHED
+  UNPUBLISHED
+  DELTA
+}
+
+enum InteractionType {
+  like
+  love
+  repost
+  share
+}
