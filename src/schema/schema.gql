@@ -1,13 +1,13 @@
 type Query {
-  self(with: CreatorAccessRequest): CreatorAccount
-  google(with: CreatorAccessRequest!): CreatorAccount
-  imgur(with: CreatorAccessRequest!): CreatorAccount
-  github(with: CreatorAccessRequest!): CreatorAccount
+  self(from: Requestor): CreatorAccount
+  google(from: Requestor!): CreatorAccount
+  imgur(from: Requestor!): CreatorAccount
+  github(from: Requestor!): CreatorAccount
   
-  vues(with: CreatorAccessRequest!, where: VuesWhereInput): [VueComponent!]
-  images(with: CreatorAccessRequest!, where: ImagesWhereInput): [ImgurImage!]
-  albums(with: CreatorAccessRequest!, where: ImageAlbumsWhereInput): [ImgurImage!]
-  docs(with: CreatorAccessRequest!): [Docule!]
+  vues(from: Requestor!, where: VuesWhereInput): [VueComponent!]
+  images(from: Requestor!, where: ImagesWhereInput): [ImgurImage!]
+  albums(from: Requestor!, where: ImageAlbumsWhereInput): [ImgurImage!]
+  docs(from: Requestor!): [Docule!]
 
   creator(where: CreatorByInput, id: Int): Creator
   creators(where: CreatorByInput, by: ForOptionsInput): [Creator]

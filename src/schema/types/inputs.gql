@@ -1,4 +1,6 @@
-input CreatorAccessRequest {
+input Requestor {
+  id: String
+  ip: String
   token: String
 }
 
@@ -118,7 +120,7 @@ input ImagesWhereInput {
 }
 
 input ImageAlbumsWhereInput {
-    userId: String
+    userName: String
 }
 
 input VuesWhereInput {

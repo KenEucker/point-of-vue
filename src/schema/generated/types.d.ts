@@ -66,14 +66,11 @@ export type Creator = {
   readonly website?: Maybe<Scalars['String']>;
 };
 
-export type CreatorAccessRequest = {
-  readonly token?: InputMaybe<Scalars['String']>;
-};
-
 export type CreatorAccount = {
   readonly __typename?: 'CreatorAccount';
   readonly authentication?: Maybe<Tokens>;
-  readonly creator: Creator;
+  readonly creator?: Maybe<Creator>;
+  readonly requestor: RequestorMirror;
 };
 
 export type CreatorByInput = {
@@ -118,12 +115,33 @@ export type GetPostInteractionsPayload = {
   readonly shares?: Maybe<Scalars['Int']>;
 };
 
+export type GitHubAccount = {
+  readonly __typename?: 'GitHubAccount';
+  readonly id: Scalars['String'];
+};
+
+export type GoogleAccount = {
+  readonly __typename?: 'GoogleAccount';
+  readonly id: Scalars['String'];
+};
+
 export type ImageAlbumsWhereInput = {
-  readonly userId?: InputMaybe<Scalars['String']>;
+  readonly userName?: InputMaybe<Scalars['String']>;
 };
 
 export type ImagesWhereInput = {
   readonly albumId?: InputMaybe<Scalars['String']>;
+};
+
+export type ImgurAccount = {
+  readonly __typename?: 'ImgurAccount';
+  readonly avatar?: Maybe<Scalars['String']>;
+  readonly bio?: Maybe<Scalars['String']>;
+  readonly city?: Maybe<Scalars['String']>;
+  readonly country?: Maybe<Scalars['String']>;
+  readonly id: Scalars['String'];
+  readonly name?: Maybe<Scalars['String']>;
+  readonly timezone?: Maybe<Scalars['String']>;
 };
 
 export type ImgurAlbum = {
@@ -360,8 +378,8 @@ export type Query = {
 
 
 export type QueryAlbumsArgs = {
+  from: Requestor;
   where?: InputMaybe<ImageAlbumsWhereInput>;
-  with: CreatorAccessRequest;
 };
 
 
@@ -378,7 +396,7 @@ export type QueryCreatorsArgs = {
 
 
 export type QueryDocsArgs = {
-  with: CreatorAccessRequest;
+  from: Requestor;
 };
 
 
@@ -388,23 +406,23 @@ export type QueryGetPostInteractionsArgs = {
 
 
 export type QueryGithubArgs = {
-  with: CreatorAccessRequest;
+  from: Requestor;
 };
 
 
 export type QueryGoogleArgs = {
-  with: CreatorAccessRequest;
+  from: Requestor;
 };
 
 
 export type QueryImagesArgs = {
+  from: Requestor;
   where?: InputMaybe<ImagesWhereInput>;
-  with: CreatorAccessRequest;
 };
 
 
 export type QueryImgurArgs = {
-  with: CreatorAccessRequest;
+  from: Requestor;
 };
 
 
@@ -439,13 +457,29 @@ export type QuerySearchPostsArgs = {
 
 
 export type QuerySelfArgs = {
-  with?: InputMaybe<CreatorAccessRequest>;
+  from?: InputMaybe<Requestor>;
 };
 
 
 export type QueryVuesArgs = {
+  from: Requestor;
   where?: InputMaybe<VuesWhereInput>;
-  with: CreatorAccessRequest;
+};
+
+export type Requestor = {
+  readonly id?: InputMaybe<Scalars['String']>;
+  readonly ip?: InputMaybe<Scalars['String']>;
+  readonly token?: InputMaybe<Scalars['String']>;
+};
+
+export type RequestorMirror = {
+  readonly __typename?: 'RequestorMirror';
+  readonly github?: Maybe<GitHubAccount>;
+  readonly google?: Maybe<GoogleAccount>;
+  readonly id?: Maybe<Scalars['String']>;
+  readonly imgur?: Maybe<ImgurAccount>;
+  readonly ip?: Maybe<Scalars['String']>;
+  readonly token?: Maybe<Scalars['String']>;
 };
 
 export type SearchPostsInput = {
@@ -619,7 +653,6 @@ export type ResolversTypes = {
   CreateInteractionInput: CreateInteractionInput;
   CreatePostInput: CreatePostInput;
   Creator: ResolverTypeWrapper<Creator>;
-  CreatorAccessRequest: CreatorAccessRequest;
   CreatorAccount: ResolverTypeWrapper<CreatorAccount>;
   CreatorByInput: CreatorByInput;
   CreatorInput: CreatorInput;
@@ -628,8 +661,11 @@ export type ResolversTypes = {
   Docule: ResolverTypeWrapper<Docule>;
   ForOptionsInput: ForOptionsInput;
   GetPostInteractionsPayload: ResolverTypeWrapper<GetPostInteractionsPayload>;
+  GitHubAccount: ResolverTypeWrapper<GitHubAccount>;
+  GoogleAccount: ResolverTypeWrapper<GoogleAccount>;
   ImageAlbumsWhereInput: ImageAlbumsWhereInput;
   ImagesWhereInput: ImagesWhereInput;
+  ImgurAccount: ResolverTypeWrapper<ImgurAccount>;
   ImgurAlbum: ResolverTypeWrapper<ImgurAlbum>;
   ImgurImage: ResolverTypeWrapper<ImgurImage>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -648,6 +684,8 @@ export type ResolversTypes = {
   PostInput: PostInput;
   PostSubscriptionPayload: ResolverTypeWrapper<PostSubscriptionPayload>;
   Query: ResolverTypeWrapper<{}>;
+  Requestor: Requestor;
+  RequestorMirror: ResolverTypeWrapper<RequestorMirror>;
   SearchPostsInput: SearchPostsInput;
   SearchPostsPayload: ResolverTypeWrapper<SearchPostsPayload>;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -667,7 +705,6 @@ export type ResolversParentTypes = {
   CreateInteractionInput: CreateInteractionInput;
   CreatePostInput: CreatePostInput;
   Creator: Creator;
-  CreatorAccessRequest: CreatorAccessRequest;
   CreatorAccount: CreatorAccount;
   CreatorByInput: CreatorByInput;
   CreatorInput: CreatorInput;
@@ -676,8 +713,11 @@ export type ResolversParentTypes = {
   Docule: Docule;
   ForOptionsInput: ForOptionsInput;
   GetPostInteractionsPayload: GetPostInteractionsPayload;
+  GitHubAccount: GitHubAccount;
+  GoogleAccount: GoogleAccount;
   ImageAlbumsWhereInput: ImageAlbumsWhereInput;
   ImagesWhereInput: ImagesWhereInput;
+  ImgurAccount: ImgurAccount;
   ImgurAlbum: ImgurAlbum;
   ImgurImage: ImgurImage;
   Int: Scalars['Int'];
@@ -693,6 +733,8 @@ export type ResolversParentTypes = {
   PostInput: PostInput;
   PostSubscriptionPayload: PostSubscriptionPayload;
   Query: {};
+  Requestor: Requestor;
+  RequestorMirror: RequestorMirror;
   SearchPostsInput: SearchPostsInput;
   SearchPostsPayload: SearchPostsPayload;
   String: Scalars['String'];
@@ -729,7 +771,8 @@ export type CreatorResolvers<ContextType = any, ParentType extends ResolversPare
 
 export type CreatorAccountResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreatorAccount'] = ResolversParentTypes['CreatorAccount']> = {
   authentication?: Resolver<Maybe<ResolversTypes['Tokens']>, ParentType, ContextType>;
-  creator?: Resolver<ResolversTypes['Creator'], ParentType, ContextType>;
+  creator?: Resolver<Maybe<ResolversTypes['Creator']>, ParentType, ContextType>;
+  requestor?: Resolver<ResolversTypes['RequestorMirror'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -755,6 +798,27 @@ export type GetPostInteractionsPayloadResolvers<ContextType = any, ParentType ex
   loves?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   reposts?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   shares?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GitHubAccountResolvers<ContextType = any, ParentType extends ResolversParentTypes['GitHubAccount'] = ResolversParentTypes['GitHubAccount']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GoogleAccountResolvers<ContextType = any, ParentType extends ResolversParentTypes['GoogleAccount'] = ResolversParentTypes['GoogleAccount']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImgurAccountResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImgurAccount'] = ResolversParentTypes['ImgurAccount']> = {
+  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  timezone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -852,22 +916,32 @@ export type PostSubscriptionPayloadResolvers<ContextType = any, ParentType exten
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  albums?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurImage']>>, ParentType, ContextType, RequireFields<QueryAlbumsArgs, 'with'>>;
+  albums?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurImage']>>, ParentType, ContextType, RequireFields<QueryAlbumsArgs, 'from'>>;
   creator?: Resolver<Maybe<ResolversTypes['Creator']>, ParentType, ContextType, Partial<QueryCreatorArgs>>;
   creators?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Creator']>>>, ParentType, ContextType, Partial<QueryCreatorsArgs>>;
-  docs?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Docule']>>, ParentType, ContextType, RequireFields<QueryDocsArgs, 'with'>>;
+  docs?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Docule']>>, ParentType, ContextType, RequireFields<QueryDocsArgs, 'from'>>;
   getPostInteractions?: Resolver<Maybe<ResolversTypes['GetPostInteractionsPayload']>, ParentType, ContextType, RequireFields<QueryGetPostInteractionsArgs, 'id'>>;
-  github?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryGithubArgs, 'with'>>;
-  google?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryGoogleArgs, 'with'>>;
-  images?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurImage']>>, ParentType, ContextType, RequireFields<QueryImagesArgs, 'with'>>;
-  imgur?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryImgurArgs, 'with'>>;
+  github?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryGithubArgs, 'from'>>;
+  google?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryGoogleArgs, 'from'>>;
+  images?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurImage']>>, ParentType, ContextType, RequireFields<QueryImagesArgs, 'from'>>;
+  imgur?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryImgurArgs, 'from'>>;
   interaction?: Resolver<Maybe<ResolversTypes['Interaction']>, ParentType, ContextType, Partial<QueryInteractionArgs>>;
   interactions?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Interaction']>>>, ParentType, ContextType, Partial<QueryInteractionsArgs>>;
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, Partial<QueryPostArgs>>;
   posts?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Post']>>>, ParentType, ContextType, Partial<QueryPostsArgs>>;
   searchPosts?: Resolver<Maybe<ResolversTypes['SearchPostsPayload']>, ParentType, ContextType, RequireFields<QuerySearchPostsArgs, 'search'>>;
   self?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QuerySelfArgs>>;
-  vues?: Resolver<Maybe<ReadonlyArray<ResolversTypes['VueComponent']>>, ParentType, ContextType, RequireFields<QueryVuesArgs, 'with'>>;
+  vues?: Resolver<Maybe<ReadonlyArray<ResolversTypes['VueComponent']>>, ParentType, ContextType, RequireFields<QueryVuesArgs, 'from'>>;
+};
+
+export type RequestorMirrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['RequestorMirror'] = ResolversParentTypes['RequestorMirror']> = {
+  github?: Resolver<Maybe<ResolversTypes['GitHubAccount']>, ParentType, ContextType>;
+  google?: Resolver<Maybe<ResolversTypes['GoogleAccount']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  imgur?: Resolver<Maybe<ResolversTypes['ImgurAccount']>, ParentType, ContextType>;
+  ip?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SearchPostsPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['SearchPostsPayload'] = ResolversParentTypes['SearchPostsPayload']> = {
@@ -909,6 +983,9 @@ export type Resolvers<ContextType = any> = {
   Date?: GraphQLScalarType;
   Docule?: DoculeResolvers<ContextType>;
   GetPostInteractionsPayload?: GetPostInteractionsPayloadResolvers<ContextType>;
+  GitHubAccount?: GitHubAccountResolvers<ContextType>;
+  GoogleAccount?: GoogleAccountResolvers<ContextType>;
+  ImgurAccount?: ImgurAccountResolvers<ContextType>;
   ImgurAlbum?: ImgurAlbumResolvers<ContextType>;
   ImgurImage?: ImgurImageResolvers<ContextType>;
   Interaction?: InteractionResolvers<ContextType>;
@@ -919,6 +996,7 @@ export type Resolvers<ContextType = any> = {
   Post?: PostResolvers<ContextType>;
   PostSubscriptionPayload?: PostSubscriptionPayloadResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  RequestorMirror?: RequestorMirrorResolvers<ContextType>;
   SearchPostsPayload?: SearchPostsPayloadResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
   Tokens?: TokensResolvers<ContextType>;

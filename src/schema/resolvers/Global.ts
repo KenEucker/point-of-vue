@@ -1,22 +1,43 @@
+import { ImageAlbumsWhereInput, ImagesWhereInput, ImgurAccount } from './../generated/types.d'
 import { GraphQLError } from 'graphql'
 import auth0Client from 'auth0'
 import Client, { auth, gql, getMethod } from '@github-graph/api'
+import imgur from 'imgur'
+
+const constructImgurUser = (profile: any): ImgurAccount => ({
+  id: profile.data.id,
+  name: profile.data.url,
+  avatar: profile.data.avatar,
+  bio: profile.data.bio,
+  city: profile.user_metadata.city,
+  country: profile.user_metadata.country,
+  timezone: profile.user_metadata.timezone,
+})
+const constructGoogleUser = (profile: any): ImgurAccount => ({
+  id: profile.id,
+})
+const constructGitHubUser = (profile: any): ImgurAccount => ({
+  id: profile.id,
+})
 
 const Global = {
   self: async (
     _parent: never,
-    args: { with: { token: any; id: any } },
+    args: { from: { token: any; id: any } },
     { prisma, auth0 }: any,
-    _info: any
+    info: any
   ) => {
     const where: any = {
-      id: args?.with?.id,
+      id: args?.from?.id,
     }
 
     if (!auth0 && !where.id) {
       throw new GraphQLError("You can't do that")
     }
 
+    const requestor: any = {
+      token: args.from?.token,
+    }
     const authentication: any = auth0 ? {} : undefined
 
     if (auth0) {
@@ -25,7 +46,7 @@ const Global = {
         clientId: process.env.AUTH0_MAN_CID,
         clientSecret: process.env.AUTH0_MAN_SEC,
       })
-      let token = args.with?.token
+      let token = args.from?.token
       authentication.creatorSubId = auth0.sub
 
       if (!token) {
@@ -52,18 +73,30 @@ const Global = {
         })
         await management
           .getUser({ id: auth0.sub })
-          .then(function (read_user) {
+          .then(function (profile) {
             // console.log({ read_user, ids: read_user.identities })
-            where.email = read_user.email
-            authentication.github = read_user.identities?.find(
+            where.email = profile.email
+            authentication.github = profile.identities?.find(
               (i) => i.connection === 'github'
             )?.access_token
-            authentication.google = read_user.identities?.find(
+            authentication.google = profile.identities?.find(
               (i) => i.connection === 'google-oauth2'
             )?.access_token
-            authentication.imgur = read_user.identities?.find(
+            authentication.imgur = profile.identities?.find(
               (i) => i.connection === 'Imgur'
             )?.access_token
+
+            console.log({ read_user: profile })
+            if (authentication.imgur) {
+              requestor.imgur = constructImgurUser(profile)
+              requestor.ip = profile.last_ip
+            }
+            if (authentication.google) {
+              requestor.google = constructGoogleUser(profile)
+            }
+            if (authentication.github) {
+              requestor.github = constructGitHubUser(profile)
+            }
           })
           .catch(function (_err) {
             // The cliff swallow or American cliff swallow (Petrochelidon pyrrhonota) is a member of the passerine bird family Hirundinidae, the swallows and martins. The generic name Petrochelidon is derived from Ancient Greek petros meaning "rock" and khelidon "swallow", and the specific name pyrrhonota comes from purrhos meaning "flame-coloured" and -notos "-backed".
@@ -75,12 +108,11 @@ const Global = {
       // authentication.auth0 = token
     }
 
-    if (!where.id && !where.email && !where.sub) {
-      throw new GraphQLError('no attached creator account')
-    }
+    const canQueryForCreator = where.id || where.email || where.sub
+    const creator = canQueryForCreator ? await prisma.creator.findUnique({ where }) : undefined
 
-    const creator = await prisma.creator.findUnique({ where })
     return {
+      requestor,
       creator,
       authentication,
     }
@@ -88,16 +120,16 @@ const Global = {
   // GitHub
   vues: async (
     _parent: never,
-    args: { with: { token: any }; where: { oid: string } },
+    args: { from: { token: any }; where: { oid: string } },
     { auth0 }: any,
     _info: any
   ) => {
-    if (!auth0 && !args?.with?.token) {
+    if (!auth0 && !args?.from?.token) {
       throw new GraphQLError("You can't do that")
     }
-    // @ts-ignore
+    // @ts-expect-error
     const githubClient = new Client.default({
-      auth: auth.createTokenAuth(args.with.token),
+      auth: auth.createTokenAuth(args.from.token),
     })
     const oid = args?.where?.oid
     const oidQuery = oid ? `,oid:"${oid}"` : ''
@@ -134,7 +166,6 @@ const Global = {
 
     const response: any = await getVues(githubClient)
     const vues = response.viewer?.repository?.object?.entries
-    console.log({ vues })
     const acceptableFilenames = ['vue', 'query', 'script', 'template']
 
     /*
@@ -159,16 +190,55 @@ const Global = {
     return globbedVues
   },
   // Imgur
-  // images: async (
-  //   _parent: never,
-  //   _args: { with: { token: any } },
-  //   { prisma, auth0 }: any,
-  //   _info: any
-  // ) => {},
+  images: async (
+    _parent: never,
+    args: { from: { token: any }; where: ImagesWhereInput },
+    { auth0 }: any,
+    _info: any
+  ) => {
+    if (!auth0 && !args?.from?.token) {
+      throw new GraphQLError("You can't do that")
+    }
+    if (!args?.where?.albumId) {
+      throw new GraphQLError('You must supply an albumId')
+    }
+    // @ts-expect-error
+    const imgurClient = new imgur.ImgurClient({
+      accessToken: args.from?.token,
+    })
+
+    const album = await imgurClient.getAlbum(args.where.albumId)
+
+    return album.data.images
+  },
+  albums: async (
+    _parent: never,
+    args: { from: { token: any }; where: ImageAlbumsWhereInput },
+    { auth0 }: any,
+    _info: any
+  ) => {
+    if (!auth0 && !args?.from?.token) {
+      throw new GraphQLError("You can't do that")
+    }
+
+    if (!args?.where?.userName && !auth0?.sub) {
+      throw new GraphQLError("You can't do that")
+    }
+
+    // @ts-expect-error
+    const imgurClient = new imgur.ImgurClient({
+      accessToken: args.from?.token,
+    })
+
+    const userName = args?.where?.userName ?? auth0.sub
+    const album = await imgurClient.getAlbums(userName)
+
+    return album.data
+  },
   // Google
   // docs: async (
   //   _parent: never,
-  //   _args: { with: { token: any } },
+  //   _args: { from: { token: any } },
   //   { prisma, auth0 }: any,
   //   _info: any
   // ) => {},

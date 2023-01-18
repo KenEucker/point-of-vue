@@ -81,6 +81,7 @@ export const compileComponent = (
     'window',
     'alert',
     'import',
+    'fetch',
     'require',
     'console.log',
   ])

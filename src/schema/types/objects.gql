@@ -6,8 +6,36 @@ type Tokens {
   google: String
 }
 
+type ImgurAccount {
+  id: String!
+  name: String
+  avatar: String
+  bio: String
+  city: String
+  country: String
+  timezone: String
+}
+
+type GoogleAccount {
+  id: String!
+}
+
+type GitHubAccount {
+  id: String!
+}
+
+type RequestorMirror {
+  id: String
+  ip: String
+  token: String
+  github: GitHubAccount
+  imgur: ImgurAccount
+  google: GoogleAccount
+}
+
 type CreatorAccount {
-  creator: Creator!
+  requestor: RequestorMirror!
+  creator: Creator
   authentication: Tokens
 }
 
