@@ -9,6 +9,7 @@ const inProps = defineProps({
   max: { type: Number, default: 10 },
   debug: { type: Boolean, default: false },
   modelValue: { type: Number, default: 1 },
+  showEmpty: { type: Boolean, default: true },
 })
 
 const props = reactive({ ...inProps })
@@ -36,7 +37,6 @@ function getPageRange(
   if (pageCount < maxPageRange) {
     end = pageCount
   }
-  console.log({ start, end })
   return { start, end }
 }
 
@@ -89,28 +89,40 @@ function nextPage(next: () => void) {
           <p>{{ isLastPage }}</p>
         </legend>
       </div>
-      <div>
+      <div v-show="props.showEmpty">
         <button
           :disabled="isFirstPage"
-          class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 ml-0 rounded-l-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white cursor-pointer"
+          class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg cursor-pointer hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
           @click="() => prevPage(prev)"
         >
           prev
         </button>
-        <button
-          v-for="i in getRange(getPageRange(currentPage, props.max, pageCount))"
-          :key="`page-${i}`"
-          :aria-active="i === currentPage"
-          :disabled="i === currentPage"
-          class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white cursor-pointer"
-          :class="i === currentPage ? 'dark:border-gray-700 dark:bg-gray-700 dark:text-white ' : ''"
-          @click="gotoPage(i)"
-        >
-          {{ i }}
-        </button>
+        <div v-if="total > 0" class="inline">
+          <button
+            v-for="i in getRange(getPageRange(currentPage, props.max, pageCount))"
+            :key="`page-${i}`"
+            :aria-active="i === currentPage"
+            :disabled="i === currentPage"
+            class="px-3 py-2 text-gray-500 bg-white border border-gray-300 cursor-pointer hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+            :class="
+              i === currentPage ? 'dark:border-gray-700 dark:bg-gray-700 dark:text-white ' : ''
+            "
+            @click="gotoPage(i)"
+          >
+            {{ i }}
+          </button>
+        </div>
+        <div v-else class="inline">
+          <button
+            class="px-3 py-2 text-gray-100 bg-white border border-gray-300 cursor-pointer hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+            :disabled="true"
+          >
+            0
+          </button>
+        </div>
         <button
           :disabled="isLastPage"
-          class="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-r-lg leading-tight py-2 px-3 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white cursor-pointer"
+          class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg cursor-pointer hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
           @click="() => nextPage(next)"
         >
           next

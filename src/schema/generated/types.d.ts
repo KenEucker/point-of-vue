@@ -163,18 +163,23 @@ export type ImgurAccount = {
 
 export type ImgurAlbum = {
   readonly __typename?: 'ImgurAlbum';
-  readonly createdAt?: Maybe<Scalars['Date']>;
-  readonly deleteHash?: Maybe<Scalars['String']>;
+  readonly cover?: Maybe<Scalars['String']>;
+  readonly datetime?: Maybe<Scalars['Date']>;
+  readonly deletehash?: Maybe<Scalars['String']>;
   readonly description?: Maybe<Scalars['String']>;
   readonly id: Scalars['String'];
+  readonly images?: Maybe<ReadonlyArray<Maybe<ImgurImage>>>;
+  readonly images_count?: Maybe<Scalars['Int']>;
   readonly link: Scalars['String'];
+  readonly order?: Maybe<Scalars['String']>;
+  readonly privacy?: Maybe<Scalars['String']>;
   readonly title?: Maybe<Scalars['String']>;
 };
 
 export type ImgurImage = {
   readonly __typename?: 'ImgurImage';
-  readonly createdAt?: Maybe<Scalars['Date']>;
-  readonly deleteHash?: Maybe<Scalars['String']>;
+  readonly datetime?: Maybe<Scalars['Date']>;
+  readonly deletehash?: Maybe<Scalars['String']>;
   readonly description?: Maybe<Scalars['String']>;
   readonly id: Scalars['String'];
   readonly link: Scalars['String'];
@@ -375,7 +380,7 @@ export type PostSubscriptionPayload = {
 
 export type Query = {
   readonly __typename?: 'Query';
-  readonly albums?: Maybe<ReadonlyArray<ImgurImage>>;
+  readonly albums?: Maybe<ReadonlyArray<ImgurAlbum>>;
   readonly creator?: Maybe<Creator>;
   readonly creators?: Maybe<ReadonlyArray<Maybe<Creator>>>;
   readonly docs?: Maybe<ReadonlyArray<Docule>>;
@@ -859,18 +864,23 @@ export type ImgurAccountResolvers<ContextType = any, ParentType extends Resolver
 };
 
 export type ImgurAlbumResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImgurAlbum'] = ResolversParentTypes['ImgurAlbum']> = {
-  createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  deleteHash?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  cover?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  datetime?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  deletehash?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  images?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['ImgurImage']>>>, ParentType, ContextType>;
+  images_count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   link?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  order?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  privacy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ImgurImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImgurImage'] = ResolversParentTypes['ImgurImage']> = {
-  createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  deleteHash?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  datetime?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  deletehash?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   link?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -952,7 +962,7 @@ export type PostSubscriptionPayloadResolvers<ContextType = any, ParentType exten
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  albums?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurImage']>>, ParentType, ContextType, RequireFields<QueryAlbumsArgs, 'from'>>;
+  albums?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurAlbum']>>, ParentType, ContextType, RequireFields<QueryAlbumsArgs, 'from'>>;
   creator?: Resolver<Maybe<ResolversTypes['Creator']>, ParentType, ContextType, Partial<QueryCreatorArgs>>;
   creators?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Creator']>>>, ParentType, ContextType, Partial<QueryCreatorsArgs>>;
   docs?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Docule']>>, ParentType, ContextType, RequireFields<QueryDocsArgs, 'from'>>;

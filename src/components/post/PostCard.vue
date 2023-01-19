@@ -21,7 +21,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="flex flex-col w-full p-5 mb-4 rounded-md bg-ll-neutral dark:bg-ld-neutral relative">
+  <div class="relative flex flex-col w-full p-5 mb-4 rounded-md bg-ll-neutral dark:bg-ld-neutral">
     <div class="flex justify-between">
       <pov-creator :creator="props.post?.creator" />
       <button class="relative transition-transform transform active:scale-95">

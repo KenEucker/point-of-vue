@@ -4,7 +4,7 @@ import { ref, computed } from 'vue'
 import { useCreatorState } from '../store/state'
 import { Creator } from '../schema/generated/types.d'
 import { useRouter } from 'vue-router'
-import LoadingSpinner from '../components/atomic/LoadingSpinner.vue'
+import LoadingSpinner from '../components/atomic/PovLoading.vue'
 import ErrorMessage from '../components/atomic/ErrorMessage.vue'
 
 const creatorState = useCreatorState()
@@ -23,7 +23,7 @@ const errors = ref()
 const errorMessage = ref('')
 const dirty = ref(false)
 
-if (creatorState.isLoggedIn && !creatorState.isCreatorSignedUp) {
+if (creatorState.isCreatorSignedUp !== true) {
   router.push('/')
 }
 
@@ -144,7 +144,7 @@ async function saveFields(e: Event) {
 <template>
   <div class="" @click="errors = false">
     <section
-      class="max-w-4xl p-6 mx-auto rounded-md shadow-md mx-auto dark:bg-gray-800 mt-20"
+      class="max-w-4xl p-6 mx-auto mt-20 rounded-md shadow-md dark:bg-gray-800"
       :style="{
         background: `url(${creatorState.getCreator.banner}) no-repeat right`,
       }"
@@ -155,7 +155,7 @@ async function saveFields(e: Event) {
       <loading-spinner :full-screen="false" />
     </div>
     <error-message v-else-if="errors" :message="errorMessage" />
-    <section v-else class="max-w-4xl p-6 mx-auto rounded-md shadow-md dark:bg-gray-800 mt-20">
+    <section v-else class="max-w-4xl p-6 mx-auto mt-20 rounded-md shadow-md dark:bg-gray-800">
       <h1 class="text-xl font-bold capitalize dark:text-white">Profile settings</h1>
       <form>
         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
@@ -185,7 +185,7 @@ async function saveFields(e: Event) {
 
         <div class="flex justify-end mt-6">
           <button
-            class="px-6 py-2 dark:text-white text-black leading-5 transition-colors duration-200 transform bg-ll-primary rounded-md hover:bg-ll-secondary focus:outline-none focus:bg-ll-secondary"
+            class="px-6 py-2 leading-5 text-black transition-colors duration-200 transform rounded-md dark:text-white bg-ll-primary hover:bg-ll-secondary focus:outline-none focus:bg-ll-secondary"
             :disabled="!dirty"
             @click="saveFields"
           >

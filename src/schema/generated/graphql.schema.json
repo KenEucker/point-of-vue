@@ -1388,7 +1388,19 @@
         "description": null,
         "fields": [
           {
-            "name": "createdAt",
+            "name": "cover",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "datetime",
             "description": null,
             "args": [],
             "type": {
@@ -1400,7 +1412,7 @@
             "deprecationReason": null
           },
           {
-            "name": "deleteHash",
+            "name": "deletehash",
             "description": null,
             "args": [],
             "type": {
@@ -1440,6 +1452,34 @@
             "deprecationReason": null
           },
           {
+            "name": "images",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "ImgurImage",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "images_count",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "link",
             "description": null,
             "args": [],
@@ -1451,6 +1491,30 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "order",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "privacy",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1479,7 +1543,7 @@
         "description": null,
         "fields": [
           {
-            "name": "createdAt",
+            "name": "datetime",
             "description": null,
             "args": [],
             "type": {
@@ -1491,7 +1555,7 @@
             "deprecationReason": null
           },
           {
-            "name": "deleteHash",
+            "name": "deletehash",
             "description": null,
             "args": [],
             "type": {
@@ -2999,7 +3063,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "ImgurImage",
+                  "name": "ImgurAlbum",
                   "ofType": null
                 }
               }

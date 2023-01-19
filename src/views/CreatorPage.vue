@@ -1,20 +1,24 @@
 <script setup lang="ts">
 import ArrowBack from 'vue-ionicons/dist/md-arrow-back.vue'
 import PovPost from '../components/post/PovPost.vue'
-import LoadingSpinner from '../components/atomic/LoadingSpinner.vue'
+import LoadingSpinner from '../components/atomic/PovLoading.vue'
 import ErrorMessage from '../components/atomic/ErrorMessage.vue'
 import PovCreator from '../components/creator/PovCreator.vue'
 import FollowCreator from '../components/creator/FollowCreator.vue'
 import { reactive, watch, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useQuery } from '@vue/apollo-composable'
 import { gql } from '@apollo/client/core'
+import { useRouter } from 'vue-router'
 import { useRouteParams } from '@vueuse/router'
 import { useCreatorState } from '../store/state'
 
+const router = useRouter()
 const creatorState = useCreatorState()
 const handleParam = useRouteParams('handle')
 const handleParamIsSet = handleParam.value?.length
+if (!handleParamIsSet && !creatorState.getCreator?.handle) {
+  router.push('/')
+}
 const handle = handleParamIsSet ? handleParam : creatorState.getCreator.handle
 
 const creatorByHandleQuery = gql`
@@ -48,11 +52,8 @@ const creatorByHandleQuery = gql`
 `
 
 const creator = ref()
-const router = useRouter()
 const { result, loading, error } = useQuery(creatorByHandleQuery, { handle })
-const creatorQuery = reactive(result)
-
-watch(creatorQuery, (r) => {
+watch(result, (r) => {
   if (r?.creator) {
     creator.value = r.creator
     isOwnPage.value = creator.value.handle === handle
@@ -107,7 +108,7 @@ function selected(idx: number) {
           v-if="isOwnPage"
           :creator="creator"
           size="medium"
-          class="-ml-10 -mt-4"
+          class="-mt-4 -ml-10"
           :full="true"
           :go-to-creator-page="false"
         />
@@ -115,7 +116,7 @@ function selected(idx: number) {
           v-else
           :creator="creator"
           size="medium"
-          class="-ml-10 -mt-4"
+          class="-mt-4 -ml-10"
           :full="true"
           :go-to-creator-page="false"
         />

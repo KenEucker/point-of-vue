@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import PostOptions from './PostOptions.vue'
 import PostInteractionsBar from './PostInteractionsBar.vue'
-import LoadingSpinner from '../atomic/LoadingSpinner.vue'
+import LoadingSpinner from '../atomic/PovLoading.vue'
 import PostText from './PostText.vue'
 import PovCreator from '../creator/PovCreator.vue'
 import PostMedia from './PostMedia.vue'
@@ -52,7 +52,7 @@ async function deletePost() {
 </script>
 
 <template>
-  <div class="flex flex-col w-full p-5 mb-4 rounded-md bg-ll-neutral dark:bg-ld-neutral relative">
+  <div class="relative flex flex-col w-full p-5 mb-4 rounded-md bg-ll-neutral dark:bg-ld-neutral">
     <loading-spinner v-if="isLoading" :full-screen="false" />
     <div v-else>
       <div class="flex justify-between">
@@ -63,7 +63,7 @@ async function deletePost() {
           class="absolute top-4 right-2"
           :creator-id="creatorState.getCreatorId"
           :post-id="props.post.id"
-          :can-edit="creatorState.isLoggedIn && props.isSelfPost"
+          :can-edit="creatorState.isCreatorSignedUp && props.isSelfPost"
           @on-delete="deletePost"
         />
       </div>

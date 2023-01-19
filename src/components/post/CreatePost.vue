@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { useNow, useDateFormat } from '@vueuse/core'
-import LoadingSpinner from '../atomic/LoadingSpinner.vue'
+import LoadingSpinner from '../atomic/PovLoading.vue'
 import ErrorMessage from '../atomic/ErrorMessage.vue'
 import EmojiPicker from 'vue3-emoji-picker'
 import { useMutation } from '@vue/apollo-composable'

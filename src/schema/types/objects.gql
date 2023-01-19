@@ -73,8 +73,13 @@ type ImgurAlbum {
   link: String!
   title: String
   description: String
-  deleteHash: String
-  createdAt: Date
+  deletehash: String
+  cover: String
+  privacy: String
+  images: [ImgurImage]
+  images_count: Int
+  order: String
+  datetime: Date
 }
 
 type ImgurImage {
@@ -82,8 +87,8 @@ type ImgurImage {
   link: String!
   title: String
   description: String
-  deleteHash: String
-  createdAt: Date
+  deletehash: String
+  datetime: Date
 }
 
 # Google Integration

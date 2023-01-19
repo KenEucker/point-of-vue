@@ -11,7 +11,7 @@ const creatorState = useCreatorState()
 const emailRef = ref()
 
 if (creatorState.isLoggedIn && !creatorState.isCreatorSignedUp) {
-  emailRef.value = { value: creatorState.getCreator.email }
+  emailRef.value = { value: creatorState.getCreator?.email }
   showSignupModal.value = true
 }
 
@@ -29,7 +29,7 @@ const signUp = async (e: Event) => {
 </script>
 <template>
   <div class="w-full px-8 pt-6 pb-8 mb-4 bg-gray-900 rounded-lg shadow-lg">
-    <div v-if="creatorState.isLoggedIn && creatorState.getCreator.id < 1">
+    <div v-if="creatorState.isCreatorSignedUp">
       <div class="mb-4 text-center">
         <label class="block py-2 mb-2 text-2xl font-bold text-green-300">
           Thank you for signing up!

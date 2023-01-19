@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, watch, ref } from 'vue'
 import PovPost from './PovPost.vue'
-import LoadingSpinner from '../atomic/LoadingSpinner.vue'
+import LoadingSpinner from '../atomic/PovLoading.vue'
 import ErrorMessage from '../atomic/ErrorMessage.vue'
 import { Post } from '../../schema/generated/types.d'
 import { getGraphUrl } from '../../utilities'
@@ -21,8 +21,7 @@ let rightPosts: Post[] = reactive([])
 const initialized = ref(false)
 
 const postsState = usePostsState()
-const postsLoaded = reactive(postsState)
-watch(postsLoaded, () => {
+watch(postsState, () => {
   if (!postsState.getPostsLoading) {
     initialized.value = true
     injectPosts()
@@ -98,7 +97,8 @@ function getRandomIntInclusive(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min // The maximum is inclusive and the minimum is inclusive
 }
 
-const isPostSelfPost = (post: Post) => post.creator?.handle === creatorState.creator?.handle
+const isPostSelfPost = (post: Post) =>
+  creatorState.isCreatorSignedUp && post.creator?.handle === creatorState.creator?.handle
 </script>
 
 <template>

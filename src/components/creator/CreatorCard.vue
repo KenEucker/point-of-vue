@@ -6,8 +6,7 @@ import PointOfVue from '../atomic/PointOfVue.vue'
 import PopButton from '../atomic/PopButton.vue'
 import PovCreator from './PovCreator.vue'
 import { useMenuState, useCreatorState } from '../../store/state'
-import { storeToRefs } from 'pinia'
-import LoadingSpinner from '../atomic/LoadingSpinner.vue'
+import LoadingSpinner from '../atomic/PovLoading.vue'
 import { watch } from 'vue'
 const emailInput = ref()
 const menuState = useMenuState()
@@ -20,11 +19,12 @@ const props = defineProps({
   useAuth0: Boolean,
 })
 
-const { creator } = storeToRefs(creatorState)
-watch(creator, () => {
+const creator = ref()
+watch(creatorState, () => {
+  creator.value = creatorState
   if (creatorState.isLoggedIn) {
     loggingIn.value = false
-    if (creatorState.getCreatorId > 0) {
+    if (creatorState.isCreatorSignedUp) {
       menuState.openCreatePost()
     }
   } else {
@@ -67,7 +67,7 @@ const useLogin = async () => {
       >
         <div class="flex flex-col items-center justify-center">
           <p class="text-lg font-bold text-gray-800 dark:text-gray-300">
-            {{ creator.posts?.length ?? 0 }}
+            {{ creator?.posts?.length ?? 0 }}
           </p>
           <p class="-mt-1 text-xs">Posts</p>
         </div>

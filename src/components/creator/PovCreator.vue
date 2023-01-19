@@ -17,7 +17,6 @@ const props = defineProps({
     default: () => {
       return {}
     },
-    required: true,
   },
   imageOnly: {
     type: Boolean,
@@ -51,7 +50,7 @@ const classes = computed(() => {
 
 const goToCreatorPage = props.goToCreatorPage
   ? () => {
-      router.push(`/${props.creator.handle}`)
+      router.push(`/${props.creator?.handle}`)
     }
   : () => {
       /// nothing to do
@@ -59,42 +58,46 @@ const goToCreatorPage = props.goToCreatorPage
 </script>
 <template>
   <div
-    class="flex relative w-full"
+    class="relative flex w-full"
     :class="props.size === 'large' ? 'inline-grid' : 'items-center'"
   >
-    <extra-special-checkmark v-if="creator.verified" :size="props.size" class="special-aint-ya" />
+    <extra-special-checkmark
+      v-if="props.creator?.verified"
+      :size="props.size"
+      class="special-aint-ya"
+    />
     <creator-avatar
-      :avatar="props.creator.avatar"
+      :avatar="props.creator?.avatar"
       :class="`${props.goToCreatorPage ? 'cursor-pointer' : ''} ${classes}`"
       @click="goToCreatorPage"
     />
     <div v-if="!props.imageOnly" class="justify-center w-1/2 pl-4">
       <div>
-        <h2 class="text-xl leading-6 font-bold dark:text-white">
-          <creator-name :name="props.creator.name" />
+        <h2 class="text-xl font-bold leading-6 dark:text-white">
+          <creator-name :name="props.creator?.name" />
         </h2>
-        <p class="text-sm leading-5 font-medium text-gray-600">
-          <creator-handle :handle="props.creator.handle" />
+        <p class="text-sm font-medium leading-5 text-gray-600">
+          <creator-handle :handle="props.creator?.handle" />
         </p>
       </div>
       <div v-if="props.full" class="mt-3">
-        <p class="text-white leading-tight mb-2">
-          <creator-status :status="props.creator.status" />
+        <p class="mb-2 leading-tight text-white">
+          <creator-status :status="props.creator?.status" />
         </p>
-        <div class="text-gray-600 flex">
-          <creator-website :website="props.creator.website" :show-icon="true" />
-          <creator-joined :joined="props.creator.joined" :show-icon="true" />
+        <div class="flex text-gray-600">
+          <creator-website :website="props.creator?.website" :show-icon="true" />
+          <creator-joined :joined="props.creator?.joined" :show-icon="true" />
         </div>
       </div>
       <div
         v-if="props.full"
-        class="pt-3 flex justify-start items-start w-full divide-x divide-gray-800 divide-solid"
+        class="flex items-start justify-start w-full pt-3 divide-x divide-gray-800 divide-solid"
       >
-        <div class="text-center pr-3">
+        <div class="pr-3 text-center">
           <span class="font-bold dark:text-white">0</span
           ><span class="text-gray-600"> Following</span>
         </div>
-        <div class="text-center px-3">
+        <div class="px-3 text-center">
           <span class="font-bold dark:text-white">0 </span
           ><span class="text-gray-600"> Followers</span>
         </div>

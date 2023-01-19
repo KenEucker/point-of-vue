@@ -6,7 +6,7 @@ type Query {
   
   vues(from: Requestor!, where: VuesWhereInput): [VueComponent!]
   images(from: Requestor!, where: ImagesWhereInput): [ImgurImage!]
-  albums(from: Requestor!, where: ImageAlbumsWhereInput): [ImgurImage!]
+  albums(from: Requestor!, where: ImageAlbumsWhereInput): [ImgurAlbum!]
   docs(from: Requestor!): [Docule!]
 
   creator(where: CreatorByInput, id: Int): Creator

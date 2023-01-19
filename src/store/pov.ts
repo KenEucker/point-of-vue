@@ -78,9 +78,9 @@ export const usePovState = defineStore({
     },
     pruneCreatorsToFollow() {
       const creatorSate = useCreatorState()
-      if (creatorSate.getCreator?.id > 0) {
+      if (creatorSate.getCreatorId > 0) {
         this.creatorsToFollow = this.creatorsToFollow.filter(
-          (a) => a.id === creatorSate.getCreator.id
+          (a) => a.id === creatorSate.getCreatorId
         )
       }
     },

@@ -18,10 +18,12 @@ export const getInitialCreatorState = (): {
   loggedIn: boolean
   creator: Creator
   auth0Configured: boolean
+  signedUp: boolean
   auth0Token: string
   authentication: any
 } => ({
   loggedIn: false,
+  signedUp: false,
   auth0Configured: auth.initialized,
   creator: {
     id: 0,
@@ -41,10 +43,10 @@ export const useCreatorState = defineStore({
   state: getInitialCreatorState,
   getters: {
     isAuth0: (s) => s.auth0Configured,
-    isCreatorSignedUp: (s) => s.creator?.id !== -1,
+    isCreatorSignedUp: (s) => s.signedUp,
     isLoggedIn: (s) => s.loggedIn,
     getCreator: (s) => s.creator,
-    getCreatorId: (s) => s.creator?.id ?? 0,
+    getCreatorId: (s) => (s.loggedIn ? (s.signedUp ? s.creator?.id : 0) : -1),
   },
   actions: {
     async creatorSignup(creator: Creator) {
@@ -137,12 +139,49 @@ export const useCreatorState = defineStore({
     },
     async fetchCreator(creator?: Creator) {
       creator = creator ?? ({ id: storedId.value, email: storedEmail.value } as Creator)
+      // console.log({ creator, token: storedToken.value })
       const loginViaEmailQuery = gql`
-        query StoreFetchSelf($email: String!) {
-          self(from: { email: $email }) {
+        query StoreFetchSelf($token: String!) {
+          self(from: { token: $token }) {
+            requestor {
+              id
+              ip
+              token
+              email
+              github {
+                email
+                email_verified
+                name
+                avatar
+                bio
+                city
+                country
+                timezone
+                hireable
+                profile
+              }
+              imgur {
+                name
+                avatar
+                bio
+                city
+                country
+                timezone
+              }
+              google {
+                email
+                email_verified
+                name
+                avatar
+                city
+                country
+                timezone
+              }
+            }
             authentication {
               imgur
               github
+              google
             }
             creator {
               id
@@ -166,16 +205,19 @@ export const useCreatorState = defineStore({
       `
       const { data, error: queryError } = await apolloClient.query({
         query: loginViaEmailQuery,
-        variables: { email: creator.email },
+        variables: { token: storedToken.value },
       })
       let error = null
 
       if (data?.self) {
-        console.log({ self: data.self })
         this.creator = data.self.creator
         if (this.creator) {
           storedId.value = this.creator.id
           storedEmail.value = this.creator.email
+          this.signedUp = true
+        } else {
+          this.creator =
+            data.self.requestor?.imgur ?? data.self.requestor?.github ?? data.self.requestor.google
         }
         this.authentication = data.self?.authentication
         if (this.authentication) {

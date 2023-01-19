@@ -96,9 +96,9 @@ const popoverContent = computed(() =>
   props.disableInteraction
     ? 'you cannot do that'
     : props.creatorId < 0
-    ? 'complete your signup'
-    : props.creatorId < 1
     ? 'you must be logged in'
+    : props.creatorId < 1
+    ? 'complete your signup'
     : `${props.variant}d`
 )
 </script>

@@ -10,10 +10,9 @@ import { useMenuState, useCreatorState } from '../../store/state'
 const menuState = useMenuState()
 const creatorState = useCreatorState()
 const router = useRouter()
+const allRoutes = router.getRoutes()
 const routes = computed(() =>
-  router
-    .getRoutes()
-    .filter((r) => r.meta.mainMenu && (creatorState.isLoggedIn || !r.meta.protected))
+  allRoutes.filter((r) => r.meta.mainMenu && (creatorState.isLoggedIn || !r.meta.protected))
 )
 const currentRoute = router.currentRoute
 

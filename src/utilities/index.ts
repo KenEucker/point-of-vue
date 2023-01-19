@@ -3,9 +3,8 @@ import { createGlobalState, useDark } from '@vueuse/core'
 export const getGraphUrl = (addAuthHeader = false) => {
   let authHeader = ''
   if (addAuthHeader) {
-    const token = localStorage.getItem('creator-token')
     authHeader = `?headers=${encodeURIComponent(
-      JSON.stringify({ Authorization: `Bearer ${token}` })
+      JSON.stringify({ Authorization: `Bearer ${creatorToken}` })
     )}`
   }
 
@@ -15,6 +14,7 @@ export const getGraphUrl = (addAuthHeader = false) => {
 }
 
 export const studioUrl = process.env.STUDIO_URL
+export const creatorToken = localStorage.getItem('creator-token')
 
 export const useSubscription = (subscriptionQuery: string, callback: any) => {
   const url = new URL(getGraphUrl())

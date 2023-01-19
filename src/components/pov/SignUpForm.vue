@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import LoadingSpinner from '../atomic/LoadingSpinner.vue'
+import LoadingSpinner from '../atomic/PovLoading.vue'
 import PovCreator from '../creator/PovCreator.vue'
 import { useCreatorState } from '../../store/state'
 import { ref, reactive } from 'vue'
@@ -89,7 +89,7 @@ const completeSignup = async (e: Event) => {
             type="email"
             name="email"
             required
-            readonly
+            :readonly="creator.email?.length > 0"
             class="relative block w-full px-4 py-2 mt-2 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 focus:border-green-500 dark:focus:border-green-500 focus:outline-none focus:ring"
           />
         </p>

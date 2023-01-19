@@ -4,12 +4,35 @@ import {
   ImgurAccount,
   GoogleAccount,
   GitHubAccount,
+  ImgurImage,
+  ImgurAlbum,
 } from './../generated/types.d'
 import { GraphQLError } from 'graphql'
 import auth0Client from 'auth0'
 import Client, { auth, gql, getMethod } from '@github-graph/api'
 import imgur from 'imgur'
 
+const ImgurImageMap = (d: ImgurImage) => ({
+  id: d.id,
+  link: d.link,
+  title: d.title,
+  description: d.description,
+  deletehash: d.deletehash,
+  datetime: new Date(d.datetime * 1000),
+})
+const ImgurAlbumMap = (d: any) => ({
+  id: d.id,
+  link: d.link,
+  title: d.title,
+  description: d.description,
+  deletehash: d.deletehash,
+  cover: d.cover,
+  privacy: d.privacy,
+  images_count: d.images_count,
+  order: d.order,
+  // images: d.images?.map(ImgurImageMap) ?? [],
+  datetime: new Date(d.datetime * 1000),
+})
 const constructImgurUser = (profile: any): ImgurAccount => ({
   id: profile.data.id,
   name: profile.data.url,
@@ -60,7 +83,7 @@ const Global = {
     }
 
     if (!auth0 && !requestor.token) {
-      throw new GraphQLError("You can't do that")
+      throw new GraphQLError("You can't do that (E: 0001)")
     }
     const authentication: any = auth0 ? {} : undefined
 
@@ -70,7 +93,7 @@ const Global = {
         clientId: process.env.AUTH0_MAN_CID,
         clientSecret: process.env.AUTH0_MAN_SEC,
       })
-      let token = args.from?.token
+      let token = null //args.from?.token
       authentication.creatorSubId = auth0.sub
 
       if (!token) {
@@ -90,16 +113,19 @@ const Global = {
           )
         })
       }
+
       if (token) {
         const management = new auth0Client.ManagementClient({
           token,
           domain: process.env.AUTH0_DOMAIN ?? '',
         })
+
         await management
           .getUser({ id: auth0.sub })
           .then(function (profile) {
-            // console.log({ read_user, ids: read_user.identities })
             requestor.email = profile.email
+            requestor.ip = profile.last_ip
+
             authentication.github = profile.identities?.find(
               (i) => i.connection === 'github'
             )?.access_token
@@ -112,7 +138,6 @@ const Global = {
 
             if (authentication.imgur) {
               requestor.imgur = constructImgurUser(profile)
-              requestor.ip = profile.last_ip
             }
             if (authentication.google) {
               requestor.google = constructGoogleUser(profile)
@@ -123,6 +148,7 @@ const Global = {
           })
           .catch(function (_err) {
             // The cliff swallow or American cliff swallow (Petrochelidon pyrrhonota) is a member of the passerine bird family Hirundinidae, the swallows and martins. The generic name Petrochelidon is derived from Ancient Greek petros meaning "rock" and khelidon "swallow", and the specific name pyrrhonota comes from purrhos meaning "flame-coloured" and -notos "-backed".
+            console.error(_err.message)
           })
       } else {
         authentication.auth0 = 'invalid'
@@ -141,13 +167,11 @@ const Global = {
           /// TODO: fix this imgur limitation
           requestor.email = requestor.google.email ?? requestor.github.email
         } else {
-          console.log('here')
-          throw new GraphQLError("You can't do that")
+          throw new GraphQLError("You can't do that (E: 0002)")
         }
       }
     } else if (requestor.token.length < 10) {
-      console.log('everywhere')
-      throw new GraphQLError("You can't do that")
+      throw new GraphQLError("You can't do that (E: 0003)")
     }
 
     const canQueryForCreator = requestor.email || where.email
@@ -170,7 +194,7 @@ const Global = {
     _info: any
   ) => {
     if (!auth0 && !args?.from?.token) {
-      throw new GraphQLError("You can't do that")
+      throw new GraphQLError("You can't do that (E: 0004)")
     }
     // @ts-expect-error
     const githubClient = new Client.default({
@@ -242,7 +266,7 @@ const Global = {
     _info: any
   ) => {
     if (!auth0 && !args?.from?.token) {
-      throw new GraphQLError("You can't do that")
+      throw new GraphQLError("You can't do that (E: 0005)")
     }
     if (!args?.where?.albumId) {
       throw new GraphQLError('You must supply an albumId')
@@ -252,9 +276,9 @@ const Global = {
       accessToken: args.from?.token,
     })
 
-    const album = await imgurClient.getAlbum(args.where.albumId)
+    const response = await imgurClient.getAlbum(args.where.albumId)
 
-    return album.data.images
+    return response.success ? response.data.images.map(ImgurImageMap) : []
   },
   albums: async (
     _parent: never,
@@ -263,11 +287,11 @@ const Global = {
     _info: any
   ) => {
     if (!auth0 && !args?.from?.token) {
-      throw new GraphQLError("You can't do that")
+      throw new GraphQLError("You can't do that (E: 0006)")
     }
 
     if (!args?.where?.userName && !auth0?.sub) {
-      throw new GraphQLError("You can't do that")
+      throw new GraphQLError("You can't do that  (E: 0007)")
     }
 
     // @ts-expect-error
@@ -276,9 +300,9 @@ const Global = {
     })
 
     const userName = args?.where?.userName ?? auth0.sub
-    const album = await imgurClient.getAlbums(userName)
+    const response = await imgurClient.getAlbums(userName)
 
-    return album.data
+    return response.success ? response.data?.map(ImgurAlbumMap) : []
   },
   // Google
   // docs: async (

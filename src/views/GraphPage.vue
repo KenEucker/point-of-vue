@@ -4,6 +4,6 @@ import { getGraphUrl } from '../utilities'
 
 <template>
   <div class="w-full h-600">
-    <iframe class="w-full h-full" :src="getGraphUrl(true)" />
+    <iframe class="w-full h-full" :src="getGraphUrl(true)"> </iframe>
   </div>
 </template>
