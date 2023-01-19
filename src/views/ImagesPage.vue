@@ -19,6 +19,7 @@ watch(imagesState, () => {
   if (loadedImageState.albums.length !== imagesState.getAlbums?.length) {
     loadedImageState.albums = imagesState.getAlbums
   }
+  loadedImageState.loading = true
   if (
     loadedImageState.selectedAlbum &&
     imagesState.checkFetchAlbumImages(loadedImageState.selectedAlbum)
@@ -31,6 +32,7 @@ watch(imagesState, () => {
 
 if (!imagesState.albumsHaveBeenFetched) {
   imagesState.fetchAlbums()
+  loadedImageState.loading = true
 } else {
   loadedImageState.loading = false
 }

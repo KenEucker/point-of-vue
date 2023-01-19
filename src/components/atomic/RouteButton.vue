@@ -40,19 +40,19 @@ const props = defineProps({
     <home v-else-if="props.text == 'Home'" w="30" h="30" />
     <img
       v-else-if="props.text == 'Graph'"
-      class="-mt-1 w-8 h-8 inline"
+      class="inline w-8 h-8 -mt-1"
       src="/img/GraphQL_Logo.svg"
     />
     <images v-else-if="props.text == 'Images'" w="30" h="30" class="text-purple-400" />
     <create v-else-if="props.text == 'Create'" w="30" h="30" class="text-yellow-600" />
-    <img v-else-if="props.text == 'Vues'" src="/img/vue.svg" alt="vues page" class="max-w-15" />
+    <img v-else-if="props.text == 'Vues'" src="/img/vue.svg" alt="vues page" class="max-w-8" />
     <explore v-else-if="props.text == 'Data'" w="30" h="30" class="text-blue-600" />
     <notifications v-else-if="props.text == 'Notifications'" w="30" h="30" />
     <saved v-else-if="props.text == 'Favorites'" w="30" h="30" />
     <groups v-else-if="props.text == 'Groups'" w="30" h="30" />
     <profile v-else-if="props.text == 'Profile'" w="30" h="30" />
     <settings v-else-if="props.text == 'Settings'" w="30" h="30" />
-    <span v-if="props.expanded" class="ml-5 align-top text-md capitalize">{{
+    <span v-if="props.expanded" class="ml-5 capitalize align-top text-md">{{
       props.text ?? props.text
     }}</span>
     <slot></slot>

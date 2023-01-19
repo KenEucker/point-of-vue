@@ -19,9 +19,7 @@ const props = defineProps({
   useAuth0: Boolean,
 })
 
-const creator = ref()
 watch(creatorState, () => {
-  creator.value = creatorState
   if (creatorState.isLoggedIn) {
     loggingIn.value = false
     if (creatorState.isCreatorSignedUp) {
@@ -56,7 +54,7 @@ const useLogin = async () => {
         <logout-icon h="32" w="32" />
       </button>
       <pov-creator
-        :creator="creator"
+        :creator="creatorState.getCreator"
         size="small"
         :image-only="!props.isExpanded"
         :go-to-creator-page="false"
@@ -67,7 +65,7 @@ const useLogin = async () => {
       >
         <div class="flex flex-col items-center justify-center">
           <p class="text-lg font-bold text-gray-800 dark:text-gray-300">
-            {{ creator?.posts?.length ?? 0 }}
+            {{ creatorState.getCreator?.posts?.length ?? 0 }}
           </p>
           <p class="-mt-1 text-xs">Posts</p>
         </div>
