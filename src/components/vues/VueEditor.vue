@@ -8,7 +8,7 @@ import { StorageName, useDarkGlobal, compileComponent } from '../../utilities'
 import MonacoEditor from './MonacoEditor.vue'
 import EditorTabs from './EditorTabs.vue'
 import { useMagicKeys } from '@vueuse/core'
-import PovComponent from './PovComponent.vue'
+import VueComponent from './VueComponent.vue'
 
 const { width } = useWindowSize()
 
@@ -65,7 +65,7 @@ const { ctrl_s } = useMagicKeys({
 })
 const isDark = useDarkGlobal()
 
-const onChange = (payload) => {
+const onChange = (payload: any) => {
   console.log({ payload })
 }
 
@@ -118,7 +118,7 @@ onMounted(() => {
   <div class="flex h-full">
     <div id="editor" class="w-full">
       <editor-tabs v-model="currentTab" :tabs="tabs" @play="onPlay" />
-      <monaco-editor v-model="code" :active-tab="currentTab" class="h-[100%]" @change="onChange" />
+      <monaco-editor v-model="code" :active-tab="currentTab" class="h-full" @change="onChange" />
     </div>
     <div id="component" class="w-full h-full">
       <div v-if="logs.error || logs.info" class="h-full">
@@ -168,7 +168,7 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <pov-component :component="component"><div ref="containerRef"></div></pov-component>
+      <vue-component :component="component"><div ref="containerRef"></div></vue-component>
     </div>
   </div>
 </template>

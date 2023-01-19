@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import ImageModal from '../components/atomic/ImageModal.vue'
-import ImageCard from '../components/atomic/ImageCard.vue'
+import ImageModal from '../components/images/ImageModal.vue'
+import ImageCard from '../components/images/ImageCard.vue'
 import PaginationButtons from '../components/atomic/PaginationButtons.vue'
 import { getRange } from '../utilities'
 

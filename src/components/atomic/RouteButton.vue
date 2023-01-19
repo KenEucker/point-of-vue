@@ -45,6 +45,7 @@ const props = defineProps({
     />
     <images v-else-if="props.text == 'Images'" w="30" h="30" class="text-purple-400" />
     <create v-else-if="props.text == 'Create'" w="30" h="30" class="text-yellow-600" />
+    <img v-else-if="props.text == 'Vues'" src="/img/vue.svg" alt="vues page" class="max-w-15" />
     <explore v-else-if="props.text == 'Data'" w="30" h="30" class="text-blue-600" />
     <notifications v-else-if="props.text == 'Notifications'" w="30" h="30" />
     <saved v-else-if="props.text == 'Favorites'" w="30" h="30" />

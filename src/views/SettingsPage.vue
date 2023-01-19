@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PovCreator from '../components/creator/CreateCreator.vue'
+import PovCreator from '../components/creator/PovCreator.vue'
 import { ref, computed } from 'vue'
 import { useCreatorState } from '../store/state'
 import { Creator } from '../schema/generated/types.d'

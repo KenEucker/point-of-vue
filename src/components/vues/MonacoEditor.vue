@@ -66,6 +66,7 @@ onMounted(() => {
   editor = monaco.editor.create(outputContainer.value!, {
     language: activeTab.value,
     theme: isDark.value ? 'vs-dark' : 'vs',
+    fontSize: 16,
   })
 
   emit('update:modelValue', editorValue.value)
@@ -118,7 +119,7 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <div ref="outputContainer" style="height: calc(60% - 2.5rem)" />
+    <div ref="outputContainer" class="h-full pt-3" />
     <div v-show="logs" ref="logsContainer" class=""></div>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PovComponent from './PovComponent.vue'
+import VueComponent from './VueComponent.vue'
 import ErrorIcon from 'vue-ionicons/dist/md-alert.vue'
 import ArchivedIcon from 'vue-ionicons/dist/md-cloud-download.vue'
 import PublishedIcon from 'vue-ionicons/dist/md-cloud-done.vue'
@@ -12,7 +12,7 @@ const props = defineProps({
 })
 </script>
 <template>
-  <pov-component :component="props.component" :show-status="true">
+  <vue-component :component="props.component" :show-status="true">
     <div class="flex px-6 py-4">
       <div class="text-base font-light text-gray-800 max-w-75">
         <span class="block text-sm text-gray-600">{{ component.description }}</span>
@@ -46,5 +46,5 @@ const props = defineProps({
         <span class="ml-1 text-base font-light">{{ component.erroredAt.toDateString() }}</span>
       </div>
     </div>
-  </pov-component>
+  </vue-component>
 </template>

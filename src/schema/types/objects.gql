@@ -18,16 +18,34 @@ type ImgurAccount {
 
 type GoogleAccount {
   id: String!
+  email: String
+  email_verified: Boolean
+  name: String
+  avatar: String
+  city: String
+  country: String
+  timezone: String
 }
 
 type GitHubAccount {
   id: String!
+  email: String
+  email_verified: Boolean
+  name: String
+  avatar: String
+  bio: String
+  city: String
+  country: String
+  timezone: String
+  hireable: String
+  profile: String
 }
 
 type RequestorMirror {
   id: String
   ip: String
   token: String
+  email: String
   github: GitHubAccount
   imgur: ImgurAccount
   google: GoogleAccount

@@ -4,7 +4,7 @@ import HeartEmpty from 'vue-ionicons/dist/md-heart-empty.vue'
 import HeartFull from 'vue-ionicons/dist/md-heart.vue'
 // import EditIcon from 'vue-ionicons/dist/md-radio-button-on.vue'
 import EditIcon from 'vue-ionicons/dist/md-arrow-dropdown-circle.vue'
-import PopButton from './PopButton.vue'
+import PopButton from '../atomic/PopButton.vue'
 
 const props = defineProps({
   img: {

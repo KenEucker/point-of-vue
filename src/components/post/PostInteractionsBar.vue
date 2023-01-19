@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PovPostInteraction from './PovPostInteraction.vue'
+import PostInteraction from './PostInteraction.vue'
 import { gql } from '@apollo/client/core'
 import { reactive, watch, computed } from 'vue'
 import { useLazyQuery } from '@vue/apollo-composable'
@@ -102,28 +102,28 @@ const onInteractionSuccess = (interaction: string) => {
 
 <template>
   <div class="flex justify-between pt-4 mt-4 border-t border-ll-border dark:border-ld-border">
-    <pov-post-interaction
+    <post-interaction
       variant="like"
       :creator-id="props.creatorId"
       :post-id="props.postId"
       :count="interactions.likes"
       :disable-interaction="props.isSelfPost"
     />
-    <pov-post-interaction
+    <post-interaction
       variant="love"
       :creator-id="props.creatorId"
       :post-id="props.postId"
       :count="interactions.loves"
       :disable-interaction="props.isSelfPost"
     />
-    <pov-post-interaction
+    <post-interaction
       variant="repost"
       :post-id="props.postId"
       :creator-id="props.creatorId"
       :count="interactions.reposts"
       :disable-interaction="props.isSelfPost"
     />
-    <pov-post-interaction
+    <post-interaction
       variant="share"
       :post-id="props.postId"
       :creator-id="props.creatorId"

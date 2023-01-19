@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import PovCreator from './CreateCreator.vue'
+import PovCreator from './PovCreator.vue'
 
 const followed = ref(true)
 const props = defineProps({

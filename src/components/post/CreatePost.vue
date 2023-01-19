@@ -12,7 +12,7 @@ import ImagesIcon from 'vue-ionicons/dist/md-images.vue'
 import AddIcon from 'vue-ionicons/dist/md-add-circle-outline.vue'
 import MinusIcon from 'vue-ionicons/dist/md-remove-circle-outline.vue'
 import CheckMark from 'vue-ionicons/dist/md-checkmark-circle.vue'
-import PovPostMedia from './PovPostMedia.vue'
+import PostMedia from './PostMedia.vue'
 import Popper from 'vue3-popper'
 
 const creatorState = useCreatorState()
@@ -163,7 +163,7 @@ function saveImages() {
           resize="none"
           @input="getNewTitle"
         ></textarea>
-        <pov-post-media v-if="showImages" class="w-2/3 ml-4" :media="images" />
+        <post-media v-if="showImages" class="w-2/3 ml-4" :media="images" />
       </div>
       <div class="flex items-center justify-between w-full pt-3 z-1">
         <popper placement="right">

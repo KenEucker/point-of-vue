@@ -10,12 +10,16 @@ import { watch } from 'vue'
 const storedEmail = useStorage('creator-email', '')
 const storedId = useStorage('creator-id', 0)
 const storedToken = useStorage('creator-token', '')
+const storedGoogleToken = useStorage('google-token', '')
+const storedGitHubToken = useStorage('github-token', '')
+const storedImgurToken = useStorage('imgur-token', '')
 
 export const getInitialCreatorState = (): {
   loggedIn: boolean
   creator: Creator
   auth0Configured: boolean
   auth0Token: string
+  authentication: any
 } => ({
   loggedIn: false,
   auth0Configured: auth.initialized,
@@ -29,6 +33,7 @@ export const getInitialCreatorState = (): {
     verified: false,
   },
   auth0Token: '',
+  authentication: {},
 })
 
 export const useCreatorState = defineStore({
@@ -133,22 +138,28 @@ export const useCreatorState = defineStore({
     async fetchCreator(creator?: Creator) {
       creator = creator ?? ({ id: storedId.value, email: storedEmail.value } as Creator)
       const loginViaEmailQuery = gql`
-        query StoreFetchCreator($email: String!) {
-          creator(where: { email: $email }) {
-            id
-            name
-            email
-            handle
-            verified
-            status
-            avatar
-            location
-            banner
-            bio
-            birthday
-            website
-            posts {
+        query StoreFetchSelf($email: String!) {
+          self(from: { email: $email }) {
+            authentication {
+              imgur
+              github
+            }
+            creator {
               id
+              name
+              email
+              handle
+              verified
+              status
+              avatar
+              location
+              banner
+              bio
+              birthday
+              website
+              posts {
+                id
+              }
             }
           }
         }
@@ -159,10 +170,26 @@ export const useCreatorState = defineStore({
       })
       let error = null
 
-      if (data?.creator) {
-        this.creator = data.creator
-        storedId.value = this.creator.id
-        storedEmail.value = this.creator.email
+      if (data?.self) {
+        console.log({ self: data.self })
+        this.creator = data.self.creator
+        if (this.creator) {
+          storedId.value = this.creator.id
+          storedEmail.value = this.creator.email
+        }
+        this.authentication = data.self?.authentication
+        if (this.authentication) {
+          storedImgurToken.value = this.authentication.imgur?.length
+            ? this.authentication.imgur
+            : storedImgurToken.value
+          storedGoogleToken.value = this.authentication.google?.length
+            ? this.authentication.google
+            : storedGoogleToken.value
+          storedGitHubToken.value = this.authentication.github?.length
+            ? this.authentication.github
+            : storedGitHubToken.value
+        }
+
         this.loggedIn = true
       } else if (queryError) {
         error = queryError.message
@@ -223,6 +250,9 @@ export const useCreatorState = defineStore({
       storedId.value = null
       storedEmail.value = null
       storedToken.value = null
+      storedGitHubToken.value = null
+      storedGoogleToken.value = null
+      storedImgurToken.value = null
 
       if (auth?.isAuthenticated) {
         auth.logout({ returnTo: window.location.origin })

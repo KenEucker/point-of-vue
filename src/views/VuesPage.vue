@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ComponentEditor from '../components/editor/ComponentEditor.vue'
-import CreatorDeveloperCard from '../components/creator/CreatorDeveloperCard.vue'
+import VueEditor from '../components/vues/VueEditor.vue'
+import VuesProfileCard from '../components/vues/VuesProfileCard.vue'
 import { useCreatorState } from '../store/state'
 const creatorState = useCreatorState()
 
@@ -65,7 +65,7 @@ const components = [
 
 <template>
   <main class="border-t border-gray-200 dark:border-gray-700">
-    <creator-developer-card :creator="creatorState.getCreator" :components="components" />
-    <component-editor class="h-[100%]" />
+    <vues-profile-card :creator="creatorState.getCreator" :components="components" />
+    <vue-editor class="h-[60%]" />
   </main>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import LoadingSpinner from '../atomic/LoadingSpinner.vue'
-import PovCreator from '../creator/CreateCreator.vue'
+import PovCreator from '../creator/PovCreator.vue'
 import { useCreatorState } from '../../store/state'
 import { ref, reactive } from 'vue'
 import { Creator } from '../../schema/generated/types'

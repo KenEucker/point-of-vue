@@ -41,6 +41,9 @@ const serverUrl = `${graphUrl}:${port}/${graphPath}`
 
 // Create a Yoga instance with a GraphQL schema.
 const yoga = createYoga({
+  graphiql: {
+    credentials: 'include',
+  },
   plugins,
   schema: authIsConfigured ? applyMiddleware(schema, permissions) : schema,
   context: {

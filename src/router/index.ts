@@ -46,18 +46,19 @@ const routes: RouteRecordRaw[] = [
     name: 'Images',
     component: () => import('../views/ImagesPage.vue'),
     meta: {
+      requires: ['imgur'],
       protected: true,
       mainMenu: true,
     },
     beforeEnter: useAuthGuard,
   },
   {
-    path: '/create',
-    name: 'Create',
-    component: () => import('../views/CreatePage.vue'),
+    path: '/data',
+    name: 'Data',
+    component: () => import('../views/DataPage.vue'),
     meta: {
       protected: true,
-      mainMenu: true,
+      mainMenu: process.env.NODE_ENV !== 'production',
     },
     beforeEnter: useAuthGuard,
   },
@@ -72,9 +73,9 @@ const routes: RouteRecordRaw[] = [
     beforeEnter: useAuthGuard,
   },
   {
-    path: '/data',
-    name: 'Data',
-    component: () => import('../views/DataPage.vue'),
+    path: '/vues',
+    name: 'Vues',
+    component: () => import('../views/VuesPage.vue'),
     meta: {
       protected: true,
       mainMenu: true,
@@ -103,6 +104,7 @@ const routes: RouteRecordRaw[] = [
     meta: {},
   },
   {
+    /// Should never land here
     path: '/:pathMatch(.*)*',
     redirect: '/404',
   },

@@ -117,12 +117,29 @@ export type GetPostInteractionsPayload = {
 
 export type GitHubAccount = {
   readonly __typename?: 'GitHubAccount';
+  readonly avatar?: Maybe<Scalars['String']>;
+  readonly bio?: Maybe<Scalars['String']>;
+  readonly city?: Maybe<Scalars['String']>;
+  readonly country?: Maybe<Scalars['String']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly email_verified?: Maybe<Scalars['Boolean']>;
+  readonly hireable?: Maybe<Scalars['String']>;
   readonly id: Scalars['String'];
+  readonly name?: Maybe<Scalars['String']>;
+  readonly profile?: Maybe<Scalars['String']>;
+  readonly timezone?: Maybe<Scalars['String']>;
 };
 
 export type GoogleAccount = {
   readonly __typename?: 'GoogleAccount';
+  readonly avatar?: Maybe<Scalars['String']>;
+  readonly city?: Maybe<Scalars['String']>;
+  readonly country?: Maybe<Scalars['String']>;
+  readonly email?: Maybe<Scalars['String']>;
+  readonly email_verified?: Maybe<Scalars['Boolean']>;
   readonly id: Scalars['String'];
+  readonly name?: Maybe<Scalars['String']>;
+  readonly timezone?: Maybe<Scalars['String']>;
 };
 
 export type ImageAlbumsWhereInput = {
@@ -467,6 +484,7 @@ export type QueryVuesArgs = {
 };
 
 export type Requestor = {
+  readonly email?: InputMaybe<Scalars['String']>;
   readonly id?: InputMaybe<Scalars['String']>;
   readonly ip?: InputMaybe<Scalars['String']>;
   readonly token?: InputMaybe<Scalars['String']>;
@@ -474,6 +492,7 @@ export type Requestor = {
 
 export type RequestorMirror = {
   readonly __typename?: 'RequestorMirror';
+  readonly email?: Maybe<Scalars['String']>;
   readonly github?: Maybe<GitHubAccount>;
   readonly google?: Maybe<GoogleAccount>;
   readonly id?: Maybe<Scalars['String']>;
@@ -802,12 +821,29 @@ export type GetPostInteractionsPayloadResolvers<ContextType = any, ParentType ex
 };
 
 export type GitHubAccountResolvers<ContextType = any, ParentType extends ResolversParentTypes['GitHubAccount'] = ResolversParentTypes['GitHubAccount']> = {
+  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email_verified?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  hireable?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  profile?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  timezone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type GoogleAccountResolvers<ContextType = any, ParentType extends ResolversParentTypes['GoogleAccount'] = ResolversParentTypes['GoogleAccount']> = {
+  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email_verified?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  timezone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -935,6 +971,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type RequestorMirrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['RequestorMirror'] = ResolversParentTypes['RequestorMirror']> = {
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   github?: Resolver<Maybe<ResolversTypes['GitHubAccount']>, ParentType, ContextType>;
   google?: Resolver<Maybe<ResolversTypes['GoogleAccount']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

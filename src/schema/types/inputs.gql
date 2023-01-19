@@ -1,5 +1,6 @@
 input Requestor {
   id: String
+  email: String
   ip: String
   token: String
 }

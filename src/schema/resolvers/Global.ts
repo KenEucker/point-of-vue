@@ -1,4 +1,10 @@
-import { ImageAlbumsWhereInput, ImagesWhereInput, ImgurAccount } from './../generated/types.d'
+import {
+  ImageAlbumsWhereInput,
+  ImagesWhereInput,
+  ImgurAccount,
+  GoogleAccount,
+  GitHubAccount,
+} from './../generated/types.d'
 import { GraphQLError } from 'graphql'
 import auth0Client from 'auth0'
 import Client, { auth, gql, getMethod } from '@github-graph/api'
@@ -13,30 +19,48 @@ const constructImgurUser = (profile: any): ImgurAccount => ({
   country: profile.user_metadata.country,
   timezone: profile.user_metadata.timezone,
 })
-const constructGoogleUser = (profile: any): ImgurAccount => ({
-  id: profile.id,
+const constructGoogleUser = (profile: any): GoogleAccount => ({
+  id: profile.user_id,
+  email: profile.email,
+  email_verified: profile.email_verified,
+  name: profile.nickname,
+  avatar: profile.picture,
+  city: profile.user_metadata.city,
+  country: profile.user_metadata.country,
+  timezone: profile.user_metadata.timezone,
 })
-const constructGitHubUser = (profile: any): ImgurAccount => ({
-  id: profile.id,
+const constructGitHubUser = (profile: any): GitHubAccount => ({
+  id: profile.user_id,
+  email: profile.email,
+  email_verified: profile.email_verified,
+  name: profile.nickname,
+  avatar: profile.picture,
+  bio: profile.bio,
+  hireable: profile.hireable,
+  profile: profile.html_url,
+  city: profile.user_metadata.city,
+  country: profile.user_metadata.country,
+  timezone: profile.user_metadata.timezone,
 })
 
 const Global = {
   self: async (
     _parent: never,
-    args: { from: { token: any; id: any } },
+    args: { from: { token: string; id: string | number; email: string } },
     { prisma, auth0 }: any,
     info: any
   ) => {
     const where: any = {
       id: args?.from?.id,
-    }
-
-    if (!auth0 && !where.id) {
-      throw new GraphQLError("You can't do that")
+      email: args?.from?.email,
     }
 
     const requestor: any = {
       token: args.from?.token,
+    }
+
+    if (!auth0 && !requestor.token) {
+      throw new GraphQLError("You can't do that")
     }
     const authentication: any = auth0 ? {} : undefined
 
@@ -58,7 +82,7 @@ const Global = {
             function (err, response) {
               if (err) {
                 console.error({ err })
-                // Handle error.
+                return resolve()
               }
               token = response?.access_token
               resolve()
@@ -75,7 +99,7 @@ const Global = {
           .getUser({ id: auth0.sub })
           .then(function (profile) {
             // console.log({ read_user, ids: read_user.identities })
-            where.email = profile.email
+            requestor.email = profile.email
             authentication.github = profile.identities?.find(
               (i) => i.connection === 'github'
             )?.access_token
@@ -86,7 +110,6 @@ const Global = {
               (i) => i.connection === 'Imgur'
             )?.access_token
 
-            console.log({ read_user: profile })
             if (authentication.imgur) {
               requestor.imgur = constructImgurUser(profile)
               requestor.ip = profile.last_ip
@@ -106,10 +129,32 @@ const Global = {
       }
       /// TODO: Remove this
       // authentication.auth0 = token
+      if (where.email) {
+        const matchesGoogle = where.email === requestor.google?.email
+        const matchesGitHub = where.email === requestor.github?.email
+        const matchesImgur = false // TODO: Remove
+        if (matchesGoogle) {
+          requestor.email = requestor.google.email
+        } else if (matchesGitHub) {
+          requestor.email = requestor.github.email
+        } else if (matchesImgur) {
+          /// TODO: fix this imgur limitation
+          requestor.email = requestor.google.email ?? requestor.github.email
+        } else {
+          console.log('here')
+          throw new GraphQLError("You can't do that")
+        }
+      }
+    } else if (requestor.token.length < 10) {
+      console.log('everywhere')
+      throw new GraphQLError("You can't do that")
     }
 
-    const canQueryForCreator = where.id || where.email || where.sub
-    const creator = canQueryForCreator ? await prisma.creator.findUnique({ where }) : undefined
+    const canQueryForCreator = requestor.email || where.email
+    const creator = canQueryForCreator
+      ? /// TODO: fix this for non-authed demo mode
+        await prisma.creator.findUnique({ where: { email: requestor.email ?? where.email } })
+      : undefined
 
     return {
       requestor,

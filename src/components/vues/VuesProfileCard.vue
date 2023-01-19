@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import PovCreator from './CreateCreator.vue'
+import PovCreator from '../creator/PovCreator.vue'
 import { PovComponent } from '../../utilities'
-import PovComponentVue from '../editor/PovComponentVue.vue'
+import PovVueCard from './PovVueCard.vue'
 import ApertureIcon from 'vue-ionicons/dist/md-aperture.vue'
 import CommentsIcon from 'vue-ionicons/dist/md-chatboxes.vue'
 import CubeIcon from 'vue-ionicons/dist/md-cube.vue'
@@ -129,12 +129,12 @@ const developerStats = [
       </div> -->
     </div>
     <div class="flex flex-no-wrap overflow-x-scroll scrolling-touch items-start mb-8">
-      <pov-component-vue
+      <pov-vue-card
         v-for="component in props.components"
         :key="`component-${component.name}`"
         class="flex-none w-2/3 md:w-1/3 mr-8 md:pb-4 border rounded-lg"
         :component="component"
-      ></pov-component-vue>
+      ></pov-vue-card>
     </div>
   </div>
 </template>

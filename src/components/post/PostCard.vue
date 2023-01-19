@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import MoreIcon from 'vue-ionicons/dist/md-more.vue'
-import PovPostInteractionsBar from './PovPostInteractionsBar.vue'
+import PostInteractionsBar from './PostInteractionsBar.vue'
 import PostText from './PostText.vue'
-import PovCreator from '../creator/CreateCreator.vue'
-import PovPostMedia from './PovPostMedia.vue'
+import PovCreator from '../creator/PovCreator.vue'
+import PostMedia from './PostMedia.vue'
 import { usePovState, useCreatorState } from '../../store/state'
 
 const povStore = usePovState()
@@ -33,8 +33,8 @@ const props = defineProps({
     </p>
 
     <post-text :post="props.post" />
-    <pov-post-media :media="props.post?.media" />
-    <pov-post-interactions-bar
+    <post-media :media="props.post?.media" />
+    <post-interactions-bar
       v-if="!povStore.isSimpleMode"
       :creator-id="creatorState.getCreatorId"
       :post-id="props.post.id"
