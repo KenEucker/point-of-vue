@@ -1,5 +1,5 @@
 import { useCreatorState } from './creator'
-import { useMenuState } from './menu'
+import { usePageState } from './page'
 import { usePostsState } from './posts'
 import { usePovState } from './pov'
 import { useInteractionsState } from './interactions'
@@ -7,7 +7,7 @@ import { useImagesState } from './images'
 
 export {
   useCreatorState,
-  useMenuState,
+  usePageState,
   usePovState,
   usePostsState,
   useInteractionsState,

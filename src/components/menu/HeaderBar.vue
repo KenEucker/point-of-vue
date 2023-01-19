@@ -5,9 +5,9 @@ import RouteButton from '../atomic/RouteButton.vue'
 import MenuOpen from 'vue-ionicons/dist/md-funnel.vue'
 import SearchIcon from 'vue-ionicons/dist/md-search.vue'
 import { useWindowSize } from '@vueuse/core'
-import { useMenuState } from '../../store/state'
+import { usePageState } from '../../store/state'
 
-const menuState = useMenuState()
+const pageState = usePageState()
 
 const props = defineProps({
   displayRightMenuButton: {
@@ -20,12 +20,12 @@ const { width } = useWindowSize()
 </script>
 
 <template>
-  <div class="flex w-full h-full justify-between items-center">
+  <div class="flex items-center justify-between w-full h-full">
     <div class="flex items-center">
       <button
-        class="w-10 h-10 mr-2 border rounded-md flex justify-center items-center ml-2 border-ll-border dark:border-ld-border bg-ll-base dark:bg-ld-base dark:text-gray-200 active:scale-95 transition-transform transform"
-        :class="menuState.leftMenuOpen ? 'rotate-90' : 'rotate-270'"
-        @click="menuState.toggleLeftMenu()"
+        class="flex items-center justify-center w-10 h-10 ml-2 mr-2 transition-transform transform border rounded-md border-ll-border dark:border-ld-border bg-ll-base dark:bg-ld-base dark:text-gray-200 active:scale-95"
+        :class="pageState.leftMenuOpen ? 'rotate-90' : 'rotate-270'"
+        @click="pageState.toggleLeftMenu()"
       >
         <menu-open h="20" w="20" />
       </button>
@@ -38,24 +38,24 @@ const { width } = useWindowSize()
     </div>
 
     <div
-      class="bg-ll-base dakr:bg-ld-base md:min-w-60 rounded-md border border-ll-border dark:border-ld-border w-2/4 h-3/4 flex items-center"
+      class="flex items-center w-2/4 border rounded-md bg-ll-base dakr:bg-ld-base md:min-w-60 border-ll-border dark:border-ld-border h-3/4"
     >
       <input
         type="text"
         :placeholder="`Search ${width > 550 ? 'your point of vue' : ''}`"
-        class="px-2 bg-transparent text-md outline-none w-full h-full"
+        class="w-full h-full px-2 bg-transparent outline-none text-md"
       />
 
-      <button class="p-2 active:scale-95 transform transition-transform">
+      <button class="p-2 transition-transform transform active:scale-95">
         <search-icon h="20" w="20" class="align-middle" />
       </button>
     </div>
     <div>
       <button
-        v-if="props.displayRightMenuButton && width > 480"
-        class="w-10 h-10 mr-2 border rounded-md flex justify-center items-center ml-2 border-ll-border dark:border-ld-border bg-ll-base dark:bg-ld-base dark:text-gray-200 active:scale-95 transition-transform transform"
-        :class="menuState.rightMenuOpen ? 'rotate-270' : 'rotate-90'"
-        @click="menuState.toggleRightMenu()"
+        v-show="props.displayRightMenuButton && width > 480"
+        class="flex items-center justify-center w-10 h-10 ml-2 mr-2 transition-transform transform border rounded-md border-ll-border dark:border-ld-border bg-ll-base dark:bg-ld-base dark:text-gray-200 active:scale-95"
+        :class="pageState.rightMenuOpen ? 'rotate-270' : 'rotate-90'"
+        @click="pageState.toggleRightMenu()"
       >
         <menu-open h="20" w="20" class="rotate-120" />
       </button>

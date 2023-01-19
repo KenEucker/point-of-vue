@@ -10,11 +10,11 @@ onMounted(() => {
 </script>
 <template>
   <ul
-    v-if="povState.getCreatorsToFollow"
-    class="w-full bg-ll-neutral dark:bg-ld-neutral p-5 rounded-md mb-5"
+    v-show="povState.getCreatorsToFollow"
+    class="w-full p-5 mb-5 rounded-md bg-ll-neutral dark:bg-ld-neutral"
   >
     <li
-      class="dark:text-gray-200 text-gray-700 text-lg border-b pb-3 border-ll-border dark:border-ld-border mb-4"
+      class="pb-3 mb-4 text-lg text-gray-700 border-b dark:text-gray-200 border-ll-border dark:border-ld-border"
     >
       <p>Who to follow</p>
     </li>

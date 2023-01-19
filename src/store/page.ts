@@ -1,26 +1,32 @@
 import { defineStore } from 'pinia'
 
-export const getInitialMenuState = (): {
+export const getInitialPageState = (): {
   createPostOpen: boolean
   leftMenuOpen: boolean
   rightMenuOpen: boolean
+  disableAbout: boolean
   signupOpen: boolean
 } => ({
   createPostOpen: false,
   leftMenuOpen: false,
   rightMenuOpen: false,
   signupOpen: false,
+  disableAbout: false,
 })
 
-export const useMenuState = defineStore('useMenuState', {
-  state: getInitialMenuState,
+export const usePageState = defineStore('usePageState', {
+  state: getInitialPageState,
   getters: {
     isCreatePostOpen: (s) => s.createPostOpen,
     isLeftMenuOpen: (s) => s.leftMenuOpen,
     isRightMenuOpen: (s) => s.rightMenuOpen,
     isSignupOpen: (s) => s.signupOpen,
+    isAboutDisabled: (s) => s.disableAbout,
   },
   actions: {
+    disableAboutSidebar() {
+      this.disableAbout = true
+    },
     closeCreatePost() {
       this.createPostOpen = false
     },

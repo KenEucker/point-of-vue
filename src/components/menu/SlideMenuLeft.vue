@@ -5,9 +5,9 @@ import PostPov from 'vue-ionicons/dist/md-bonfire.vue'
 import CloseIcon from 'vue-ionicons/dist/md-close-circle-outline.vue'
 import RouteButton from '../atomic/RouteButton.vue'
 import CreatorCard from '../creator/CreatorCard.vue'
-import { useMenuState, useCreatorState } from '../../store/state'
+import { usePageState, useCreatorState } from '../../store/state'
 
-const menuState = useMenuState()
+const pageState = usePageState()
 const creatorState = useCreatorState()
 const router = useRouter()
 const allRoutes = router.getRoutes()
@@ -25,15 +25,15 @@ const props = defineProps({
 })
 
 function postButtonClick() {
-  menuState.openCreatePost()
-  menuState.closeLeftMenu()
+  pageState.openCreatePost()
+  pageState.closeLeftMenu()
 
   router.push('/posts')
 }
 
 const creatorPanelClick = () => {
-  if (!menuState.isLeftMenuOpen) {
-    menuState.openLeftMenu()
+  if (!pageState.isLeftMenuOpen) {
+    pageState.openLeftMenu()
   }
 }
 </script>
@@ -56,7 +56,7 @@ const creatorPanelClick = () => {
         :class="`${props.isExpanded ? 'mb-2' : 'justify-center mb-4'} ${
           route.name == currentRoute.name ? 'text-ll-primary' : ''
         }`"
-        @click="menuState.closeLeftMenu()"
+        @click="pageState.closeLeftMenu()"
       >
         <route-button
           :path="route.path"
@@ -68,17 +68,17 @@ const creatorPanelClick = () => {
     </ul>
 
     <button
-      v-if="creatorState.isLoggedIn"
+      v-show="creatorState.isLoggedIn"
       class="flex items-center justify-center w-full px-2 py-3 text-white transition-transform transform rounded-lg max-w-50 md:max-w-90 bg-ll-primary dark:bg-ld-primary active:scale-95"
       @click="postButtonClick"
     >
-      <p v-if="props.isExpanded" class="mr-4">Post</p>
+      <p v-show="props.isExpanded" class="mr-4">Post</p>
       <post-pov class="" w="30" h="30" />
     </button>
 
     <button
       class="absolute flex items-center w-8 h-8 mr-2 text-sm transition-transform transform border rounded-full md:hidden top-2 -right-1 bg-ll-neutral dark:bg-ld-neutral border-ll-border dark:border-ld-border active:scale-95"
-      @click="menuState.closeLeftMenu()"
+      @click="pageState.closeLeftMenu()"
     >
       <close-icon h="30" w="30" />
     </button>

@@ -5,11 +5,11 @@ import LogoutIcon from 'vue-ionicons/dist/md-log-out.vue'
 import PointOfVue from '../atomic/PointOfVue.vue'
 import PopButton from '../atomic/PopButton.vue'
 import PovCreator from './PovCreator.vue'
-import { useMenuState, useCreatorState } from '../../store/state'
+import { usePageState, useCreatorState } from '../../store/state'
 import LoadingSpinner from '../atomic/PovLoading.vue'
 import { watch } from 'vue'
 const emailInput = ref()
-const menuState = useMenuState()
+const pageState = usePageState()
 const creatorState = useCreatorState()
 const loggingIn = ref()
 const errorMessage = ref()
@@ -23,10 +23,10 @@ watch(creatorState, () => {
   if (creatorState.isLoggedIn) {
     loggingIn.value = false
     if (creatorState.isCreatorSignedUp) {
-      menuState.openCreatePost()
+      pageState.openCreatePost()
     }
   } else {
-    menuState.closeCreatePost()
+    pageState.closeCreatePost()
   }
 })
 
@@ -87,14 +87,14 @@ const useLogin = async () => {
       v-else-if="props.isExpanded"
       class="flex flex-col w-full p-2 rounded shadow-md dark:bg-ld-base sm:w-100 md:w-40 lg:w-60 lg:p-4 lg:pt-6 lg:mb-4"
     >
-      <loading-spinner v-if="loggingIn" :full-screen="false" />
-      <div v-else-if="errorMessage" @click="errorMessage = null">
+      <loading-spinner v-show="loggingIn" :full-screen="false" />
+      <div v-show="errorMessage" @click="errorMessage = null">
         {{ errorMessage }}
       </div>
-      <div v-else-if="props.useAuth0">
+      <div v-show="props.useAuth0 && !loggingIn && !errorMessage">
         <pop-button> Login <login-icon h="24" w="24" @click="useLogin" /> </pop-button>
       </div>
-      <div v-else class="mb-4">
+      <div v-show="!loggingIn && !errorMessage" class="mb-4">
         <label class="block mb-2 text-sm font-bold text-center text-grey-darker" for="email">
           <point-of-vue :expanded="props.isExpanded" />
         </label>
@@ -119,7 +119,7 @@ const useLogin = async () => {
       class="flex py-3 transition-transform transform rounded-lg text-tight active:scale-95"
       type="button"
     >
-      <login-icon h="24" w="24" @click="menuState.openLeftMenu()" />
+      <login-icon h="24" w="24" @click="pageState.openLeftMenu()" />
     </button>
   </div>
 </template>

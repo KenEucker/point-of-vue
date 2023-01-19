@@ -121,7 +121,7 @@ onMounted(() => {
           resize="none"
           @input="getNewTitle"
         ></textarea>
-        <post-media v-if="showImages" class="w-2/3 ml-4" :media="newPostData.media" />
+        <post-media v-show="showImages" class="w-2/3 ml-4" :media="newPostData.media" />
       </div>
       <div class="flex items-center justify-between w-full pt-3 z-1">
         <create-post-images v-model="newPostData.media" />

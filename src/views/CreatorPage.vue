@@ -133,8 +133,8 @@ function selected(idx: number) {
           </button>
         </div>
       </div>
-      <div v-if="state.selected === 0" class="flex grid grid-cols-1">My points of view</div>
-      <div v-if="state.selected === 1" class="flex grid grid-cols-1">
+      <div v-show="state.selected === 0" class="flex grid grid-cols-1">My points of view</div>
+      <div v-show="state.selected === 1" class="flex grid grid-cols-1">
         <pov-post
           v-for="post in creator?.posts"
           :key="post.id"
@@ -142,8 +142,8 @@ function selected(idx: number) {
           :is-self-post="isOwnPage"
         />
       </div>
-      <div v-if="state.selected === 2" class="flex grid grid-cols-1">My vue components</div>
-      <div v-if="state.selected === 3" class="flex grid grid-cols-1">
+      <div v-show="state.selected === 2" class="flex grid grid-cols-1">My vue components</div>
+      <div v-show="state.selected === 3" class="flex grid grid-cols-1">
         My favorite points of view
       </div>
     </div>

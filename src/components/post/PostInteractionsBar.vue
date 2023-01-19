@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import PostInteraction from './PostInteraction.vue'
 import { gql } from '@apollo/client/core'
-import { reactive, watch, computed } from 'vue'
+import { reactive, watch, ref } from 'vue'
 import { useLazyQuery } from '@vue/apollo-composable'
 import { useSubscription } from '../../utilities'
+import { vIntersectionObserver } from '@vueuse/components'
 
 const interactions = reactive({
   likes: 0,
@@ -29,10 +30,15 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  subscribe: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-useSubscription(
-  ` 
+if (props.subscribe) {
+  useSubscription(
+    ` 
   subscription NewPostInteractionInteractionBar {
     interactionDelta(where: {
       post: {
@@ -50,16 +56,17 @@ useSubscription(
       }
     }
   }`,
-  (i: any) => {
-    const delta = i.data?.interactionDelta?.data
-    if (delta) {
-      interactions.likes += delta.like
-      interactions.loves += delta.love
-      interactions.reposts += delta.repost
-      interactions.shares += delta.share
+    (i: any) => {
+      const delta = i.data?.interactionDelta?.data
+      if (delta) {
+        interactions.likes += delta.like
+        interactions.loves += delta.love
+        interactions.reposts += delta.repost
+        interactions.shares += delta.share
+      }
     }
-  }
-)
+  )
+}
 
 const getPostInteractionsQuery = gql`
   query PovPostGetInteractionNumbers($id: Int!) {
@@ -71,16 +78,19 @@ const getPostInteractionsQuery = gql`
     }
   }
 `
-const { result, load } = useLazyQuery(getPostInteractionsQuery, {
-  id: props.postId,
-})
+const { result, load } = useLazyQuery(
+  getPostInteractionsQuery,
+  {
+    id: props.postId,
+  },
+  { debounce: 1000 }
+)
 watch(result, ({ getPostInteractions }: any) => {
   interactions.likes = getPostInteractions.likes
   interactions.loves = getPostInteractions.loves
   interactions.reposts = getPostInteractions.reposts
   interactions.shares = getPostInteractions.shares
 })
-load()
 
 const onInteractionSuccess = (interaction: string) => {
   switch (interaction) {
@@ -98,10 +108,23 @@ const onInteractionSuccess = (interaction: string) => {
       break
   }
 }
+
+const interactionsFetched = ref(false)
+
+function onIntersectionObserver([{ isIntersecting }]: any) {
+  if (isIntersecting && !interactionsFetched.value) {
+    console.log('fetching', props.postId)
+    interactionsFetched.value = true
+    load()
+  }
+}
 </script>
 
 <template>
-  <div class="flex justify-between pt-4 mt-4 border-t border-ll-border dark:border-ld-border">
+  <div
+    v-intersection-observer="onIntersectionObserver"
+    class="flex justify-between pt-4 mt-4 border-t border-ll-border dark:border-ld-border"
+  >
     <post-interaction
       variant="like"
       :creator-id="props.creatorId"

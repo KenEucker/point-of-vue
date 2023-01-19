@@ -7,9 +7,11 @@ import { getGraphUrl } from '../utilities'
 export const getInitialPostsState = (): {
   posts: Post[]
   postsLoading: boolean
+  postsLoaded: boolean
   postsQueryError: any
 } => ({
   postsLoading: false,
+  postsLoaded: false,
   postsQueryError: null,
   posts: [],
 })
@@ -18,6 +20,7 @@ export const usePostsState = defineStore({
   id: 'usePostsState',
   state: getInitialPostsState,
   getters: {
+    postsHaveBeenLoaded: (s) => s.postsLoaded,
     getPostsLoading: (s) => s.postsLoading,
     getPostsError: (s) => s.postsQueryError,
     getPosts: (s) => s.posts,
@@ -64,35 +67,38 @@ export const usePostsState = defineStore({
       }
     },
     async getAllPosts() {
-      this.postsLoading = true
+      if (!this.postsLoading) {
+        this.postsLoading = true
 
-      const getPostsQuery = gql`
-        query posts {
-          posts {
-            id
-            title
-            creator {
-              name
-              handle
-              verified
-              avatar
+        const getPostsQuery = gql`
+          query posts {
+            posts {
+              id
+              title
+              creator {
+                name
+                handle
+                verified
+                avatar
+              }
+              text
+              media
             }
-            text
-            media
           }
+        `
+        const queryResult = await apolloClient.query({
+          query: getPostsQuery,
+        })
+
+        this.postsQueryError = queryResult.error
+
+        if (queryResult.data?.posts?.length) {
+          this.posts = queryResult.data.posts
         }
-      `
-      const queryResult = await apolloClient.query({
-        query: getPostsQuery,
-      })
 
-      this.postsQueryError = queryResult.error
-
-      if (queryResult.data?.posts?.length) {
-        this.posts = queryResult.data.posts
+        this.postsLoaded = true
+        this.postsLoading = false
       }
-
-      this.postsLoading = false
     },
   },
 })

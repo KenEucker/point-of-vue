@@ -22,12 +22,13 @@ const initialized = ref(false)
 
 const postsState = usePostsState()
 watch(postsState, () => {
-  if (!postsState.getPostsLoading) {
+  console.log('postsState enter', postsState.getPostsLoading, postsState.postsHaveBeenLoaded)
+  if (!postsState.getPostsLoading && postsState.postsHaveBeenLoaded && !initialized.value) {
+    console.log('postsState inject', postsState.getPosts)
     initialized.value = true
     injectPosts()
   }
 })
-postsState.getAllPosts()
 
 const newPostSubscription = `
   subscription NewPostPostFeed {
@@ -99,18 +100,22 @@ function getRandomIntInclusive(min: number, max: number): number {
 
 const isPostSelfPost = (post: Post) =>
   creatorState.isCreatorSignedUp && post.creator?.handle === creatorState.creator?.handle
+
+if (!postsState.postsHaveBeenLoaded) {
+  postsState.getAllPosts()
+}
 </script>
 
 <template>
   <div>
-    <div v-if="postsState.getPostsLoading" class="mt-5">
+    <div v-show="postsState.getPostsLoading" class="mt-5">
       <loading-spinner />
     </div>
-    <div v-else-if="postsState.getPostsError">
+    <div v-show="!postsState.getPostsLoading && postsState.getPostsError">
       <error-message title="Error Fetching Post Data" :message="postsState.getPostsError.message" />
     </div>
     <div
-      v-else
+      v-show="!postsState.getPostsLoading && !postsState.getPostsError"
       class="grid w-full transition-all"
       :class="props.oneColumn ? 'md:grid-cols-1 px-20 pt-5' : 'md:grid-cols-2'"
     >

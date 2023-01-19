@@ -52,7 +52,7 @@ const props = defineProps({
     <groups v-else-if="props.text == 'Groups'" w="30" h="30" />
     <profile v-else-if="props.text == 'Profile'" w="30" h="30" />
     <settings v-else-if="props.text == 'Settings'" w="30" h="30" />
-    <span v-if="props.expanded" class="ml-5 capitalize align-top text-md">{{
+    <span v-show="props.expanded" class="ml-5 capitalize align-top text-md">{{
       props.text ?? props.text
     }}</span>
     <slot></slot>
