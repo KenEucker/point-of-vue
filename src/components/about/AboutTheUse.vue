@@ -7,7 +7,7 @@ import PiniaStore from './PiniaStore.vue'
 import RenderCom from './RenderCom.vue'
 import TypeScript from './TypeScript.vue'
 import VueLang from './VueLang.vue'
-import WindiCss from './WindiCss.vue'
+import TailwindCss from './TailwindCss.vue'
 import ViteRun from './ViteRun.vue'
 import VueuseTest from './VueuseTest.vue'
 </script>
@@ -21,7 +21,7 @@ import VueuseTest from './VueuseTest.vue'
     <graph-qlang id="graphql" />
     <prisma-orm id="prisma" />
     <pinia-store id="pinia" />
-    <windi-css id="windicss" />
+    <tailwind-css id="tailwind" />
     <auth-zero id="auth0" />
     <render-com id="render" />
     <git-hub id="github" />

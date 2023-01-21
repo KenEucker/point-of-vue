@@ -16,7 +16,7 @@ const tabs = {
   query: 'graphql',
   script: 'javascript',
   template: 'html',
-  //style: 'css', // Feature blocked - let users take advantage of the already present windicss classes
+  //style: 'css', // Feature blocked - let users take advantage of the already present tailwindcss classes
 }
 
 const props = defineProps({

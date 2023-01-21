@@ -6,7 +6,7 @@ working on. This is still a project but I would be happy to evolve it into somet
 
 # Stack
 
-Vite + TypeScript + Vue3 + GraphQl + Prisma + Pinia + WindiCss
+Vite + TypeScript + Vue3 + GraphQl + Prisma + Pinia + TailwindCss
 
 # Contributing
 
@@ -144,14 +144,13 @@ This open source project was made possible by the following platforms and open s
     </div>
     <div>
         <img
-          src="https://point-of-vue-web.onrender.com/img/windicss-logo.svg"
+          src="https://point-of-vue-web.onrender.com/img/Tailwind_CSS_Logo.svg"
           width="24"
           height="24"
-          alt="windicss logo"
-        /><span>windicss</span>
+          alt="tailwind logo"
+        /><span>tailwind</span>
       <p>
-        WindiCss provides class based styling and easy theming in the lightest set of deliverables
-        for a rich visual experience and rapid development.
+         Tailwind provides class based styling and easy theming in the lightest set of deliverables for a rich visual experience and rapid development.
       </p>
     </div>
     <div>

@@ -57,11 +57,11 @@ const logos = [
     variant: 'green',
   },
   {
-    name: 'windicss',
+    name: 'tailwind',
     description:
-      'WindiCss provides class based styling and easy theming in the lightest set of deliverables for a rich visual experience and rapid development.',
-    url: 'https://windicss.org',
-    src: '/img/windicss-logo.svg',
+      'Tailwind provides class based styling and easy theming in the lightest set of deliverables for a rich visual experience and rapid development.',
+    url: 'https://tailwindcss.com/',
+    src: '/img/Tailwind_CSS_Logo.svg',
     variant: 'blue',
   },
   {
