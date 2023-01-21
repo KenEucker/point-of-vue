@@ -113,7 +113,6 @@ const interactionsFetched = ref(false)
 
 function onIntersectionObserver([{ isIntersecting }]: any) {
   if (isIntersecting && !interactionsFetched.value) {
-    console.log('fetching', props.postId)
     interactionsFetched.value = true
     load()
   }

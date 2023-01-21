@@ -75,14 +75,18 @@ const beginCountdown = () => {
 
 <template>
   <div class="w-full md:p-4 md:w-3/4 m-auto">
-    <div
-      class="border-1 border-gray-400 rounded-b rounded-r rounded-l p-4 flex grid grid-rows-3 grid-cols-2 items-center justify-between"
-    >
+    <div class="border-1 border-gray-400 rounded-b rounded-r rounded-l p-4">
       <div class="col-span-2 text-center">
-        <div class="font-bold text-xl mb-2">VueUse, VueUse-Motion, Vue-Apollo</div>
-        <p class="text-gray-700 text-base">The following items use the tech listed above</p>
+        <img class="w-20 md:w-35 m-auto" src="/img/vueuse-icon.svg" />
+        <div class="font-bold text-xl mb-2">VueUse</div>
+        <h3 class="vueuse">Collection of Vue Composition Utilities</h3>
       </div>
+      <p class="">
+        The following items use different aspects of the VueUse library which may or may not have
+        made it into the demo
+      </p>
       <div class="text-center">
+        <span class="font-bold">Subscriptions and State</span>
         <div class="my-2 justify-center">
           <button
             class="bg-green-500 hover:bg-green-700 text-sm py-2 px-4 rounded"
@@ -119,7 +123,8 @@ const beginCountdown = () => {
           </button>
         </div>
       </div>
-      <div class="text-lg">
+      <div class="text-center text-lg">
+        <span class="font-bold">Environment</span>
         <p>Mouse: {{ x }} x {{ y }}</p>
         <UseNetwork v-slot="{ isOnline, downlink, downlinkMax, effectiveType, type }">
           <p>IsOnline: {{ isOnline }}</p>
@@ -128,6 +133,15 @@ const beginCountdown = () => {
           <p>FPS: {{ fps }}</p>
         </UseNetwork>
       </div>
+      <p class="text-center pt-3">
+        Check out all the different things you can do with
+        <a
+          class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+          href="https://vueuse.org/"
+          target="_blank"
+          >VueUse</a
+        >!
+      </p>
     </div>
   </div>
 </template>
@@ -136,6 +150,18 @@ const beginCountdown = () => {
 span {
   padding-left: 10px;
   padding-right: 10px;
+}
+
+.vueuse {
+  text-align: center;
+  background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 50px;
+  line-height: 1.25;
+  font-weight: 900;
+  letter-spacing: -1.5px;
 }
 
 .countdown {

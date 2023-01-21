@@ -4,7 +4,7 @@ import PovPost from './PovPost.vue'
 import LoadingSpinner from '../atomic/PovLoading.vue'
 import ErrorMessage from '../atomic/ErrorMessage.vue'
 import { Post } from '../../schema/generated/types.d'
-import { getGraphUrl } from '../../utilities'
+import { getGraphUrl, sleep } from '../../utilities'
 import { usePostsState, useCreatorState } from '../../store/state'
 
 const creatorState = useCreatorState()
@@ -23,10 +23,12 @@ const initialized = ref(false)
 const postsState = usePostsState()
 watch(postsState, () => {
   console.log('postsState enter', postsState.getPostsLoading, postsState.postsHaveBeenLoaded)
-  if (!postsState.getPostsLoading && postsState.postsHaveBeenLoaded && !initialized.value) {
+  if (!postsState.getPostsLoading) {
     console.log('postsState inject', postsState.getPosts)
+    leftPosts.splice(0, leftPosts.length)
+    rightPosts.splice(0, rightPosts.length)
     initialized.value = true
-    injectPosts()
+    injectPosts(postsState.getPosts)
   }
 })
 
@@ -51,14 +53,15 @@ const newPostSubscription = `
   }
 `
 
-const injectPosts = () => {
-  postsState.getPosts.forEach((post: Post, index: number) => {
-    if (index % 2 != 0) {
-      leftPosts.push(post)
+const injectPosts = async (posts: any) => {
+  for (let i = 0; i < posts.length; ++i) {
+    await sleep(50)
+    if (i % 2 != 0) {
+      leftPosts.push(posts[i])
     } else {
-      rightPosts.push(post)
+      rightPosts.push(posts[i])
     }
-  })
+  }
 }
 
 const url = new URL(getGraphUrl())
@@ -101,8 +104,10 @@ function getRandomIntInclusive(min: number, max: number): number {
 const isPostSelfPost = (post: Post) =>
   creatorState.isCreatorSignedUp && post.creator?.handle === creatorState.creator?.handle
 
-if (!postsState.postsHaveBeenLoaded) {
+if (!postsState.postsHaveBeenLoaded && !postsState.getPostsLoading) {
   postsState.getAllPosts()
+} else {
+  injectPosts(postsState.getPosts)
 }
 </script>
 
@@ -112,7 +117,10 @@ if (!postsState.postsHaveBeenLoaded) {
       <loading-spinner />
     </div>
     <div v-show="!postsState.getPostsLoading && postsState.getPostsError">
-      <error-message title="Error Fetching Post Data" :message="postsState.getPostsError.message" />
+      <error-message
+        title="Error Fetching Post Data"
+        :message="postsState.getPostsError?.message"
+      />
     </div>
     <div
       v-show="!postsState.getPostsLoading && !postsState.getPostsError"

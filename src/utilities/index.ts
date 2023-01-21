@@ -357,3 +357,23 @@ export const removeNodesWithKeywords = (
   const removed = lines.filter((line) => !filteredLines.includes(line))
   return { output, removed }
 }
+
+export const getImgurImageSized = (
+  link: string | null = null,
+  size = 'l',
+  id: string | null = null,
+  ext = '.jpg'
+) => {
+  const imgurUrl = link ?? `https://i.imgur.com/${id}${ext}`
+  const ret = imgurUrl
+    .replace('.jpeg', `${size}.jpg`)
+    .replace('.jpg', `${size}.jpg`)
+    .replace('.gif', `${size}.gif`)
+    .replace('.png', `${size}.png`)
+    .replace('.mp4', `${size}.mp4`)
+
+  console.log({ ret })
+  return ret
+}
+
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))

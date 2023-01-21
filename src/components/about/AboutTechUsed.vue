@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { vElementHover } from '@vueuse/components'
-import PopButton from '../../components/atomic/PopButton.vue'
+import PopButton from '../atomic/PopButton.vue'
 
 const logos = [
   {
     name: 'vite',
     description:
-      'Builds the frontend client scripts and files and provides plugins for local development.',
+      'Vite builds the frontend client scripts and files and provides plugins for local development.',
     url: 'https://vitejs.dev',
     src: '/img/vite.svg',
     variant: 'purple',
@@ -88,6 +88,14 @@ const logos = [
     src: '/img/auth0-logo.svg',
     variant: 'white',
   },
+  {
+    name: 'github',
+    description:
+      "Finally, last but not least, github.com provides this project's source code to live in a public domain with an AGPL 3.0 or later license. You can run this project on your own machine, edit it's source code as you wish, and participate in the improvement of the original project by heading over to github: https://github.com/KenEucker/point-of-vue",
+    url: 'https://github.com/KenEucker/point-of-vue',
+    src: '/img/github.svg',
+    variant: 'white',
+  },
 ]
 
 const hoverered = (name: string) => {
@@ -143,7 +151,12 @@ const goTo = (link: string) => {
             :alt="`${logo.name} logo`"
           />
         </pop-button>
-        <span class="text-lg">{{ logo.name }}</span>
+        <div
+          class="text-lg"
+          :class="`text-${logo.variant === 'white' ? 'zinc' : logo.variant}-200`"
+        >
+          {{ logo.name }}
+        </div>
         <p class="text-sm">{{ logo.description }}</p>
       </div>
     </div>

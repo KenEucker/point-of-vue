@@ -50,7 +50,6 @@ const { mutate: useCreatePostMutation } = useMutation(mutation)
 const emit = defineEmits(['onClose', 'onOpen', 'onNewPostCreated'])
 
 const getNewTitle = () => {
-  console.log('newt', newPostData)
   if (newPostData.title.length) {
     return
   }

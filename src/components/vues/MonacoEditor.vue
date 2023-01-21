@@ -5,6 +5,12 @@ import { useDebounceFn, useResizeObserver, useStorage } from '@vueuse/core'
 import { StorageName, useDarkGlobal } from '../../utilities'
 
 import * as monaco from 'monaco-editor'
+import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
+import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
+// import graphqlWorker from 'monaco-editor/esm/vs/basic-languages/graphql/graphql.worker?worker'
+import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
+import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
+import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 
 const props = defineProps<{
   modelValue: typeof editorValue.value
@@ -15,36 +21,24 @@ const emit = defineEmits<(e: 'update:modelValue', payload: typeof editorValue.va
 
 self.MonacoEnvironment = {
   getWorker: function (_: never, label: any) {
-    const getWorkerModule = (moduleUrl: string, label: any) => {
-      // @ts-expect-error
-      const workerUrl = self.MonacoEnvironment.getWorkerUrl(moduleUrl)
-      return new Worker(workerUrl, {
-        name: label,
-        type: 'module',
-      })
-    }
-
     switch (label) {
       case 'json':
-        return getWorkerModule('/monaco-editor/esm/vs/language/json/json.worker?worker', label)
+        return new jsonWorker()
       case 'graphql':
-        return getWorkerModule(
-          '/monaco-editor/esm/vs/language/graphql/graphql.worker?worker',
-          label
-        )
+        return new editorWorker()
       case 'css':
       case 'scss':
       case 'less':
-        return getWorkerModule('/monaco-editor/esm/vs/language/css/css.worker?worker', label)
+        return new cssWorker()
       case 'html':
       case 'handlebars':
       case 'razor':
-        return getWorkerModule('/monaco-editor/esm/vs/language/html/html.worker?worker', label)
+        return new htmlWorker()
       case 'typescript':
       case 'javascript':
-        return getWorkerModule('/monaco-editor/esm/vs/language/typescript/ts.worker?worker', label)
+        return new tsWorker()
       default:
-        return getWorkerModule('/monaco-editor/esm/vs/editor/editor.worker?worker', label)
+        return new editorWorker()
     }
   },
 }

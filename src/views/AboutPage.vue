@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import AboutDemo from '../components/about/AboutDemo.vue'
 import AboutProject from '../components/about/AboutProject.vue'
-import TestBed from '../components/about/TestBed.vue'
-import ProjectLogos from '../components/about/ProjectLogos.vue'
+import AboutTheUse from '../components/about/AboutTheUse.vue'
+import AboutTechUsed from '../components/about/AboutTechUsed.vue'
 </script>
 
 <template>
-  <project-logos />
-  <test-bed />
+  <about-demo />
+  <about-tech-used />
+  <about-the-use />
   <about-project />
 </template>

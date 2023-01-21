@@ -79,7 +79,7 @@ This open source project was made possible by the following platforms and open s
           height="24"
           /><span>vite</span>
       <p>
-        Builds the frontend client scripts and files and provides plugins for local development.
+        Vite builds the frontend client scripts and files and provides plugins for local development.
       </p>
     </div>
     <div>

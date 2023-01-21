@@ -17,8 +17,8 @@ const storedImgurToken = useStorage('imgur-token', '')
 export const getInitialCreatorState = (): {
   loggedIn: boolean
   creator: Creator
-  auth0Configured: boolean
   signedUp: boolean
+  auth0Configured: boolean
   auth0Token: string
   authentication: any
 } => ({

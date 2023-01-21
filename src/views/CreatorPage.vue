@@ -6,7 +6,7 @@ import ErrorMessage from '../components/atomic/ErrorMessage.vue'
 import PovCreator from '../components/creator/PovCreator.vue'
 import FollowCreator from '../components/creator/FollowCreator.vue'
 import { reactive, watch, ref } from 'vue'
-import { useQuery } from '@vue/apollo-composable'
+import { useQuery, useLazyQuery } from '@vue/apollo-composable'
 import { gql } from '@apollo/client/core'
 import { useRouter } from 'vue-router'
 import { useRouteParams } from '@vueuse/router'
@@ -33,6 +33,13 @@ const creatorByHandleQuery = gql`
       verified
       banner
       website
+    }
+  }
+`
+
+const creatorPostsByHandleQuery = gql`
+  query CreatorByHandle($handle: String!) {
+    creator(where: { handle: $handle }) {
       posts {
         id
         title
@@ -51,14 +58,33 @@ const creatorByHandleQuery = gql`
   }
 `
 
-const creator = ref()
-const { result, loading, error } = useQuery(creatorByHandleQuery, { handle })
-watch(result, (r) => {
+const creator = ref<any>({})
+const creatorPosts = ref<any>([])
+const {
+  result: creatorResult,
+  loading: creatorLoading,
+  error: creatorError,
+} = useQuery(creatorByHandleQuery, { handle })
+watch(creatorResult, (r) => {
   if (r?.creator) {
     creator.value = r.creator
     isOwnPage.value = creator.value.handle === handle
+    fetchPosts()
   } else {
     router.push('/')
+  }
+})
+
+const {
+  result: postsResult,
+  loading: postsLoading,
+  error: postsError,
+  load: fetchPosts,
+} = useLazyQuery(creatorPostsByHandleQuery, { handle })
+
+watch(postsResult, (r) => {
+  if (r?.creator) {
+    creatorPosts.value = r.creator.posts
   }
 })
 
@@ -80,11 +106,20 @@ function selected(idx: number) {
 
 <template>
   <div>
-    <div v-if="loading">
+    <div v-if="creatorLoading || postsLoading">
       <loading-spinner />
     </div>
-    <div v-else-if="error">
-      <error-message title="Error Fetching Profile Data" :message="error.message" />
+    <div v-else-if="creatorError || postsError">
+      <error-message
+        v-if="creatorError"
+        title="Error Fetching Profile Data"
+        :message="creatorError.message"
+      />
+      <error-message
+        v-if="postsError"
+        title="Error Fetching Profile Data"
+        :message="postsError.message"
+      />
     </div>
     <div v-else class="w-full p-4 pr-6 max-w-[700px] mx-auto">
       <div class="ml-10 md:ml-0">
@@ -136,7 +171,7 @@ function selected(idx: number) {
       <div v-show="state.selected === 0" class="flex grid grid-cols-1">My points of view</div>
       <div v-show="state.selected === 1" class="flex grid grid-cols-1">
         <pov-post
-          v-for="post in creator?.posts"
+          v-for="post in creatorPosts"
           :key="post.id"
           :post="post"
           :is-self-post="isOwnPage"

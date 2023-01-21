@@ -11,7 +11,7 @@ const storedEmail = useStorage('creator-email', '')
 const storedId = useStorage('creator-id', 0)
 const storedToken = useStorage('creator-token', '')
 
-export const getInitialVueState = (): {} => ({})
+export const getInitialVueState = () => ({})
 
 export const useVueState = defineStore({
   id: 'useVueState',

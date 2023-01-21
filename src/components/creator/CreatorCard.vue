@@ -94,7 +94,7 @@ const useLogin = async () => {
       <div v-show="props.useAuth0 && !loggingIn && !errorMessage">
         <pop-button> Login <login-icon h="24" w="24" @click="useLogin" /> </pop-button>
       </div>
-      <div v-show="!loggingIn && !errorMessage" class="mb-4">
+      <div v-show="!loggingIn && !errorMessage && !props.useAuth0" class="mb-4">
         <label class="block mb-2 text-sm font-bold text-center text-grey-darker" for="email">
           <point-of-vue :expanded="props.isExpanded" />
         </label>

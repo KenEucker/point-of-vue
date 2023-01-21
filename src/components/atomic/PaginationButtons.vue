@@ -37,6 +37,9 @@ function getPageRange(
   if (pageCount < maxPageRange) {
     end = pageCount
   }
+  if (start < 0) {
+    start = 1
+  }
   return { start, end }
 }
 
