@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
-import { useStorageAsync } from '@vueuse/core'
+import { useStorage } from '@vueuse/core'
 import { useWindowSize } from '@vueuse/core'
 
-const leftMenuOpen = useStorageAsync('leftMenuOpen', false)
-const rightMenuOpen = useStorageAsync('rightMenuOpen', false)
-const disableAbout = useStorageAsync('disableAbout', false)
+const leftMenuOpen = useStorage('leftMenuOpen', false)
+const rightMenuOpen = useStorage('rightMenuOpen', false)
+const disableAbout = useStorage('disableAbout', false)
 const { width, height } = useWindowSize()
 
 export const getInitialPageState = (): {
