@@ -78,7 +78,7 @@ const fromTo = computed(getFromTo)
     <div v-show="!loadedImageState.loading">
       <div
         v-show="loadedImageState.albums.length"
-        class="flex flex-no-wrap items-start mb-8 overflow-x-scroll scrolling-touch"
+        class="flex flex-nowrap items-start mb-8 overflow-x-scroll scrolling-touch"
       >
         <image-card
           v-for="album in loadedImageState.albums"

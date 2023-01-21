@@ -7,30 +7,30 @@ const location = useBrowserLocation()
 </script>
 <template>
   <div class="m-6 leading-normal tracking-normal text-ll-primary bg-fixed bg-cover">
-    <div class="container w-full">
+    <div class="container">
       <point-of-vue :expanded="true" :full="true" class="m-auto" />
     </div>
 
     <div class="container flex flex-col flex-wrap items-center mx-auto md:flex-row">
-      <div class="flex flex-col justify-center w-full overflow-y-hidden xl:w-2/5 lg:items-start">
+      <div class="flex flex-col justify-center overflow-y-hidden xl:w-2/5 lg:items-start">
         <h1
           class="my-4 text-3xl font-bold leading-tight text-center opacity-75 md:text-5xl md:text-left"
         >
           Get back to your
           <span
-            class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-pink-500 to-purple-500"
+            class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-pink-500 to-purple-500"
           >
             point of vue
           </span>
           on the new
           <span
-            class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-pink-500 to-purple-500"
+            class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-pink-500 to-purple-500"
             >programmable</span
           >
           web
         </h1>
         <p
-          class="mb-8 text-base text-green-400 leading-normal text-center md:text-2xl md:text-left"
+          class="mb-8 text-base text-emerald-400 leading-normal text-center md:text-2xl md:text-left"
         >
           Point Of Vue is a platform that opens up all of your data on the web, allowing you to
           share it all from one place. Sign up by email, or using any one of the email based
@@ -67,13 +67,13 @@ const location = useBrowserLocation()
           a button.
         </p>
         <div
-          class="relative w-full mx-auto my-4 transition duration-700 ease-in-out transform md:w-4/5 -rotate-6 hover:scale-105 hover:rotate-6"
+          class="relative w-full mx-auto my-4 transition duration-700 ease-in-out transform md:w-4/5 rotate-6 hover:scale-105 hover:rotate-6"
         >
           <img class="relative" src="/img/macbook.svg" />
           <img
             src="/img/app-screenshot.png"
             alt="app screenshot"
-            class="absolute top-[7%] left-0 bottom-0 right-0 mx-auto w-[80%] h-[85%] overflow-hidden"
+            class="absolute top-7 left-0 bottom-0 right-0 mx-auto w-80 h-85 overflow-hidden"
           />
         </div>
         <p

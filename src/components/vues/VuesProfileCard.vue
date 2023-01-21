@@ -7,9 +7,9 @@ import CommentsIcon from 'vue-ionicons/dist/md-chatboxes.vue'
 import CubeIcon from 'vue-ionicons/dist/md-cube.vue'
 import MoreIcon from 'vue-ionicons/dist/md-more.vue'
 import abbreviate from 'number-abbreviate'
-import { useWindowSize } from '@vueuse/core'
+import { usePageState } from '../../store/state'
 
-const { width } = useWindowSize()
+const pageState = usePageState()
 
 const props = defineProps({
   creator: {
@@ -59,7 +59,7 @@ const developerStats = [
         :size="props.size"
         :image-only="props.imageOnly"
         class="order-1"
-        :class="width < 600 ? 'flex-row' : 'flex-infinite'"
+        :class="pageState.width < 600 ? 'flex-row' : 'flex-infinite'"
       />
       <div class="flex flex-col px-6">
         <div class="mt-2 flex flex-row items-center space-x-5">
@@ -93,7 +93,7 @@ const developerStats = [
         </div>
       </div>
 
-      <!-- <div :class="width < 600 ? 'flex-row order-3' : 'flex-col order-2 px-6'" class="flex">
+      <!-- <div :class="pageState.width < 600 ? 'flex-row order-3' : 'flex-col order-2 px-6'" class="flex">
         <div class="mt-2 flex flex-row items-center space-x-5">
           <a
             v-for="stat in developerStats"
@@ -117,7 +117,7 @@ const developerStats = [
 
       <div
         class="flex flex-col items-end justify-start"
-        :class="width < 600 ? 'order-2' : 'order-3'"
+        :class="pageState.width < 600 ? 'order-2' : 'order-3'"
       >
         <div class="flex flex-row space-x-3">
           <button
@@ -128,7 +128,7 @@ const developerStats = [
         </div>
       </div> -->
     </div>
-    <div class="flex flex-no-wrap overflow-x-scroll scrolling-touch items-start mb-8">
+    <div class="flex flex-nowrap overflow-x-scroll scrolling-touch items-start mb-8">
       <pov-vue-card
         v-for="component in props.components"
         :key="`component-${component.name}`"

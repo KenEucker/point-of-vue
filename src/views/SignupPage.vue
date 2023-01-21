@@ -7,7 +7,7 @@ import SignUp from '../components/pov/SignUp.vue'
       <h1 class="my-4 text-3xl font-bold leading-tight text-center md:text-5xl md:text-left">
         Your
         <span
-          class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-pink-500 to-purple-500"
+          class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-pink-500 to-purple-500"
         >
           voice
         </span>

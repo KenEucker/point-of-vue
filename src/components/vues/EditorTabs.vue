@@ -26,19 +26,19 @@ const emit = defineEmits(['play', 'save', 'publish', 'update:modelValue'])
     </li>
     <li class="ml-10">
       <pop-button @click="emit('save')"
-        ><span class="px-1 py-1 mt-0.25 text-green-600 rounded"><save-icon w="24" h="24" /></span>
+        ><span class="px-1 py-1 mt-0.25 text-emerald-600 rounded"><save-icon w="24" h="24" /></span>
       </pop-button>
     </li>
     <li class="ml-2">
       <pop-button @click="emit('publish')"
-        ><span class="px-1 py-1 mt-0.25 text-green-600 rounded"
+        ><span class="px-1 py-1 mt-0.25 text-emerald-600 rounded"
           ><publish-icon w="24" h="24"
         /></span>
       </pop-button>
     </li>
     <li class="ml-2">
       <pop-button @click="emit('play')"
-        ><span class="px-1 py-1 mt-0.25 text-green-600 rounded"><play-icon w="24" h="24" /></span>
+        ><span class="px-1 py-1 mt-0.25 text-emerald-600 rounded"><play-icon w="24" h="24" /></span>
       </pop-button>
     </li>
   </ul>
@@ -46,10 +46,10 @@ const emit = defineEmits(['play', 'save', 'publish', 'update:modelValue'])
 
 <style>
 .tab-item {
-  @apply inline-block px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-green-500 dark:hover:text-green-400;
+  @apply inline-block px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-emerald-500 dark:hover:text-emerald-400;
 }
 
 .tab-item-active {
-  @apply inline-block px-4 py-2 border-t-2 border-green-500 text-green-500 font-semibold;
+  @apply inline-block px-4 py-2 border-t-2 border-emerald-500 text-emerald-500 font-semibold;
 }
 </style>

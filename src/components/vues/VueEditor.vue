@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue'
 import * as Vue from 'vue'
-import { useStorage, useWindowSize } from '@vueuse/core'
+import { useStorage } from '@vueuse/core'
 import Split from 'split.js'
 import { loadModule } from 'vue3-sfc-loader'
 import { StorageName, useDarkGlobal, compileComponent } from '../../utilities'
@@ -9,8 +9,7 @@ import MonacoEditor from './MonacoEditor.vue'
 import EditorTabs from './EditorTabs.vue'
 import { useMagicKeys } from '@vueuse/core'
 import VueComponent from './VueComponent.vue'
-
-const { width } = useWindowSize()
+import { usePageState } from '../../store/state'
 
 const tabs = {
   vue: 'json',
@@ -31,6 +30,7 @@ const props = defineProps({
   },
 })
 
+const pageState = usePageState()
 const containerRef = ref()
 const code = ref<Record<string, any>>(props.initialCode)
 const currentTab = useStorage(StorageName.ACTIVE_TAB, 'vue')
@@ -107,7 +107,7 @@ const onPlay = async () => {
 }
 
 onMounted(() => {
-  if (width.value > 700) {
+  if (pageState.width > 700) {
     Split(['#editor', '#component'])
   }
   onPlay()

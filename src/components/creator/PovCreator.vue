@@ -39,12 +39,12 @@ const props = defineProps({
 const classes = computed(() => {
   switch (props.size) {
     case 'large':
-      return 'w-50 h-50'
+      return 'max-w-sm max-h-sm'
     case 'medium':
-      return 'w-40 h-40'
+      return 'w-18 h-18'
     case 'small':
     default:
-      return 'w-15 h-15'
+      return 'w-14 h-14'
   }
 })
 

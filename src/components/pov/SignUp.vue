@@ -2,7 +2,6 @@
 import SignUpForm from './SignUpForm.vue'
 import { useCreatorState } from '../../store/state'
 import { ref } from 'vue'
-import { useWindowSize } from '@vueuse/core'
 
 const label = ref('Signup for your own Point Of Vue!')
 const formRef = ref()
@@ -31,14 +30,14 @@ const signUp = async (e: Event) => {
   <div class="w-full px-8 pt-6 pb-8 mb-4 bg-gray-900 rounded-lg shadow-lg">
     <div v-if="creatorState.isCreatorSignedUp">
       <div class="mb-4 text-center">
-        <label class="block py-2 mb-2 text-2xl font-bold text-green-300">
+        <label class="block py-2 mb-2 text-2xl font-bold text-emerald-300">
           Thank you for signing up!
         </label>
       </div>
     </div>
     <form v-else v-show="!showSignupModal" ref="formRef" @submit="signUp">
       <div class="mb-4">
-        <label class="block py-2 mb-2 font-bold text-green-300" for="email">
+        <label class="block py-2 mb-2 font-bold text-emerald-300" for="email">
           {{ label }}
         </label>
         <input
@@ -52,7 +51,7 @@ const signUp = async (e: Event) => {
       </div>
       <div class="flex items-center justify-between pt-4">
         <button
-          class="px-4 py-2 font-bold transition duration-300 ease-in-out transform rounded bg-gradient-to-r text-slate-800 from-purple-800 to-green-500 hover:from-pink-500 hover:to-green-500 focus:ring hover:scale-105"
+          class="px-4 py-2 font-bold transition duration-300 ease-in-out transform rounded bg-gradient-to-r text-slate-800 from-purple-800 to-emerald-500 hover:from-pink-500 hover:to-emerald-500 focus:ring hover:scale-105"
           type="submit"
         >
           Sign Up

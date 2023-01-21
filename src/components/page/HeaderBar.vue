@@ -4,7 +4,6 @@ import PopButton from '../atomic/PopButton.vue'
 import RouteButton from '../atomic/RouteButton.vue'
 import MenuOpen from 'vue-ionicons/dist/md-funnel.vue'
 import SearchIcon from 'vue-ionicons/dist/md-search.vue'
-import { useWindowSize } from '@vueuse/core'
 import { usePageState } from '../../store/state'
 
 const pageState = usePageState()
@@ -15,8 +14,6 @@ const props = defineProps({
     default: false,
   },
 })
-
-const { width } = useWindowSize()
 </script>
 
 <template>
@@ -24,7 +21,7 @@ const { width } = useWindowSize()
     <div class="flex items-center">
       <button
         class="flex items-center justify-center w-10 h-10 ml-2 mr-2 transition-transform transform border rounded-md border-ll-border dark:border-ld-border bg-ll-base dark:bg-ld-base dark:text-gray-200 active:scale-95"
-        :class="pageState.leftMenuOpen ? 'rotate-90' : 'rotate-270'"
+        :class="pageState.leftMenuOpen ? 'rotate-90' : 'rotate-[270deg]'"
         @click="pageState.toggleLeftMenu()"
       >
         <menu-open h="20" w="20" />
@@ -38,11 +35,11 @@ const { width } = useWindowSize()
     </div>
 
     <div
-      class="flex items-center w-2/4 border rounded-md bg-ll-base dakr:bg-ld-base md:min-w-60 border-ll-border dark:border-ld-border h-3/4"
+      class="flex items-center w-2/4 border rounded-md bg-ll-base dakr:bg-ld-base md:max-w-100 border-ll-border dark:border-ld-border h-3/4"
     >
       <input
         type="text"
-        :placeholder="`Search ${width > 550 ? 'your point of vue' : ''}`"
+        :placeholder="`Search ${pageState.width > 550 ? 'your point of vue' : ''}`"
         class="w-full h-full px-2 bg-transparent outline-none text-md"
       />
 
@@ -52,12 +49,12 @@ const { width } = useWindowSize()
     </div>
     <div>
       <button
-        v-show="props.displayRightMenuButton && width > 480"
+        v-show="props.displayRightMenuButton && pageState.width > 480"
         class="flex items-center justify-center w-10 h-10 ml-2 mr-2 transition-transform transform border rounded-md border-ll-border dark:border-ld-border bg-ll-base dark:bg-ld-base dark:text-gray-200 active:scale-95"
-        :class="pageState.rightMenuOpen ? 'rotate-270' : 'rotate-90'"
+        :class="pageState.rightMenuOpen ? 'rotate-[270deg]' : 'rotate-90'"
         @click="pageState.toggleRightMenu()"
       >
-        <menu-open h="20" w="20" class="rotate-120" />
+        <menu-open h="20" w="20" />
       </button>
     </div>
   </div>

@@ -12,21 +12,18 @@ const props = defineProps({
 
 <template>
   <div
-    :class="`${props.fullScreen ? 'w-full min-h-screen' : ''}`"
+    :class="`${props.fullScreen ? 'w-full min-h-full' : ''}`"
     class="flex justify-center items-center"
   >
-    <div
-      v-if="props.fullScreen"
-      class="flex w-full w-3/4 text-xl justify-center absolute top-[30%]"
-    >
+    <div v-if="props.fullScreen" class="flex w-full w-3/4 text-xl justify-center absolute top-30">
       {{ faker.hacker.phrase() }}
     </div>
     <div class="p-10 rounded-xl relative">
       <div
-        :class="`${props.fullScreen ? 'w-full min-h-screen' : ''}`"
+        :class="`${props.fullScreen ? 'w-full min-h-full' : ''}`"
         class="flex justify-center items-center"
       >
-        <div :class="`${props.fullScreen ? 'min-h-screen' : ''}`" class="w-3/4 justify-center flex">
+        <div :class="`${props.fullScreen ? 'min-h-full' : ''}`" class="w-3/4 justify-center flex">
           <div
             :class="`${props.fullScreen ? 'h-50 w-50 ' : 'h-36 w-36'}`"
             class="flex items-center justify-center rounded-full bg-gradient-to-tr from-indigo-500 to-pink-500 animate-spin"

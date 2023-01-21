@@ -41,7 +41,7 @@ function followCreator() {
       class="inlife-flex"
     />
     <button
-      class="relative inline-flex items-center justify-center text-white p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800"
+      class="relativeitems-center justify-center text-white p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800"
       :class="
         followed
           ? 'ring-2 ring-orange-400 dark:ring-0'

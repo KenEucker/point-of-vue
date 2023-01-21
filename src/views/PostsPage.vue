@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import PostFeed from '../components/post/PostFeed.vue'
 import CreatePost from '../components/post/CreatePost.vue'
-import { useWindowSize } from '@vueuse/core'
-import { usePageState, usePostsState, useCreatorState } from '../store/state'
-import { ref, reactive } from 'vue'
+import { usePageState } from '../store/state'
 
-const { width } = useWindowSize()
 const pageState = usePageState()
 </script>
 
@@ -19,7 +16,9 @@ const pageState = usePageState()
     />
     <post-feed
       :one-column="
-        pageState.leftMenuOpen === true && pageState.rightMenuOpen === true && width < 1300
+        pageState.leftMenuOpen === true &&
+        pageState.rightMenuOpen === true &&
+        pageState.width < 1300
       "
     />
   </div>

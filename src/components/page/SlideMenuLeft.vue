@@ -52,7 +52,7 @@ const creatorPanelClick = () => {
       <li
         v-for="route in routes"
         :key="route.name"
-        class="` w-full max-w-50 py-2 flex items-center cursor-pointer active:scale-95 transform transition-transform select-none"
+        class="w-full max-w-50 py-2 flex items-center cursor-pointer active:scale-95 transform transition-transform select-none mb-4"
         :class="`${props.isExpanded ? 'mb-2' : 'justify-center mb-4'} ${
           route.name == currentRoute.name ? 'text-ll-primary' : ''
         }`"

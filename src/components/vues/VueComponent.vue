@@ -70,7 +70,7 @@ const getOptions = (component: PovComponent) => {
           <span
             :class="
               props.component.status === 'good'
-                ? 'bg-green-500'
+                ? 'bg-emerald-500'
                 : props.component.status === 'error'
                 ? 'bg-red-500'
                 : 'bg-purple-500'

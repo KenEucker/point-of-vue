@@ -121,7 +121,7 @@ function selected(idx: number) {
         :message="postsError.message"
       />
     </div>
-    <div v-else class="w-full p-4 pr-6 max-w-[700px] mx-auto">
+    <div v-else class="w-full p-4 pr-6 max-w-fit mx-auto">
       <div class="ml-10 md:ml-0">
         <div class="flex p-1">
           <arrow-back
@@ -137,7 +137,7 @@ function selected(idx: number) {
           </div>
         </div>
         <div class="object-fill bg-gray-700 banner min-h-50 h-50">
-          <img :src="creator?.banner" class="w-[100%]" />
+          <img :src="creator?.banner" class="w-full" />
         </div>
         <pov-creator
           v-if="isOwnPage"

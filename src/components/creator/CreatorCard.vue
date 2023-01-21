@@ -50,7 +50,7 @@ const useLogin = async () => {
 <template>
   <div class="flex items-center justify-center">
     <div v-if="creatorState.isLoggedIn" class="relative flex flex-col profile">
-      <button v-if="props.isExpanded" class="absolute -top-1/5 left-1/2" @click="logout()">
+      <button v-if="props.isExpanded" class="absolute -top-10 left-1/2" @click="logout()">
         <logout-icon h="32" w="32" />
       </button>
       <pov-creator
@@ -85,7 +85,7 @@ const useLogin = async () => {
     </div>
     <div
       v-else-if="props.isExpanded"
-      class="flex flex-col w-full p-2 rounded shadow-md dark:bg-ld-base sm:w-100 md:w-40 lg:w-60 lg:p-4 lg:pt-6 lg:mb-4"
+      class="flex flex-col w-full p-2 rounded shadow-md dark:bg-ld-base lg:p-4 lg:pt-6 lg:mb-4"
     >
       <loading-spinner v-show="loggingIn" :full-screen="false" />
       <div v-show="errorMessage" @click="errorMessage = null">

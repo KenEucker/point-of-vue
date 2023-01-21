@@ -20,13 +20,13 @@ const emit = defineEmits(['close', 'next', 'previous'])
   <div
     v-if="props.show"
     id="modal-id"
-    class="fixed inset-0 top-0 left-0 z-50 flex items-center justify-center h-screen bg-center bg-no-repeat bg-cover outline-none min-w-screen animated fadeIn faster focus:outline-none"
+    class="fixed inset-0 top-0 left-0 z-50 flex items-center justify-center h-full bg-center bg-no-repeat bg-cover outline-none min-w-full animated fadeIn faster focus:outline-none"
     style="
       background-image: url('https://images.unsplash.com/photo-1604262725913-1c415cd27564?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2142&q=80');
     "
   >
     <div class="absolute inset-0 z-0 bg-black opacity-80"></div>
-    <div class="relative flex flex-col items-center justify-center min-h-screen">
+    <div class="relative flex flex-col items-center justify-center min-h-full">
       <div class="container">
         <div class="w-full max-w-md p-6 bg-gray-900 shadow-lg rounded-xl">
           <div class="flex flex-col">
@@ -86,7 +86,7 @@ const emit = defineEmits(['close', 'next', 'previous'])
                       Lorem ipsum is placeholder text commonly used in the graphic
                     </h2>
                     <div
-                      class="flex items-center px-2 py-1 ml-3 text-xs text-white bg-green-400 rounded-lg"
+                      class="flex items-center px-2 py-1 ml-3 text-xs text-white bg-emerald-400 rounded-lg"
                     >
                       INSTOCK
                     </div>
@@ -120,9 +120,9 @@ const emit = defineEmits(['close', 'next', 'previous'])
                         </li>
                         <li class="">
                           <span
-                            class="block p-1 transition duration-300 ease-in border-2 border-gray-900 rounded-full hover:border-green-500"
+                            class="block p-1 transition duration-300 ease-in border-2 border-gray-900 rounded-full hover:border-emerald-500"
                           >
-                            <a href="#green" class="block w-3 h-3 bg-green-500 rounded-full"></a>
+                            <a href="#green" class="block w-3 h-3 bg-emerald-500 rounded-full"></a>
                           </span>
                         </li>
                       </ul>

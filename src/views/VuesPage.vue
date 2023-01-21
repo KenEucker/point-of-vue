@@ -66,6 +66,6 @@ const components = [
 <template>
   <main class="border-t border-gray-200 dark:border-gray-700">
     <vues-profile-card :creator="creatorState.getCreator" :components="components" />
-    <vue-editor class="h-[60%]" />
+    <vue-editor class="h-1/2" />
   </main>
 </template>

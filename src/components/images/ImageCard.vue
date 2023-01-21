@@ -56,7 +56,7 @@ const getImageSized = props.img ? getImgurImageSized : () => ''
   <popper>
     <template #default>
       <pop-button class="p-2" @click.prevent="maybeShowModal">
-        <div class="w-full max-w-md p-2 bg-gray-900 shadow-lg min-w-50 rounded-xl">
+        <div class="w-full max-w-md p-2 bg-gray-900 shadow-lg min-w-full rounded-xl">
           <div class="flex flex-col">
             <div class="">
               <div
@@ -110,7 +110,7 @@ const getImageSized = props.img ? getImgurImageSized : () => ''
 
                     <div
                       v-if="props.src"
-                      class="flex items-center px-2 py-1 ml-3 text-xs text-white bg-green-400 rounded-lg"
+                      class="flex items-center px-2 py-1 ml-3 text-xs text-white bg-emerald-400 rounded-lg"
                     >
                       {{ props.src }}
                     </div>
@@ -129,7 +129,7 @@ const getImageSized = props.img ? getImgurImageSized : () => ''
       </pop-button>
     </template>
     <template #content>
-      <div v-if="props.img" class="h-screen md:flex">
+      <div v-if="props.img" class="h-full md:flex">
         <div
           class="relative overflow-hidden md:flex w-1/2 bg-gradient-to-tr from-blue-800 to-purple-700 i justify-around items-center hidden"
         >

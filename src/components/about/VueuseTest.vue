@@ -89,7 +89,7 @@ const beginCountdown = () => {
         <span class="font-bold">Subscriptions and State</span>
         <div class="my-2 justify-center">
           <button
-            class="bg-green-500 hover:bg-green-700 text-sm py-2 px-4 rounded"
+            class="bg-emerald-500 hover:bg-emerald-700 text-sm py-2 px-4 rounded"
             type="button"
             @click="beginCountdown()"
           >
@@ -99,7 +99,7 @@ const beginCountdown = () => {
         </div>
         <div class="my-2">
           <button
-            class="bg-green-500 hover:bg-green-700 text-sm py-2 px-4 rounded"
+            class="bg-emerald-500 hover:bg-emerald-700 text-sm py-2 px-4 rounded"
             type="button"
             @click="dec()"
           >
@@ -107,7 +107,7 @@ const beginCountdown = () => {
           </button>
           <span>count is {{ count }}</span>
           <button
-            class="bg-green-500 hover:bg-green-700 text-sm py-2 px-4 rounded"
+            class="bg-emerald-500 hover:bg-emerald-700 text-sm py-2 px-4 rounded"
             type="button"
             @click="inc()"
           >
@@ -116,7 +116,7 @@ const beginCountdown = () => {
         </div>
         <div class="my-2">
           <button
-            class="bg-green-500 hover:bg-green-700 text-sm py-2 px-4 rounded"
+            class="bg-emerald-500 hover:bg-emerald-700 text-sm py-2 px-4 rounded"
             @click="toggleDark()"
           >
             Enable {{ isDark ? 'Light' : 'Dark' }} Mode

@@ -36,7 +36,7 @@ const props = defineProps({
   <router-link :to="props.path">
     <pov v-if="props.text == 'Hello'" w="40" h="40" />
     <list v-else-if="props.text == 'Posts'" w="30" h="30" />
-    <node-js v-else-if="props.text == 'About'" w="30" h="30" class="-mt-1 text-green-400" />
+    <node-js v-else-if="props.text == 'About'" w="30" h="30" class="-mt-1 text-emerald-400" />
     <home v-else-if="props.text == 'Home'" w="30" h="30" />
     <img
       v-else-if="props.text == 'Graph'"
@@ -45,7 +45,13 @@ const props = defineProps({
     />
     <images v-else-if="props.text == 'Images'" w="30" h="30" class="text-purple-400" />
     <create v-else-if="props.text == 'Create'" w="30" h="30" class="text-yellow-600" />
-    <img v-else-if="props.text == 'Vues'" src="/img/vue.svg" alt="vues page" class="max-w-8" />
+    <img
+      v-else-if="props.text == 'Vues'"
+      src="/img/vue.svg"
+      alt="vues page"
+      class="w-7 inline align-middle -mt-1"
+      :class="props.expanded ? 'ml-0.5' : ''"
+    />
     <explore v-else-if="props.text == 'Data'" w="30" h="30" class="text-blue-600" />
     <notifications v-else-if="props.text == 'Notifications'" w="30" h="30" />
     <saved v-else-if="props.text == 'Favorites'" w="30" h="30" />

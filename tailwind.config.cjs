@@ -1,8 +1,6 @@
-import { defineConfig } from 'windicss/helpers'
-import formsPlugin from 'windicss/plugin/forms'
-
-export default defineConfig({
-  darkMode: 'class',
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,vue}'],
   theme: {
     extend: {
       colors: {
@@ -25,8 +23,5 @@ export default defineConfig({
       },
     },
   },
-  plugins: [formsPlugin],
-  extract: {
-    exclude: ['node_modules', '.git'],
-  },
-})
+  plugins: [require('@tailwindcss/forms')],
+}

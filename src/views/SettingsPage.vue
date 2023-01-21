@@ -144,7 +144,7 @@ async function saveFields(e: Event) {
 <template>
   <div class="" @click="errors = false">
     <section
-      class="max-w-4xl p-6 mx-auto mt-20 rounded-md shadow-md dark:bg-gray-800"
+      class="rounded-md shadow-md dark:bg-gray-800"
       :style="{
         background: `url(${creatorState.getCreator.banner}) no-repeat right`,
       }"
@@ -177,7 +177,7 @@ async function saveFields(e: Event) {
               :value="field.value"
               @change="dirty = true"
             />
-            <span v-if="field.prefix" class="absolute inset-y-10 left-0 flex pl-[1%]">{{
+            <span v-if="field.prefix" class="absolute inset-y-10 left-0 flex pl-1">{{
               field.prefix
             }}</span>
           </div>

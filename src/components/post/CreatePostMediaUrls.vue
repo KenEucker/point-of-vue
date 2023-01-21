@@ -53,7 +53,7 @@ function saveImages() {
             />
             <button
               type="button"
-              class="px-2 py-1 ml-2 text-xs font-medium leading-tight uppercase align-middle transition duration-150 ease-in-out rounded shadow-md space-between dark:text-white bg-ll-primary hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg"
+              class="px-2 py-1 ml-2 text-xs font-medium leading-tight uppercase align-middle transition duration-150 ease-in-out rounded shadow-md space-between dark:text-white bg-ll-primary hover:bg-emerald-700 hover:shadow-lg focus:bg-emerald-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-emerald-800 active:shadow-lg"
               @click="images.splice(i)"
             >
               <minus-icon h="24" w="24" />
@@ -62,14 +62,14 @@ function saveImages() {
           <div class="flex justify-end">
             <button
               type="button"
-              class="px-2 py-1 text-xs font-medium leading-tight uppercase transition duration-150 ease-in-out rounded shadow-md space-between dark:text-white bg-ll-primary hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg"
+              class="px-2 py-1 text-xs font-medium leading-tight uppercase transition duration-150 ease-in-out rounded shadow-md space-between dark:text-white bg-ll-primary hover:bg-emerald-700 hover:shadow-lg focus:bg-emerald-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-emerald-800 active:shadow-lg"
               @click="images.push('')"
             >
               <add-icon h="24" w="24" />
             </button>
             <button
               type="submit"
-              class="px-2 py-1 ml-4 text-xs font-medium leading-tight uppercase transition duration-150 ease-in-out rounded shadow-md space-between dark:text-white bg-ll-primary hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg"
+              class="px-2 py-1 ml-4 text-xs font-medium leading-tight uppercase transition duration-150 ease-in-out rounded shadow-md space-between dark:text-white bg-ll-primary hover:bg-emerald-700 hover:shadow-lg focus:bg-emerald-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-emerald-800 active:shadow-lg"
               @click="saveImages(), close()"
             >
               <check-mark h="24" w="24" />

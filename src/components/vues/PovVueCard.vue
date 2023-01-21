@@ -36,7 +36,7 @@ const props = defineProps({
         <span class="ml-1 text-base font-light">{{ component.archivedAt.toDateString() }}</span>
       </div>
       <div v-else-if="component.publishedAt">
-        <published-icon h="24" w="24" class="align-top text-green-500" />
+        <published-icon h="24" w="24" class="align-top text-emerald-500" />
         <span class="ml-3 text-base font-light">published to the globe on </span>
         <span class="ml-1 text-base font-light">{{ component.publishedAt.toDateString() }}</span>
       </div>

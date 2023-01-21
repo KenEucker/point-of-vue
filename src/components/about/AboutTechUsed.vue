@@ -146,7 +146,7 @@ const goTo = (link: string) => {
               scale: 1.25,
             }"
             :src="logo.src"
-            class="max-w-[95px] w-20 m-4 min-h-6 mx-auto"
+            class="max-w-24 w-20 m-4 min-h-6 mx-auto"
             :class="logo.name"
             :alt="`${logo.name} logo`"
           />

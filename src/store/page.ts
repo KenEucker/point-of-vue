@@ -1,22 +1,31 @@
 import { defineStore } from 'pinia'
+import { useStorageAsync } from '@vueuse/core'
+import { useWindowSize } from '@vueuse/core'
+
+const leftMenuOpen = useStorageAsync('leftMenuOpen', false)
+const rightMenuOpen = useStorageAsync('rightMenuOpen', false)
+const disableAbout = useStorageAsync('disableAbout', false)
+const { width, height } = useWindowSize()
 
 export const getInitialPageState = (): {
   createPostOpen: boolean
+  signupOpen: boolean
   leftMenuOpen: boolean
   rightMenuOpen: boolean
   disableAbout: boolean
-  signupOpen: boolean
 } => ({
   createPostOpen: false,
-  leftMenuOpen: false,
-  rightMenuOpen: false,
   signupOpen: false,
-  disableAbout: false,
+  leftMenuOpen: leftMenuOpen.value,
+  rightMenuOpen: rightMenuOpen.value,
+  disableAbout: disableAbout.value,
 })
 
 export const usePageState = defineStore('usePageState', {
   state: getInitialPageState,
   getters: {
+    width: (s) => width.value,
+    height: (s) => height.value,
     isCreatePostOpen: (s) => s.createPostOpen,
     isLeftMenuOpen: (s) => s.leftMenuOpen,
     isRightMenuOpen: (s) => s.rightMenuOpen,
@@ -24,8 +33,11 @@ export const usePageState = defineStore('usePageState', {
     isAboutDisabled: (s) => s.disableAbout,
   },
   actions: {
+    enableAboutSidebar() {
+      disableAbout.value = this.disableAbout = false
+    },
     disableAboutSidebar() {
-      this.disableAbout = true
+      disableAbout.value = this.disableAbout = true
     },
     closeCreatePost() {
       this.createPostOpen = false
@@ -34,22 +46,22 @@ export const usePageState = defineStore('usePageState', {
       this.createPostOpen = true
     },
     toggleLeftMenu() {
-      this.leftMenuOpen = !this.leftMenuOpen
+      leftMenuOpen.value = this.leftMenuOpen = !this.leftMenuOpen
     },
     closeLeftMenu() {
-      this.leftMenuOpen = false
+      leftMenuOpen.value = this.leftMenuOpen = false
     },
     openLeftMenu() {
-      this.leftMenuOpen = true
+      leftMenuOpen.value = this.leftMenuOpen = true
     },
     toggleRightMenu() {
-      this.rightMenuOpen = !this.rightMenuOpen
+      rightMenuOpen.value = this.rightMenuOpen = !this.rightMenuOpen
     },
     closeRightMenu() {
-      this.rightMenuOpen = false
+      rightMenuOpen.value = this.rightMenuOpen = false
     },
     openRightMenu() {
-      this.rightMenuOpen = true
+      rightMenuOpen.value = this.rightMenuOpen = true
     },
     closeSignup() {
       this.signupOpen = false

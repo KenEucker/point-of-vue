@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import WindiCSS from 'vite-plugin-windicss'
 import EnvironmentPlugin from 'vite-plugin-environment'
 import env from 'dotenv'
 env.config()
@@ -11,7 +10,6 @@ const port = process.env.PORT ? Number(process.env.PORT) : 8080
 export default defineConfig({
   plugins: [
     vue(),
-    WindiCSS(),
     EnvironmentPlugin({
       ORIGIN: process.env.ORIGIN ?? 'http://localhost',
       ORIGIN_PORT: process.env.ORIGIN_PORT ?? port.toString(),

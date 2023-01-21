@@ -4,9 +4,8 @@ import PovCreator from '../creator/PovCreator.vue'
 import { useCreatorState } from '../../store/state'
 import { ref, reactive } from 'vue'
 import { Creator } from '../../schema/generated/types'
-import { useWindowSize } from '@vueuse/core'
 import { useRouter } from 'vue-router'
-
+import { usePageState } from '../../store/state'
 const props = defineProps({
   email: {
     type: String,
@@ -14,7 +13,6 @@ const props = defineProps({
   },
 })
 
-const { width } = useWindowSize()
 const label = ref('Signup for your own Point Of Vue!')
 const signUpForm = ref()
 const handleRef = ref()
@@ -23,6 +21,7 @@ const errors = ref()
 const showSignupModal = ref(false)
 const creatorState = useCreatorState()
 const router = useRouter()
+const pageState = usePageState()
 const creator = reactive({ ...creatorState.getCreator, email: props.email })
 
 const completeSignup = async (e: Event) => {
@@ -56,7 +55,7 @@ const completeSignup = async (e: Event) => {
       @submit="completeSignup"
     >
       <pov-creator
-        :size="width < 500 ? 'medium' : 'large'"
+        :size="pageState.width < 500 ? 'medium' : 'large'"
         :creator="creator"
         :go-to-creator-page="false"
       />
@@ -90,7 +89,7 @@ const completeSignup = async (e: Event) => {
             name="email"
             required
             :readonly="creator.email?.length > 0"
-            class="relative block w-full px-4 py-2 mt-2 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 focus:border-green-500 dark:focus:border-green-500 focus:outline-none focus:ring"
+            class="relative block w-full px-4 py-2 mt-2 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 focus:border-emerald-500 dark:focus:border-emerald-500 focus:outline-none focus:ring"
           />
         </p>
         <p class="relative">
@@ -101,9 +100,9 @@ const completeSignup = async (e: Event) => {
             type="handle"
             name="handle"
             required
-            class="relative block w-full px-4.5 py-2 mt-2 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 focus:border-green-500 dark:focus:border-green-500 focus:outline-none focus:ring"
+            class="relative block w-full px-4.5 py-2 mt-2 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 focus:border-emerald-500 dark:focus:border-emerald-500 focus:outline-none focus:ring"
           />
-          <span class="absolute inset-y-9 left-0 flex pl-[1%]">@</span>
+          <span class="absolute inset-y-9 left-0 flex pl-1">@</span>
         </p>
         <p>
           <label class="block mb-2 text-sm font-medium text-white" for="name">Avatar URL</label>
@@ -112,7 +111,7 @@ const completeSignup = async (e: Event) => {
             type="avatar"
             name="avatar"
             required
-            class="relative block w-full px-4 py-2 mt-2 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 focus:border-green-500 dark:focus:border-green-500 focus:outline-none focus:ring"
+            class="relative block w-full px-4 py-2 mt-2 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 focus:border-emerald-500 dark:focus:border-emerald-500 focus:outline-none focus:ring"
           />
         </p>
         <p>
@@ -122,7 +121,7 @@ const completeSignup = async (e: Event) => {
             type="name"
             name="name"
             required
-            class="relative block w-full px-4 py-2 mt-2 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 focus:border-green-500 dark:focus:border-green-500 focus:outline-none focus:ring"
+            class="relative block w-full px-4 py-2 mt-2 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 focus:border-emerald-500 dark:focus:border-emerald-500 focus:outline-none focus:ring"
           />
         </p>
 
@@ -132,19 +131,19 @@ const completeSignup = async (e: Event) => {
               <input
                 id="verified"
                 type="checkbox"
-                class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-green-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-green-600 dark:ring-offset-gray-800"
+                class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-emerald-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-emerald-600 dark:ring-offset-gray-800"
                 @click="(e: Event) => (creator.verified = (e.target as HTMLInputElement).checked)"
               />
             </div>
             <label for="verify" class="ml-2 text-sm font-medium text-gray-300">Verify me</label>
           </div>
-          <a href="#" class="ml-auto text-sm text-green-700 hover:underline dark:text-green-500"
+          <a href="#" class="ml-auto text-sm text-emerald-700 hover:underline dark:text-emerald-500"
             >no password?</a
           >
         </div>
         <button
           type="submit"
-          class="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 mt-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+          class="w-full text-white bg-emerald-700 hover:bg-emerald-800 focus:ring-4 mt-4 focus:outline-none focus:ring-emerald-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800"
         >
           Create your account
         </button>
