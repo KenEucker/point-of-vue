@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import AppLayout from './components/layout/AppLayout.vue'
-import HeaderBar from './components/menu/HeaderBar.vue'
-import SlideMenuLeft from './components/menu/SlideMenuLeft.vue'
-import SlideMenuRight from './components/menu/SlideMenuRight.vue'
+import HeaderBar from './components/page/HeaderBar.vue'
+import SlideMenuLeft from './components/page/SlideMenuLeft.vue'
+import SlideMenuRight from './components/page/SlideMenuRight.vue'
 import { useRouter } from 'vue-router'
 import { usePageState, usePovState } from './store/state'
 

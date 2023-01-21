@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import LoginIcon from 'vue-ionicons/dist/md-log-in.vue'
 import LogoutIcon from 'vue-ionicons/dist/md-log-out.vue'
-import PointOfVue from '../atomic/PointOfVue.vue'
+import PointOfVue from '../atomic/PointOfVue2.vue'
 import PopButton from '../atomic/PopButton.vue'
 import PovCreator from './PovCreator.vue'
 import { usePageState, useCreatorState } from '../../store/state'

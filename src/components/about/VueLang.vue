@@ -4,7 +4,7 @@ const count = ref(0)
 </script>
 
 <template>
-  <div class="p-2 mt-10 w-full md:p-4 md:w-3/4 m-auto">
+  <div class="p-2 mt-10 w-full md:p-4 md:w-3/4 m-auto overflow-hidden">
     <div
       class="border-1 border-gray-400 rounded-b rounded-r rounded-l p-8 items-center justify-between"
     >

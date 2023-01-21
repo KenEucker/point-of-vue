@@ -74,7 +74,7 @@ const beginCountdown = () => {
 </script>
 
 <template>
-  <div class="w-full md:p-4 md:w-3/4 m-auto">
+  <div class="w-full md:p-4 md:w-3/4 m-auto overflow-hidden">
     <div class="border-1 border-gray-400 rounded-b rounded-r rounded-l p-4">
       <div class="col-span-2 text-center">
         <img class="w-20 md:w-35 m-auto" src="/img/vueuse-icon.svg" />

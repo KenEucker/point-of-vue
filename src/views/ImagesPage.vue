@@ -3,7 +3,7 @@ import { ref, computed, watch, reactive } from 'vue'
 import ImageModal from '../components/images/ImageModal.vue'
 import ImageCard from '../components/images/ImageCard.vue'
 import PaginationButtons from '../components/atomic/PaginationButtons.vue'
-import { getRange } from '../utilities'
+import { getRange, sleep } from '../utilities'
 import { useImagesState } from '../store/state'
 import SpinnerWithError from '../components/atomic/SpinnerWithError.vue'
 
@@ -15,19 +15,28 @@ const loadedImageState = reactive<any>({
   loading: true,
 })
 
-watch(imagesState, () => {
-  if (loadedImageState.albums.length !== imagesState.getAlbums?.length) {
-    loadedImageState.albums = imagesState.getAlbums
-  }
+watch(imagesState, async () => {
   loadedImageState.loading = true
+  if (loadedImageState.albums.length !== imagesState.getAlbums?.length) {
+    loadedImageState.loading = false
+    for (let i = 0; i < imagesState.getAlbums.length; i++) {
+      loadedImageState.albums.push(imagesState.getAlbums[i])
+      await sleep(50)
+    }
+  }
   if (
     loadedImageState.selectedAlbum &&
     imagesState.checkFetchAlbumImages(loadedImageState.selectedAlbum)
   ) {
     // console.log('new images loaded for selected album', loadedImageState.selectedAlbum)
-    loadedImageState.images = imagesState.getImagesMap.get(loadedImageState.selectedAlbum)
+    const imagesToLoad = imagesState.getImagesMap.get(loadedImageState.selectedAlbum) ?? []
+
+    for (let i = 0; i < imagesToLoad.length; i++) {
+      loadedImageState.images.push(imagesToLoad[i])
+      await sleep(50)
+    }
+    loadedImageState.loading = false
   }
-  loadedImageState.loading = false
 })
 
 if (!imagesState.albumsHaveBeenFetched) {
@@ -80,7 +89,7 @@ const fromTo = computed(getFromTo)
           :alt="album.title ?? ''"
           :description="album.description ?? ''"
           :img="album.cover ?? ''"
-          @click="selectAlbum(album.id)"
+          @click.prevent="selectAlbum(album.id)"
         />
       </div>
       <div v-show="!loadedImageState.albums.length" class="w-full text-center">

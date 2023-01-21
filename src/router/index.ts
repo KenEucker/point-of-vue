@@ -53,6 +53,17 @@ const routes: RouteRecordRaw[] = [
     beforeEnter: useAuthGuard,
   },
   {
+    path: '/threads',
+    name: 'Threads',
+    component: () => import('../views/ThreadsPage.vue'),
+    meta: {
+      requires: ['google'],
+      protected: true,
+      mainMenu: true,
+    },
+    beforeEnter: useAuthGuard,
+  },
+  {
     path: '/data',
     name: 'Data',
     component: () => import('../views/DataPage.vue'),
@@ -77,6 +88,7 @@ const routes: RouteRecordRaw[] = [
     name: 'Vues',
     component: () => import('../views/VuesPage.vue'),
     meta: {
+      requires: ['github'],
       protected: true,
       mainMenu: true,
     },

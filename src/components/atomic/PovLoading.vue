@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { faker } from '@faker-js/faker'
-import PointOfVue from './PointOfVue.vue'
+import PointOfVue from './PointOfVue2.vue'
 
 const props = defineProps({
   fullScreen: {

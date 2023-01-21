@@ -59,6 +59,6 @@ const signUp = async (e: Event) => {
         </button>
       </div>
     </form>
-    <sign-up-form v-if="showSignupModal" :email="emailRef.value" />
+    <sign-up-form v-if="showSignupModal" :email="emailRef" />
   </div>
 </template>

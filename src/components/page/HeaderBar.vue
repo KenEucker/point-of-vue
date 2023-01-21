@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PointOfVue from '../atomic/PointOfVue.vue'
+import PointOfVue from '../atomic/PointOfVue2.vue'
 import PopButton from '../atomic/PopButton.vue'
 import RouteButton from '../atomic/RouteButton.vue'
 import MenuOpen from 'vue-ionicons/dist/md-funnel.vue'
@@ -30,11 +30,11 @@ const { width } = useWindowSize()
         <menu-open h="20" w="20" />
       </button>
 
-      <RouteButton path="/posts">
+      <!-- <RouteButton path="/posts">
         <pop-button variant="red">
           <point-of-vue class="md:ml-6" :full="width > 1200" :expanded="width > 500" />
         </pop-button>
-      </RouteButton>
+      </RouteButton> -->
     </div>
 
     <div

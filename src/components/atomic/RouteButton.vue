@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Pov from 'vue-ionicons/dist/md-bonfire.vue'
-import Groups from 'vue-ionicons/dist/md-people.vue'
 import Home from 'vue-ionicons/dist/md-home.vue'
 import NodeJs from 'vue-ionicons/dist/logo-nodejs.vue'
 import List from 'vue-ionicons/dist/md-list.vue'
@@ -11,6 +10,7 @@ import Profile from 'vue-ionicons/dist/md-person.vue'
 import Settings from 'vue-ionicons/dist/md-settings.vue'
 import Create from 'vue-ionicons/dist/md-color-palette.vue'
 import Images from 'vue-ionicons/dist/md-images.vue'
+import Threads from 'vue-ionicons/dist/md-text.vue'
 import { RouterLink } from 'vue-router'
 
 const props = defineProps({
@@ -49,7 +49,7 @@ const props = defineProps({
     <explore v-else-if="props.text == 'Data'" w="30" h="30" class="text-blue-600" />
     <notifications v-else-if="props.text == 'Notifications'" w="30" h="30" />
     <saved v-else-if="props.text == 'Favorites'" w="30" h="30" />
-    <groups v-else-if="props.text == 'Groups'" w="30" h="30" />
+    <threads v-else-if="props.text == 'Threads'" w="30" h="30" :style="{ color: '#F5BA35' }" />
     <profile v-else-if="props.text == 'Profile'" w="30" h="30" />
     <settings v-else-if="props.text == 'Settings'" w="30" h="30" />
     <span v-show="props.expanded" class="ml-5 capitalize align-top text-md">{{
