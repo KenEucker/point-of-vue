@@ -4,12 +4,13 @@ import * as Vue from 'vue'
 import { useStorage } from '@vueuse/core'
 import Split from 'split.js'
 import { loadModule } from 'vue3-sfc-loader'
-import { StorageName, useDarkGlobal, compileComponent } from '../../utilities'
+import { StorageName, useDarkGlobal } from '../../utilities'
 import MonacoEditor from './MonacoEditor.vue'
 import EditorTabs from './EditorTabs.vue'
 import { useMagicKeys } from '@vueuse/core'
 import VueComponent from './VueComponent.vue'
-import { usePageState } from '../../store/state'
+import { usePageState, useVuesState } from '../../store/state'
+import Sass from 'sass.js/dist/sass.sync.js'
 
 const tabs = {
   vue: 'json',
@@ -29,6 +30,8 @@ const props = defineProps({
     default: () => ({}),
   },
 })
+
+const vuesState = useVuesState()
 
 const pageState = usePageState()
 const containerRef = ref()
@@ -74,7 +77,7 @@ const onPlay = async () => {
     const options = {
       moduleCache: { vue: Vue },
       getFile: async () => {
-        const compiled = await compileComponent(code.value)
+        const compiled = await vuesState.compileComponent(code.value)
         if (compiled.logs) {
           if (compiled.logs.info) {
             logs.info = compiled.logs.info
@@ -91,6 +94,12 @@ const onPlay = async () => {
         // const style = Object.assign(document.createElement('style'), { textContent })
         // const ref = document.head.getElementsByTagName('style')[0] || null
         // document.head.insertBefore(style, ref)
+
+        /// Add tailwind
+        return Sass.compileSync(`
+          @tailwind base;
+          @tailwind components;
+          @tailwind utilities;`)
       },
     }
     const updatedComponentValues = JSON.parse(code.value.json)
@@ -123,13 +132,13 @@ onMounted(() => {
     <div id="component" class="w-full h-full">
       <div v-if="logs.error || logs.info" class="h-full">
         <div
-          class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md"
+          class="px-4 py-3 text-teal-900 bg-teal-100 border-t-4 border-teal-500 rounded-b shadow-md"
           role="alert"
         >
           <div class="flex">
             <div class="py-1">
               <svg
-                class="fill-current h-6 w-6 text-teal-500 mr-4"
+                class="w-6 h-6 mr-4 text-teal-500 fill-current"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
               >
@@ -146,13 +155,13 @@ onMounted(() => {
         </div>
         <div
           v-if="logs.info"
-          class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md"
+          class="px-4 py-3 text-teal-900 bg-teal-100 border-t-4 border-teal-500 rounded-b shadow-md"
           role="alert"
         >
           <div class="flex">
             <div class="py-1">
               <svg
-                class="fill-current h-6 w-6 text-teal-500 mr-4"
+                class="w-6 h-6 mr-4 text-teal-500 fill-current"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
               >

@@ -16,6 +16,7 @@ import { JwtVerifier, getTokenFromHeader } from '@serverless-jwt/jwt-verifier'
 const ImgurClient = imgur.ImgurClient
 // @ts-expect-error
 const GithubClient = Client.default
+const auth0Configured = process.env.AUTH0_DOMAIN && process.env.AUTH0_CID
 
 let auth0ManagementToken: string | null = null
 
@@ -138,7 +139,7 @@ const getCreatorFromJwt = (authorization: string, auth0?: any, prisma?: any) => 
 }
 
 const getAuthManagementToken = (requestor?: any, auth0?: any) => {
-  if (requestor.token && !auth0?.sub) {
+  if ((requestor.token && !auth0?.sub) || !auth0Configured) {
     return Promise.resolve(null)
   }
   if (auth0ManagementToken) {
@@ -342,6 +343,7 @@ const Global = {
       connection: 'github',
     }
     const identity: any = await getIdentityProfile(requestor, auth0, prisma)
+    console.log({ identity, requestor })
     if (!identity && !requestor.token) {
       throw new GraphQLError("You can't do that (E: 0004)")
     } else if (identity) {

@@ -166,7 +166,7 @@ export const useCreatorState = defineStore({
       `
       const { data, error: queryError } = await apolloClient.query({
         query: getCreatorViaEmailAndIdPair,
-        variables: { id: creator.id, email: creator.email },
+        variables: { id: creator.id ?? 0, email: creator.email },
       })
       let error = null
 

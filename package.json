@@ -89,6 +89,7 @@
     "prisma": "^4.8.1",
     "prisma-class-validator-generator": "^0.2.0",
     "sass": "^1.57.1",
+    "sass.js": "^0.11.1",
     "split.js": "^1.6.5",
     "stylelint": "^14.16.1",
     "stylelint-config-prettier": "^9.0.4",

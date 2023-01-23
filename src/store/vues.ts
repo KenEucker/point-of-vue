@@ -1,13 +1,14 @@
-import { shield } from 'graphql-shield'
 import { VueComponent } from './../schema/generated/types.d'
 import { apolloClient } from '.'
 import { defineStore } from 'pinia'
 import { gql } from '@apollo/client/core'
 import { useStorage } from '@vueuse/core'
-import { Creator } from '../schema/generated/types'
-import auth from '../auth'
-import { watch } from 'vue'
-import { PovComponent } from '../utilities'
+import {
+  getGraphUrl,
+  PovComponent,
+  removeAllAndSomeTagsFromHtml,
+  removeNodesWithKeywords,
+} from '../utilities'
 
 // Local storage state
 const storedGitHubToken = useStorage('github-token', '')
@@ -31,6 +32,127 @@ export const useVuesState = defineStore({
     getVueComponents: (s) => s.vueComponents,
   },
   actions: {
+    async compileComponent(payload: Record<string, any>): Promise<{ output: string; logs: any }> {
+      const token = localStorage.getItem('creator-token')
+      let dataRequest
+      if (payload.graphql.trim().length) {
+        const options = {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            query: `${payload.graphql}`,
+          }),
+        }
+
+        dataRequest = await fetch(getGraphUrl(), options).then((res) => res.json())
+      }
+
+      const normalizedHTML = removeAllAndSomeTagsFromHtml(
+        payload.html,
+        ['head', 'link', 'script', 'style'],
+        ['body', 'html']
+      )
+      const normalizedJS = removeNodesWithKeywords(payload.javascript, [
+        'window',
+        'alert',
+        'import',
+        'fetch',
+        'require',
+        'console.log',
+      ])
+
+      const itemsWereRemoved = normalizedJS.removed.length > 0 || normalizedHTML.removed.length > 0
+      const logs = ''
+      const errorsMessage = 'Lines with the following keywords were removed during compilation'
+      const errorsObject = {
+        template: normalizedHTML.removed,
+        script: normalizedJS.removed,
+      }
+      const errors = itemsWereRemoved
+        ? `console.log('${errorsMessage}', ${JSON.stringify(errorsObject)}, new Date())`
+        : ''
+
+      /// TODO: check this payload value
+      const normalizedJson = payload.json ?? '{}'
+      return {
+        output: `
+        <script setup>
+          ${logs}
+          ${errors}
+          /// Hydration
+          const query = ${JSON.stringify(dataRequest?.data ?? {})}
+          const vue = ${normalizedJson}
+          ${normalizedJS.output}
+        </script>
+        <template>
+          <div class="flex justify-center">
+            <div class="block p-6 rounded-lg shadow-lg bg-white max-w-sm">
+              ${normalizedHTML.output}
+            </div>
+          </div>
+        </template>`,
+        logs: undefined,
+      }
+      /// Feature disabled
+      //   <style scoped>
+      //     ${payload.css}
+      //   </style>
+      // `
+    },
+
+    compileComponentHTML(payload: Record<string, any>, isDark?: boolean) {
+      const token = localStorage.getItem('creator-token')
+      return `<html class="${isDark ? 'dark' : ''}">
+        <head>
+            <style id="_style">${payload.css}</style>
+            <script type="module" id="_script">
+                ${payload.javascript}
+                window.addEventListener('message', function(event) {
+                    console.log(event)
+                    if (event.data === 'theme-dark') {
+                        document.documentElement.classList.add('dark')
+                    } else if (event.data === 'theme-light') {
+                        document.documentElement.classList.remove('dark')
+                    }
+                })
+            </script>
+            <script>
+              
+              const options = {
+                method: "post",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": \`Bearer ${token}\`
+                },
+                body: JSON.stringify({
+                  query: \`${payload.graphql}\`
+                })
+              };
+          
+              fetch('${getGraphUrl()}', options)
+                .then(res => res.json())
+                .then((d) => {
+                  console.log({d})
+                  /// Call Render Method
+                  document.getElementById('data').innerText = JSON.stringify(d?.data, null, 2)
+                });
+            </script>
+        </head>
+        <body>
+            <div id="_html">
+              ${payload.html}
+            </div>
+            <div>
+              <h1>DATA</h1>
+              <pre id="data"></pre>
+            </div>
+        </body>
+    </html`
+    },
+
     async fetchVues(oid?: string) {
       if (this.vuesFetched) {
         return Promise.resolve(this.vues)
