@@ -103,10 +103,8 @@ export const useImagesState = defineStore({
           query: loginViaEmailQuery,
           variables: { token: storedImgurToken.value, albumId },
         })
-        console.log({ data })
         if (data?.images?.length && !queryError) {
           console.log('images fetched', albumId)
-          this.images.set(albumId, data.images)
         } else if (queryError) {
           console.error(queryError)
         }

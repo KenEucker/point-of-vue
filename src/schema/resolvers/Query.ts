@@ -13,17 +13,51 @@ const getDefaultQueryOptions = (by: ForOptionsInput) => ({
 })
 
 const Query = {
-  creator: (parent: never, args: { where: { id: any }; id: any }, { prisma }: any, info: any) => {
+  creator: async (parent: never, args: any, { prisma, auth0 }: any, info: any) => {
     const where = {
       ...args.where,
       id: args?.id ?? args?.where?.id,
     }
+    const confirmationId = args?.id ?? args?.where?.id
+    const emailWhereIsSet = where?.email?.length
+    const idWhereIsSet = !!where?.id
+    const idWhereIsZeroedOut = idWhereIsSet && where.id === -1
+    const authedRequest = idWhereIsSet || idWhereIsZeroedOut || emailWhereIsSet
+    const noSearchParams = Object.keys(args?.where ?? {}).length == 0
 
-    if (!where.id && Object.keys(args?.where ?? {}).length == 0) {
+    if (noSearchParams && !idWhereIsSet) {
       throw new GraphQLError('You must specify which creator to query.')
+    } else if (authedRequest && !auth0) {
+      throw new GraphQLError("You can't do that (E: 0008)")
+    } else if (idWhereIsSet && !emailWhereIsSet) {
+      throw new GraphQLError("You aren't allowed to search by ID only")
+    } else {
+      delete where.id
     }
 
-    return prisma.creator.findUnique({ where })
+    const creator = await prisma.creator.findUnique({ where })
+
+    if (emailWhereIsSet && creator?.email !== where.email) {
+      throw new GraphQLError("You can't do that (E: 0009)")
+    } else if (idWhereIsSet && !idWhereIsZeroedOut && creator?.id !== confirmationId) {
+      throw new GraphQLError("You can't do that (E: 0010)")
+    }
+
+    /// Check and throw error or pear down the creator response based on permissions here
+    /// Maybe check for mutual "following"?
+    if (!authedRequest && creator) {
+      creator.id = 0
+      creator.email = ''
+    }
+
+    // console.log({
+    //   idWhereIsSet,
+    //   idWhereIsZeroedOut,
+    //   confirmationId,
+    //   trueFalse: creator?.id !== confirmationId,
+    // })
+
+    return creator
   },
 
   post: (parent: never, args: { where: { id: any }; id: any }, { prisma }: any, info: any) => {

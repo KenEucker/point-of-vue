@@ -13,6 +13,7 @@ import auth from './auth'
 
 import { MotionPlugin } from '@vueuse/motion'
 import { createPinia } from 'pinia'
+import VueEasyLightbox from 'vue-easy-lightbox'
 
 const app = createApp(App)
 
@@ -32,6 +33,7 @@ app.use(createPinia())
 
 // other UI plugins
 app.use(MotionPlugin)
+app.use(VueEasyLightbox)
 
 // Run
 app.mount('#app')

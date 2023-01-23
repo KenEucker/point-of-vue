@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import PostOptions from './PostOptions.vue'
 import PostInteractionsBar from './PostInteractionsBar.vue'
-import LoadingSpinner from '../atomic/PovLoading.vue'
+import SpinnerWithError from '../atomic/SpinnerWithError.vue'
 import PostText from './PostText.vue'
 import PovCreator from '../creator/PovCreator.vue'
 import PostMedia from './PostMedia.vue'
@@ -53,7 +53,7 @@ async function deletePost() {
 
 <template>
   <div class="relative flex flex-col w-full p-5 mb-4 rounded-md bg-ll-neutral dark:bg-ld-neutral">
-    <loading-spinner v-if="isLoading" :full-screen="false" />
+    <spinner-with-error v-if="isLoading" type="pov" :full-screen="false" />
     <div v-else>
       <div class="flex justify-between">
         <button @click="goToCreatorPage">

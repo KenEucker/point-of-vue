@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import LoadingSpinner from '../atomic/PovLoading.vue'
 import PovCreator from '../creator/PovCreator.vue'
+import SpinnerWithError from '../atomic/SpinnerWithError.vue'
 import { useCreatorState } from '../../store/state'
 import { ref, reactive } from 'vue'
 import { Creator } from '../../schema/generated/types'
@@ -47,7 +47,7 @@ const completeSignup = async (e: Event) => {
 </script>
 <template>
   <div class="w-full mt-4 bg-gray-900 rounded-lg shadow-lg">
-    <loading-spinner v-if="loadingRef" />
+    <spinner-with-error v-if="loadingRef" type="pov" :full-screen="false" />
     <form
       v-else
       ref="signUpForm"

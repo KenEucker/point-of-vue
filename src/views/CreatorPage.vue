@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import ArrowBack from 'vue-ionicons/dist/md-arrow-back.vue'
 import PovPost from '../components/post/PovPost.vue'
-import LoadingSpinner from '../components/atomic/PovLoading.vue'
-import ErrorMessage from '../components/atomic/ErrorMessage.vue'
+import SpinnerWithError from '../components/atomic/SpinnerWithError.vue'
 import PovCreator from '../components/creator/PovCreator.vue'
 import FollowCreator from '../components/creator/FollowCreator.vue'
 import { reactive, watch, ref } from 'vue'
@@ -106,21 +105,13 @@ function selected(idx: number) {
 
 <template>
   <div>
-    <div v-if="creatorLoading || postsLoading">
-      <loading-spinner />
-    </div>
-    <div v-else-if="creatorError || postsError">
-      <error-message
-        v-if="creatorError"
-        title="Error Fetching Profile Data"
-        :message="creatorError.message"
-      />
-      <error-message
-        v-if="postsError"
-        title="Error Fetching Profile Data"
-        :message="postsError.message"
-      />
-    </div>
+    <spinner-with-error
+      v-if="postsLoading || creatorLoading || creatorError || postsError"
+      type="pov"
+      :error="creatorError?.message ?? postsError?.message"
+      title="creatorError?.message ? 'Error Fetching Profile Data' : 'Error Fetching Post Data'"
+      :full-screen="false"
+    />
     <div v-else class="w-full p-4 pr-6 max-w-fit mx-auto">
       <div class="ml-10 md:ml-0">
         <div class="flex p-1">

@@ -4,7 +4,7 @@ import { ref, computed } from 'vue'
 import { useCreatorState } from '../store/state'
 import { Creator } from '../schema/generated/types.d'
 import { useRouter } from 'vue-router'
-import LoadingSpinner from '../components/atomic/PovLoading.vue'
+import SpinnerWithError from '../components/atomic/SpinnerWithError.vue'
 import ErrorMessage from '../components/atomic/ErrorMessage.vue'
 
 const creatorState = useCreatorState()
@@ -24,6 +24,7 @@ const errorMessage = ref('')
 const dirty = ref(false)
 
 if (creatorState.isCreatorSignedUp !== true) {
+  console.log('no way josé')
   router.push('/')
 }
 
@@ -151,10 +152,12 @@ async function saveFields(e: Event) {
     >
       <pov-creator :creator="creatorState.getCreator" size="large" :go-to-creator-page="false" />
     </section>
-    <div v-if="loadingRef">
-      <loading-spinner :full-screen="false" />
-    </div>
-    <error-message v-else-if="errors" :message="errorMessage" />
+    <spinner-with-error
+      v-if="loadingRef || errors"
+      type="pov"
+      :error="errorMessage"
+      :full-screen="false"
+    />
     <section v-else class="max-w-4xl p-6 mx-auto mt-20 rounded-md shadow-md dark:bg-gray-800">
       <h1 class="text-xl font-bold capitalize dark:text-white">Profile settings</h1>
       <form>

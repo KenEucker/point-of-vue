@@ -11,6 +11,9 @@ import { GraphQLError } from 'graphql'
 import auth0Client from 'auth0'
 import Client, { auth, gql, getMethod } from '@github-graph/api'
 import imgur from 'imgur'
+import { JwtVerifier, getTokenFromHeader } from '@serverless-jwt/jwt-verifier'
+// @ts-expect-error
+const ImgurClient = imgur.ImgurClient
 
 const ImgurImageMap = (d: ImgurImage) => ({
   id: d.id,
@@ -66,7 +69,179 @@ const constructGitHubUser = (profile: any): GitHubAccount => ({
   timezone: profile.user_metadata.timezone,
 })
 
+let auth0ManagementToken: string | null = null
+
+const validateJwt = async (authorization: string, options: any) => {
+  let claims
+  let accessToken
+
+  try {
+    const verifier = new JwtVerifier(options)
+    accessToken = getTokenFromHeader(authorization)
+    claims = await verifier.verifyAccessToken(accessToken)
+  } catch (err: any) {
+    if (typeof options.handleError !== 'undefined' && options.handleError !== null) {
+      return options.handleError(err)
+    }
+
+    return {
+      error: err.code,
+      message: err.message,
+    }
+  }
+
+  return {
+    accessToken,
+    claims,
+  }
+}
+
+const getCreatorFromJwt = (authorization: string, auth0?: any, prisma?: any) => {
+  if (!authorization?.length) {
+    return Promise.resolve(null)
+  }
+
+  const authOptions = auth0
+    ? {
+        audience: auth0.aud[0] ?? '',
+        issuer: auth0.iss,
+      }
+    : {
+        issuer: 'https://dev-0n0gjhjq.us.auth0.com/',
+        audience: 'http://localhost:8100/graphql',
+      }
+
+  return validateJwt(`Bearer ${authorization}`, authOptions)
+    .then((jwt) => {
+      if (!jwt.error) {
+        if (prisma) {
+          return prisma.creator.findFirstOrThrow({
+            where: {
+              subs: {
+                has: jwt.claims?.sub,
+              },
+            },
+          })
+        } else {
+          return { subs: [jwt.sub] }
+        }
+      }
+
+      return Promise.resolve(null)
+    })
+    .catch((error) => {
+      console.log({ error })
+      return null
+    })
+}
+
+const getAuthManagementToken = (requestor?: any, auth0?: any) => {
+  if (requestor.token && !auth0?.sub) {
+    return Promise.resolve(null)
+  }
+  if (auth0ManagementToken) {
+    console.log({ auth0ManagementToken })
+    return Promise.resolve(auth0ManagementToken)
+  }
+
+  const authClient = new auth0Client.AuthenticationClient({
+    domain: process.env.AUTH0_DOMAIN ?? '',
+    clientId: process.env.AUTH0_MAN_CID,
+    clientSecret: process.env.AUTH0_MAN_SEC,
+  })
+
+  return new Promise<string | null>((resolve) => {
+    authClient.clientCredentialsGrant(
+      {
+        audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`,
+      },
+      function (err, response) {
+        if (err) {
+          console.error({ err })
+          return resolve(null)
+        }
+
+        return resolve((auth0ManagementToken = response?.access_token))
+      }
+    )
+  })
+}
+
+const getIdentityProfile = (requestor: any, auth0?: any, prisma?: any) => {
+  return new Promise((resolve) => {
+    return getAuthManagementToken(requestor, auth0).then((token) => {
+      if (!token || (!requestor.sub && !auth0?.sub)) {
+        console.log('whyyyyy', auth0)
+        return getCreatorFromJwt(requestor.token, auth0, prisma).then(resolve)
+      }
+
+      const management = new auth0Client.ManagementClient({
+        token,
+        domain: process.env.AUTH0_DOMAIN ?? '',
+      })
+
+      return management
+        .getUser({ id: requestor.sub ?? auth0.sub })
+        .then(function (profile) {
+          requestor.email = requestor.google?.email ?? requestor.github?.email ?? profile.email
+          requestor.ip = profile.last_ip
+
+          if (!requestor.sub) {
+            /// requested for info not authentication
+            return resolve(requestor)
+          } else {
+            /// All fields, requested for authentication
+            return resolve({ ...requestor, ...profile })
+          }
+        })
+        .catch(function (_err) {
+          // The cliff swallow or American cliff swallow (Petrochelidon pyrrhonota) is a member of the passerine bird family Hirundinidae, the swallows and martins. The generic name Petrochelidon is derived from Ancient Greek petros meaning "rock" and khelidon "swallow", and the specific name pyrrhonota comes from purrhos meaning "flame-coloured" and -notos "-backed".
+
+          console.log({ _err })
+          resolve(requestor)
+        })
+    })
+  })
+}
+
 const Global = {
+  viewer: async (
+    _parent: never,
+    args: { from: { token: string; id: string | number; email: string } },
+    { prisma, auth0 }: any,
+    info: any
+  ) => {
+    /// right back at ya
+    const requestor: any = {
+      token: args.from?.token,
+      // Remove?
+      id: args.from?.id,
+      email: args.from?.email,
+    }
+
+    const profile: any = await getIdentityProfile(requestor, auth0, prisma)
+
+    if (profile) {
+      if (profile.id && profile.email) {
+        /// Profile was decoded from valid token
+        profile.token = requestor.token
+        return profile
+      }
+
+      /// User profile retrieved from Auth0, need to add the creator id
+      const creator = await prisma.creator.findUnique({
+        where: { email: requestor.email },
+      })
+      profile.id = creator.id
+      profile.email = creator.email
+
+      return profile
+    } else if (requestor.token) {
+      requestor.token = 'invalid'
+    }
+
+    return requestor
+  },
   self: async (
     _parent: never,
     args: { from: { token: string; id: string | number; email: string } },
@@ -88,90 +263,48 @@ const Global = {
     const authentication: any = auth0 ? {} : undefined
 
     if (auth0) {
-      const authClient = new auth0Client.AuthenticationClient({
-        domain: process.env.AUTH0_DOMAIN ?? '',
-        clientId: process.env.AUTH0_MAN_CID,
-        clientSecret: process.env.AUTH0_MAN_SEC,
-      })
-      let token = null //args.from?.token
-      authentication.creatorSubId = auth0.sub
+      /// Instructs the next method to return the entire profile
+      requestor.sub = auth0.sub
 
-      if (!token) {
-        await new Promise<void>((resolve) => {
-          authClient.clientCredentialsGrant(
-            {
-              audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`,
-            },
-            function (err, response) {
-              if (err) {
-                console.error({ err })
-                return resolve()
-              }
-              token = response?.access_token
-              resolve()
-            }
-          )
+      await getIdentityProfile(requestor, auth0, prisma)
+        .then(function (profile: any) {
+          requestor.email = profile.email
+          requestor.ip = profile.last_ip
+
+          authentication.github = profile.identities?.find(
+            (i: { connection: string }) => i.connection === 'github'
+          )?.access_token
+          authentication.google = profile.identities?.find(
+            (i: { connection: string }) => i.connection === 'google-oauth2'
+          )?.access_token
+          authentication.imgur = profile.identities?.find(
+            (i: { connection: string }) => i.connection === 'Imgur'
+          )?.access_token
+
+          if (authentication.imgur) {
+            requestor.imgur = constructImgurUser(profile)
+          }
+          if (authentication.google) {
+            requestor.google = constructGoogleUser(profile)
+          }
+          if (authentication.github) {
+            requestor.github = constructGitHubUser(profile)
+          }
         })
-      }
-
-      if (token) {
-        const management = new auth0Client.ManagementClient({
-          token,
-          domain: process.env.AUTH0_DOMAIN ?? '',
+        .catch(function (_err) {
+          // The cliff swallow or American cliff swallow (Petrochelidon pyrrhonota) is a member of the passerine bird family Hirundinidae, the swallows and martins. The generic name Petrochelidon is derived from Ancient Greek petros meaning "rock" and khelidon "swallow", and the specific name pyrrhonota comes from purrhos meaning "flame-coloured" and -notos "-backed".
+          // console.error(_err.message)
+          requestor.token = 'error'
         })
+    } else {
+      authentication.auth0 = 'invalid'
+    }
 
-        await management
-          .getUser({ id: auth0.sub })
-          .then(function (profile) {
-            requestor.email = profile.email
-            requestor.ip = profile.last_ip
-
-            authentication.github = profile.identities?.find(
-              (i) => i.connection === 'github'
-            )?.access_token
-            authentication.google = profile.identities?.find(
-              (i) => i.connection === 'google-oauth2'
-            )?.access_token
-            authentication.imgur = profile.identities?.find(
-              (i) => i.connection === 'Imgur'
-            )?.access_token
-
-            if (authentication.imgur) {
-              requestor.imgur = constructImgurUser(profile)
-            }
-            if (authentication.google) {
-              requestor.google = constructGoogleUser(profile)
-            }
-            if (authentication.github) {
-              requestor.github = constructGitHubUser(profile)
-            }
-          })
-          .catch(function (_err) {
-            // The cliff swallow or American cliff swallow (Petrochelidon pyrrhonota) is a member of the passerine bird family Hirundinidae, the swallows and martins. The generic name Petrochelidon is derived from Ancient Greek petros meaning "rock" and khelidon "swallow", and the specific name pyrrhonota comes from purrhos meaning "flame-coloured" and -notos "-backed".
-            console.error(_err.message)
-          })
-      } else {
-        authentication.auth0 = 'invalid'
+    if (where.email && where.email !== requestor.email) {
+      /// TODO: remove hack for Imgur testing
+      if (!requestor.imgur) {
+        throw new GraphQLError("You can't do that (E: 0002)")
       }
-      /// TODO: Remove this
-      // authentication.auth0 = token
-      if (where.email) {
-        const matchesGoogle = where.email === requestor.google?.email
-        const matchesGitHub = where.email === requestor.github?.email
-        const matchesImgur = false // TODO: Remove
-        if (matchesGoogle) {
-          requestor.email = requestor.google.email
-        } else if (matchesGitHub) {
-          requestor.email = requestor.github.email
-        } else if (matchesImgur) {
-          /// TODO: fix this imgur limitation
-          requestor.email = requestor.google.email ?? requestor.github.email
-        } else {
-          throw new GraphQLError("You can't do that (E: 0002)")
-        }
-      }
-    } else if (requestor.token.length < 10) {
-      throw new GraphQLError("You can't do that (E: 0003)")
     }
 
     const canQueryForCreator = requestor.email || where.email
@@ -271,8 +404,7 @@ const Global = {
     if (!args?.where?.albumId) {
       throw new GraphQLError('You must supply an albumId')
     }
-    // @ts-expect-error
-    const imgurClient = new imgur.ImgurClient({
+    const imgurClient = new ImgurClient({
       accessToken: args.from?.token,
     })
 
@@ -294,8 +426,7 @@ const Global = {
       throw new GraphQLError("You can't do that  (E: 0007)")
     }
 
-    // @ts-expect-error
-    const imgurClient = new imgur.ImgurClient({
+    const imgurClient = new ImgurClient({
       accessToken: args.from?.token,
     })
 
@@ -305,7 +436,7 @@ const Global = {
     return response.success ? response.data?.map(ImgurAlbumMap) : []
   },
   // Google
-  // docs: async (
+  // threads: async (
   //   _parent: never,
   //   _args: { from: { token: any } },
   //   { prisma, auth0 }: any,

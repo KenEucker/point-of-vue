@@ -100,9 +100,9 @@ export const useCreatorState = defineStore({
     },
     async checkLogin() {
       if (this.auth0Configured) {
+        const creatorValuesStored = storedId.value !== 0 || storedEmail.value.length
         watch(auth.user, async (user) => {
           if (auth?.isAuthenticated?.value) {
-            this.loggedIn = true
             this.creator = {
               id: -1,
               name: user.name,
@@ -111,6 +111,7 @@ export const useCreatorState = defineStore({
               handle: user.nickname,
               verified: false,
             }
+
             if (!storedToken.value.length) {
               this.auth0Token = await auth.getAccessTokenSilently()
 
@@ -119,9 +120,12 @@ export const useCreatorState = defineStore({
               }
             }
 
-            this.fetchCreator(this.creator)
-          } else if (storedId.value !== 0 || storedEmail.value.length) {
-            this.logout()
+            if (creatorValuesStored) {
+              this.fetchCreator()
+            } else {
+              this.fetchSelf()
+            }
+            this.loggedIn = true
           }
         })
       } else {
@@ -139,8 +143,51 @@ export const useCreatorState = defineStore({
     },
     async fetchCreator(creator?: Creator) {
       creator = creator ?? ({ id: storedId.value, email: storedEmail.value } as Creator)
+      const getCreatorViaEmailAndIdPair = gql`
+        query StoreFetchCreator($id: Int!, $email: String!) {
+          creator(where: { id: $id, email: $email }) {
+            id
+            name
+            email
+            handle
+            verified
+            status
+            avatar
+            location
+            banner
+            bio
+            birthday
+            website
+            posts {
+              id
+            }
+          }
+        }
+      `
+      const { data, error: queryError } = await apolloClient.query({
+        query: getCreatorViaEmailAndIdPair,
+        variables: { id: creator.id, email: creator.email },
+      })
+      let error = null
+
+      if (data?.creator) {
+        this.creator = data.creator
+        storedId.value = this.creator.id
+        storedEmail.value = this.creator.email
+        this.signedUp = true
+        this.loggedIn = true
+      } else if (queryError) {
+        error = queryError.message
+      } else {
+        error = 'no creator found with that id and email address'
+      }
+
+      return error
+    },
+    async fetchSelf(creator?: Creator) {
+      creator = creator ?? ({ id: storedId.value, email: storedEmail.value } as Creator)
       // console.log({ creator, token: storedToken.value })
-      const loginViaEmailQuery = gql`
+      const getSelfViaToken = gql`
         query StoreFetchSelf($token: String!) {
           self(from: { token: $token }) {
             requestor {
@@ -204,7 +251,7 @@ export const useCreatorState = defineStore({
         }
       `
       const { data, error: queryError } = await apolloClient.query({
-        query: loginViaEmailQuery,
+        query: getSelfViaToken,
         variables: { token: storedToken.value },
       })
       let error = null

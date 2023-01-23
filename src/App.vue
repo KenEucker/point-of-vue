@@ -15,7 +15,7 @@ povState.initPovState()
   <app-layout
     :left-menu-open="pageState.leftMenuOpen"
     :right-menu-open="pageState.rightMenuOpen"
-    class="w-screen h-screen"
+    class="w-full h-screen"
   >
     <template #header>
       <header-bar

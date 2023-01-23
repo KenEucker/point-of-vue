@@ -1,8 +1,15 @@
 <script setup lang="ts">
+import { onClickOutside } from '@vueuse/core'
+import { ref } from 'vue'
+
 const props = defineProps({
-  img: {
+  image: {
     type: String,
     default: '',
+  },
+  images: {
+    type: Array,
+    default: () => [],
   },
   show: {
     type: Boolean,
@@ -15,17 +22,11 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'next', 'previous'])
+const viewerRef = ref()
+onClickOutside(viewerRef, () => emit('close'))
 </script>
 <template>
-  <div
-    v-if="props.show"
-    id="modal-id"
-    class="fixed inset-0 top-0 left-0 z-50 flex items-center justify-center h-full bg-center bg-no-repeat bg-cover outline-none min-w-full animated fadeIn faster focus:outline-none"
-    style="
-      background-image: url('https://images.unsplash.com/photo-1604262725913-1c415cd27564?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2142&q=80');
-    "
-  >
-    <div class="absolute inset-0 z-0 bg-black opacity-80"></div>
+  <!-- <div class="absolute inset-0 z-0 bg-black opacity-80"></div>
     <div class="relative flex flex-col items-center justify-center min-h-full">
       <div class="container">
         <div class="w-full max-w-md p-6 bg-gray-900 shadow-lg rounded-xl">
@@ -179,6 +180,5 @@ const emit = defineEmits(['close', 'next', 'previous'])
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </div> -->
 </template>

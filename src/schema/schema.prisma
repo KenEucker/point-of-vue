@@ -35,6 +35,7 @@ model Creator {
   handle       String        @unique
   email        String        @unique
   verified     Boolean       @default(false)
+  subs         String[]      @default([])
   posts        Post[]
   permissions  Permissions[]
   interactions Interaction[]
@@ -43,24 +44,24 @@ model Creator {
   banner       String        @default("")
   status       String        @default("")
   bio          String        @default("")
-  website         String        @default("")
+  website      String        @default("")
   location     String        @default("")
   birthday     String        @default("")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model Interaction {
-  id       Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   creatorId Int
-  postId   Int
-  post     Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  text     String  @default("")
-  like     Boolean @default(false)
-  love     Boolean @default(false)
-  repost   Boolean @default(false)
-  share    Boolean @default(false)
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  text      String   @default("")
+  like      Boolean  @default(false)
+  love      Boolean  @default(false)
+  repost    Boolean  @default(false)
+  share     Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -69,17 +70,17 @@ model Interaction {
 
 model Post {
   id           Int           @id @default(autoincrement())
-  creator       Creator        @relation(fields: [creatorId], references: [id])
+  creator      Creator       @relation(fields: [creatorId], references: [id])
   interactions Interaction[]
-  creatorId     Int
+  creatorId    Int
   title        String
   published    Boolean       @default(false)
   text         String        @default("")
   status       String        @default("")
   media        String[]      @default([])
   TagsOnPosts  TagsOnPosts[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   @@unique([creatorId, title])
 }
@@ -89,8 +90,8 @@ model Tag {
   text              String      @unique
   posts             TagsOnPosts @relation(fields: [tagsOnPostsPostId], references: [postId])
   tagsOnPostsPostId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
 }
 
 model TagsOnPosts {

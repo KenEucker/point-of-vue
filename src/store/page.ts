@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { useStorage } from '@vueuse/core'
 import { useWindowSize } from '@vueuse/core'
+import { useCreatorState } from './creator'
 
 const leftMenuOpen = useStorage('leftMenuOpen', false)
 const rightMenuOpen = useStorage('rightMenuOpen', false)
@@ -43,7 +44,10 @@ export const usePageState = defineStore('usePageState', {
       this.createPostOpen = false
     },
     openCreatePost() {
-      this.createPostOpen = true
+      const creatorState = useCreatorState()
+      if (creatorState.isCreatorSignedUp) {
+        this.createPostOpen = true
+      }
     },
     toggleLeftMenu() {
       leftMenuOpen.value = this.leftMenuOpen = !this.leftMenuOpen

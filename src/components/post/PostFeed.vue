@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { reactive, watch, ref } from 'vue'
 import PovPost from './PovPost.vue'
-import LoadingSpinner from '../atomic/PovLoading.vue'
 import ErrorMessage from '../atomic/ErrorMessage.vue'
 import { Post } from '../../schema/generated/types.d'
 import { getGraphUrl, sleep } from '../../utilities'
 import { usePostsState, useCreatorState } from '../../store/state'
+import SpinnerWithError from '../atomic/SpinnerWithError.vue'
 
 const creatorState = useCreatorState()
 
@@ -22,11 +22,9 @@ const initialized = ref(false)
 
 const postsState = usePostsState()
 watch(postsState, () => {
-  console.log('postsState enter', postsState.getPostsLoading, postsState.postsHaveBeenLoaded)
+  // console.log('postsState enter', postsState.getPostsLoading, postsState.postsHaveBeenLoaded)
   if (!postsState.getPostsLoading) {
-    console.log('postsState inject', postsState.getPosts)
-    leftPosts.splice(0, leftPosts.length)
-    rightPosts.splice(0, rightPosts.length)
+    // console.log('postsState inject', postsState.getPosts)
     initialized.value = true
     injectPosts(postsState.getPosts)
   }
@@ -54,6 +52,10 @@ const newPostSubscription = `
 `
 
 const injectPosts = async (posts: any) => {
+  leftPosts.splice(0, leftPosts.length)
+  rightPosts.splice(0, rightPosts.length)
+
+  console.log('injectPosts')
   for (let i = 0; i < posts.length; ++i) {
     await sleep(50)
     if (i % 2 != 0) {
@@ -113,15 +115,13 @@ if (!postsState.postsHaveBeenLoaded && !postsState.getPostsLoading) {
 
 <template>
   <div>
-    <div v-show="postsState.getPostsLoading" class="mt-5">
-      <loading-spinner />
-    </div>
-    <div v-show="!postsState.getPostsLoading && postsState.getPostsError">
-      <error-message
-        title="Error Fetching Post Data"
-        :message="postsState.getPostsError?.message"
-      />
-    </div>
+    <spinner-with-error
+      v-show="postsState.getPostsLoading || postsState.getPostsError"
+      type="pov"
+      :error="postsState.getPostsError?.message"
+      error-title="Error Fetching Post Data"
+      :full-screen="false"
+    />
     <div
       v-show="!postsState.getPostsLoading && !postsState.getPostsError"
       class="grid w-full transition-all"

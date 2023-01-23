@@ -61,6 +61,7 @@ export type Creator = {
   readonly permissions?: Maybe<ReadonlyArray<Permissions>>;
   readonly posts?: Maybe<ReadonlyArray<Post>>;
   readonly status?: Maybe<Scalars['String']>;
+  readonly subs?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
   readonly updatedAt?: Maybe<Scalars['Date']>;
   readonly verified?: Maybe<Scalars['Boolean']>;
   readonly website?: Maybe<Scalars['String']>;
@@ -395,6 +396,7 @@ export type Query = {
   readonly posts?: Maybe<ReadonlyArray<Maybe<Post>>>;
   readonly searchPosts?: Maybe<SearchPostsPayload>;
   readonly self?: Maybe<CreatorAccount>;
+  readonly viewer?: Maybe<RequestorMirror>;
   readonly vues?: Maybe<ReadonlyArray<VueComponent>>;
 };
 
@@ -483,6 +485,11 @@ export type QuerySelfArgs = {
 };
 
 
+export type QueryViewerArgs = {
+  from?: InputMaybe<Requestor>;
+};
+
+
 export type QueryVuesArgs = {
   from: Requestor;
   where?: InputMaybe<VuesWhereInput>;
@@ -552,7 +559,6 @@ export type SubscriptionPostArgs = {
 export type Tokens = {
   readonly __typename?: 'Tokens';
   readonly auth0?: Maybe<Scalars['String']>;
-  readonly creatorSubId: Scalars['String'];
   readonly github?: Maybe<Scalars['String']>;
   readonly google?: Maybe<Scalars['String']>;
   readonly imgur?: Maybe<Scalars['String']>;
@@ -787,6 +793,7 @@ export type CreatorResolvers<ContextType = any, ParentType extends ResolversPare
   permissions?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Permissions']>>, ParentType, ContextType>;
   posts?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Post']>>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  subs?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   verified?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -977,6 +984,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   posts?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Post']>>>, ParentType, ContextType, Partial<QueryPostsArgs>>;
   searchPosts?: Resolver<Maybe<ResolversTypes['SearchPostsPayload']>, ParentType, ContextType, RequireFields<QuerySearchPostsArgs, 'search'>>;
   self?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QuerySelfArgs>>;
+  viewer?: Resolver<Maybe<ResolversTypes['RequestorMirror']>, ParentType, ContextType, Partial<QueryViewerArgs>>;
   vues?: Resolver<Maybe<ReadonlyArray<ResolversTypes['VueComponent']>>, ParentType, ContextType, RequireFields<QueryVuesArgs, 'from'>>;
 };
 
@@ -1006,7 +1014,6 @@ export type SubscriptionResolvers<ContextType = any, ParentType extends Resolver
 
 export type TokensResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tokens'] = ResolversParentTypes['Tokens']> = {
   auth0?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  creatorSubId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   github?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   google?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   imgur?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

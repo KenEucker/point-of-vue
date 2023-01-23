@@ -28,17 +28,19 @@ const Creator = {
       },
     }),
   // @ts-ignore
-  posts: (parent, args, { prisma }, info) =>
-    prisma.post.findMany({
+  posts: (parent, args, { prisma }, info) => {
+    return prisma.post.findMany({
       where: {
         creator: {
-          id: parent.id,
+          // id: parent.id,
+          handle: parent.handle,
         },
       },
       orderBy: {
         id: 'desc',
       },
-    }),
+    })
+  },
 }
 
 export default Creator

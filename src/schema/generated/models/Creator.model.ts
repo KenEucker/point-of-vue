@@ -1,72 +1,76 @@
-import { IsInt, IsDefined, IsString, IsBoolean, IsIn, IsDate } from "class-validator";
-import { Post, Interaction } from "./";
-import { getEnumValues } from "../helpers";
-import { Permissions } from "../enums";
+import { IsInt, IsDefined, IsString, IsBoolean, IsIn, IsDate } from 'class-validator'
+import { Post, Interaction } from './'
+import { getEnumValues } from '../helpers'
+import { Permissions } from '../enums'
 
 export class Creator {
-    @IsDefined()
-    @IsInt()
-    id!: number;
+  @IsDefined()
+  @IsInt()
+  id!: number
 
-    @IsDefined()
-    @IsString()
-    handle!: string;
+  @IsDefined()
+  @IsString()
+  handle!: string
 
-    @IsDefined()
-    @IsString()
-    email!: string;
+  @IsDefined()
+  @IsString()
+  email!: string
 
-    @IsDefined()
-    @IsBoolean()
-    verified!: boolean;
+  @IsDefined()
+  @IsBoolean()
+  verified!: boolean
 
-    @IsDefined()
-    posts!: Post[];
+  @IsDefined()
+  @IsString()
+  subs!: string
 
-    @IsDefined()
-    @IsIn(getEnumValues(Permissions))
-    permissions!: Permissions[];
+  @IsDefined()
+  posts!: Post[]
 
-    @IsDefined()
-    interactions!: Interaction[];
+  @IsDefined()
+  @IsIn(getEnumValues(Permissions))
+  permissions!: Permissions[]
 
-    @IsDefined()
-    @IsString()
-    name!: string;
+  @IsDefined()
+  interactions!: Interaction[]
 
-    @IsDefined()
-    @IsString()
-    avatar!: string;
+  @IsDefined()
+  @IsString()
+  name!: string
 
-    @IsDefined()
-    @IsString()
-    banner!: string;
+  @IsDefined()
+  @IsString()
+  avatar!: string
 
-    @IsDefined()
-    @IsString()
-    status!: string;
+  @IsDefined()
+  @IsString()
+  banner!: string
 
-    @IsDefined()
-    @IsString()
-    bio!: string;
+  @IsDefined()
+  @IsString()
+  status!: string
 
-    @IsDefined()
-    @IsString()
-    website!: string;
+  @IsDefined()
+  @IsString()
+  bio!: string
 
-    @IsDefined()
-    @IsString()
-    location!: string;
+  @IsDefined()
+  @IsString()
+  website!: string
 
-    @IsDefined()
-    @IsString()
-    birthday!: string;
+  @IsDefined()
+  @IsString()
+  location!: string
 
-    @IsDefined()
-    @IsDate()
-    createdAt!: Date;
+  @IsDefined()
+  @IsString()
+  birthday!: string
 
-    @IsDefined()
-    @IsDate()
-    updatedAt!: Date;
+  @IsDefined()
+  @IsDate()
+  createdAt!: Date
+
+  @IsDefined()
+  @IsDate()
+  updatedAt!: Date
 }

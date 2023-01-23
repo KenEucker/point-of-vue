@@ -1,5 +1,4 @@
 type Tokens {
-  creatorSubId: String!
   auth0: String
   github: String
   imgur: String
@@ -101,6 +100,7 @@ type Docule {
 type Creator {
   id: Int!
   handle: String!
+  subs: [String]
   verified: Boolean
   posts: [Post!]
   permissions: [Permissions!]

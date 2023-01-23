@@ -6,7 +6,7 @@ import PointOfVue from '../atomic/PointOfVue2.vue'
 import PopButton from '../atomic/PopButton.vue'
 import PovCreator from './PovCreator.vue'
 import { usePageState, useCreatorState } from '../../store/state'
-import LoadingSpinner from '../atomic/PovLoading.vue'
+import SpinnerWithError from '../atomic/SpinnerWithError.vue'
 import { watch } from 'vue'
 const emailInput = ref()
 const pageState = usePageState()
@@ -87,10 +87,13 @@ const useLogin = async () => {
       v-else-if="props.isExpanded"
       class="flex flex-col w-full p-2 rounded shadow-md dark:bg-ld-base lg:p-4 lg:pt-6 lg:mb-4"
     >
-      <loading-spinner v-show="loggingIn" :full-screen="false" />
-      <div v-show="errorMessage" @click="errorMessage = null">
-        {{ errorMessage }}
-      </div>
+      <spinner-with-error
+        v-show="loggingIn || errorMessage"
+        type="pov"
+        :error="errorMessage"
+        :full-screen="false"
+        @click="errorMessage = null"
+      />
       <div v-show="props.useAuth0 && !loggingIn && !errorMessage">
         <pop-button> Login <login-icon h="24" w="24" @click="useLogin" /> </pop-button>
       </div>

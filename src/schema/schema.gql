@@ -1,5 +1,6 @@
 type Query {
   self(from: Requestor): CreatorAccount
+  viewer(from: Requestor): RequestorMirror
   google(from: Requestor!): CreatorAccount
   imgur(from: Requestor!): CreatorAccount
   github(from: Requestor!): CreatorAccount
