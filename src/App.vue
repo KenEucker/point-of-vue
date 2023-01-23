@@ -3,6 +3,7 @@ import AppLayout from './components/layout/AppLayout.vue'
 import HeaderBar from './components/page/HeaderBar.vue'
 import SlideMenuLeft from './components/page/SlideMenuLeft.vue'
 import SlideMenuRight from './components/page/SlideMenuRight.vue'
+import SlideMenuBottom from './components/page/SlideMenuBottom.vue'
 import { useRouter } from 'vue-router'
 import { usePageState, usePovState } from './store/state'
 
@@ -35,6 +36,9 @@ povState.initPovState()
     </template>
     <template #body>
       <router-view :key="$route.fullPath"></router-view>
+    </template>
+    <template v-if="currentRoute.meta.showBottmMenu" #bottomMenu>
+      <slide-menu-bottom> </slide-menu-bottom>
     </template>
   </app-layout>
 </template>

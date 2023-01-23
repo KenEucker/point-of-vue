@@ -4,6 +4,7 @@ import { usePostsState } from './posts'
 import { usePovState } from './pov'
 import { useInteractionsState } from './interactions'
 import { useImagesState } from './images'
+import { useVuesState } from './vues'
 
 export {
   useCreatorState,
@@ -12,4 +13,5 @@ export {
   usePostsState,
   useInteractionsState,
   useImagesState,
+  useVuesState,
 }

@@ -14,6 +14,10 @@ import imgur from 'imgur'
 import { JwtVerifier, getTokenFromHeader } from '@serverless-jwt/jwt-verifier'
 // @ts-expect-error
 const ImgurClient = imgur.ImgurClient
+// @ts-expect-error
+const GithubClient = Client.default
+
+let auth0ManagementToken: string | null = null
 
 const ImgurImageMap = (d: ImgurImage) => ({
   id: d.id,
@@ -68,8 +72,6 @@ const constructGitHubUser = (profile: any): GitHubAccount => ({
   country: profile.user_metadata.country,
   timezone: profile.user_metadata.timezone,
 })
-
-let auth0ManagementToken: string | null = null
 
 const validateJwt = async (authorization: string, options: any) => {
   let claims
@@ -130,7 +132,7 @@ const getCreatorFromJwt = (authorization: string, auth0?: any, prisma?: any) => 
       return Promise.resolve(null)
     })
     .catch((error) => {
-      console.log({ error })
+      console.error({ error })
       return null
     })
 }
@@ -140,7 +142,6 @@ const getAuthManagementToken = (requestor?: any, auth0?: any) => {
     return Promise.resolve(null)
   }
   if (auth0ManagementToken) {
-    console.log({ auth0ManagementToken })
     return Promise.resolve(auth0ManagementToken)
   }
 
@@ -171,8 +172,10 @@ const getIdentityProfile = (requestor: any, auth0?: any, prisma?: any) => {
   return new Promise((resolve) => {
     return getAuthManagementToken(requestor, auth0).then((token) => {
       if (!token || (!requestor.sub && !auth0?.sub)) {
-        console.log('whyyyyy', auth0)
         return getCreatorFromJwt(requestor.token, auth0, prisma).then(resolve)
+      } else if (requestor.token && requestor.connection) {
+        /// Assuming that the profile already has all it needs from the requestor
+        return resolve(requestor)
       }
 
       const management = new auth0Client.ManagementClient({
@@ -185,11 +188,16 @@ const getIdentityProfile = (requestor: any, auth0?: any, prisma?: any) => {
         .then(function (profile) {
           requestor.email = requestor.google?.email ?? requestor.github?.email ?? profile.email
           requestor.ip = profile.last_ip
-
           if (!requestor.sub) {
             /// requested for info not authentication
             return resolve(requestor)
           } else {
+            /// If the token is being requested for a specific connection
+            if (requestor.connection) {
+              requestor.token = profile.identities?.find(
+                (i: { connection: string }) => i.connection === requestor.connection
+              )?.access_token
+            }
             /// All fields, requested for authentication
             return resolve({ ...requestor, ...profile })
           }
@@ -197,7 +205,7 @@ const getIdentityProfile = (requestor: any, auth0?: any, prisma?: any) => {
         .catch(function (_err) {
           // The cliff swallow or American cliff swallow (Petrochelidon pyrrhonota) is a member of the passerine bird family Hirundinidae, the swallows and martins. The generic name Petrochelidon is derived from Ancient Greek petros meaning "rock" and khelidon "swallow", and the specific name pyrrhonota comes from purrhos meaning "flame-coloured" and -notos "-backed".
 
-          console.log({ _err })
+          console.error({ _err })
           resolve(requestor)
         })
     })
@@ -322,16 +330,26 @@ const Global = {
   // GitHub
   vues: async (
     _parent: never,
-    args: { from: { token: any }; where: { oid: string } },
-    { auth0 }: any,
+    args: { from: any; where: { oid: string } },
+    { auth0, prisma }: any,
     _info: any
   ) => {
-    if (!auth0 && !args?.from?.token) {
-      throw new GraphQLError("You can't do that (E: 0004)")
+    const requestor = {
+      token: args.from?.token,
+      email: args.from?.email,
+      id: args.from?.id,
+      sub: auth0?.sub,
+      connection: 'github',
     }
-    // @ts-expect-error
-    const githubClient = new Client.default({
-      auth: auth.createTokenAuth(args.from.token),
+    const identity: any = await getIdentityProfile(requestor, auth0, prisma)
+    if (!identity && !requestor.token) {
+      throw new GraphQLError("You can't do that (E: 0004)")
+    } else if (identity) {
+      requestor.token = identity.token
+    }
+
+    const githubClient = new GithubClient({
+      auth: auth.createTokenAuth(requestor.token),
     })
     const oid = args?.where?.oid
     const oidQuery = oid ? `,oid:"${oid}"` : ''
@@ -395,17 +413,26 @@ const Global = {
   images: async (
     _parent: never,
     args: { from: { token: any }; where: ImagesWhereInput },
-    { auth0 }: any,
+    { auth0, prisma }: any,
     _info: any
   ) => {
-    if (!auth0 && !args?.from?.token) {
-      throw new GraphQLError("You can't do that (E: 0005)")
+    const requestor = {
+      token: args.from?.token,
+      sub: auth0?.sub,
+      connection: 'Imgur',
     }
+    const identity: any = await getIdentityProfile(requestor, auth0, prisma)
+    if (!identity && !requestor.token) {
+      throw new GraphQLError("You can't do that (E: 0005)")
+    } else if (identity) {
+      requestor.token = identity.token
+    }
+
     if (!args?.where?.albumId) {
       throw new GraphQLError('You must supply an albumId')
     }
     const imgurClient = new ImgurClient({
-      accessToken: args.from?.token,
+      accessToken: requestor.token,
     })
 
     const response = await imgurClient.getAlbum(args.where.albumId)

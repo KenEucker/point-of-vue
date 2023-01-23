@@ -26,10 +26,18 @@ const pageState = usePageState()
 
       <div
         v-if="$slots.rightMenu"
-        class="`origin-left overflow-x-hidden transition-all border-l h-full bg-ll-neutral dark:bg-ld-neutral border-ll-border dark:border-ld-border flex flex-col"
+        class="origin-left overflow-x-hidden transition-all border-l h-full bg-ll-neutral dark:bg-ld-neutral border-ll-border dark:border-ld-border flex flex-col"
         :class="pageState.rightMenuOpen ? 'w-130' : 'w-0'"
       >
         <slot name="rightMenu"></slot>
+      </div>
+
+      <div
+        v-if="$slots.bottomMenu"
+        class="origin-bottom overflow-y-hidden transition-all border-l w-full bg-ll-neutral dark:bg-ld-neutral border-ll-border dark:border-ld-border flex flex-col"
+        :class="pageState.bottomMenuOpen ? 'h-1/2' : 'h-10'"
+      >
+        <slot name="bottomMenu"></slot>
       </div>
     </div>
   </div>

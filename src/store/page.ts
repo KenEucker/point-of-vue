@@ -5,6 +5,7 @@ import { useCreatorState } from './creator'
 
 const leftMenuOpen = useStorage('leftMenuOpen', false)
 const rightMenuOpen = useStorage('rightMenuOpen', false)
+const bottomMenuOpen = useStorage('bottomMenuOpen', false)
 const disableAbout = useStorage('disableAbout', false)
 const { width, height } = useWindowSize()
 
@@ -13,12 +14,14 @@ export const getInitialPageState = (): {
   signupOpen: boolean
   leftMenuOpen: boolean
   rightMenuOpen: boolean
+  bottomMenuOpen: boolean
   disableAbout: boolean
 } => ({
   createPostOpen: false,
   signupOpen: false,
   leftMenuOpen: leftMenuOpen.value,
   rightMenuOpen: rightMenuOpen.value,
+  bottomMenuOpen: bottomMenuOpen.value,
   disableAbout: disableAbout.value,
 })
 
@@ -66,6 +69,15 @@ export const usePageState = defineStore('usePageState', {
     },
     openRightMenu() {
       rightMenuOpen.value = this.rightMenuOpen = true
+    },
+    toggleBottomMenu() {
+      bottomMenuOpen.value = this.bottomMenuOpen = !this.bottomMenuOpen
+    },
+    closeBottomMenu() {
+      bottomMenuOpen.value = this.bottomMenuOpen = false
+    },
+    openBottomMenu() {
+      bottomMenuOpen.value = this.bottomMenuOpen = true
     },
     closeSignup() {
       this.signupOpen = false

@@ -3,6 +3,7 @@ input Requestor {
   email: String
   ip: String
   token: String
+  connection: String
 }
 
 input ForOptionsInput {

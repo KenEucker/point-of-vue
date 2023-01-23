@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import VueEditor from '../components/vues/VueEditor.vue'
 import VuesProfileCard from '../components/vues/VuesProfileCard.vue'
-import { useCreatorState } from '../store/state'
+import { useCreatorState, useVuesState } from '../store/state'
 const creatorState = useCreatorState()
+const vuesState = useVuesState()
 
 const components = [
   {

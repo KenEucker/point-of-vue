@@ -1,3 +1,4 @@
+import { VueComponent } from './../schema/generated/types.d'
 import { apolloClient } from '.'
 import { defineStore } from 'pinia'
 import { gql } from '@apollo/client/core'
@@ -7,15 +8,49 @@ import auth from '../auth'
 import { watch } from 'vue'
 
 // Local storage state
-const storedEmail = useStorage('creator-email', '')
-const storedId = useStorage('creator-id', 0)
-const storedToken = useStorage('creator-token', '')
+const storedGitHubToken = useStorage('github-token', '')
 
-export const getInitialVueState = () => ({})
+export const getInitialVuesState = (): {
+  vuesFetched: boolean
+  vues: VueComponent[]
+} => ({
+  vues: [],
+  vuesFetched: false,
+})
 
-export const useVueState = defineStore({
-  id: 'useVueState',
-  state: getInitialVueState,
-  getters: {},
-  actions: {},
+export const useVuesState = defineStore({
+  id: 'useVuesState',
+  state: getInitialVuesState,
+  getters: {
+    vuesHaveBeenFetched: (s) => s.vuesFetched,
+    getVues: (s) => s.vues,
+  },
+  actions: {
+    async fetchVues(oid?: string) {
+      if (this.vuesHaveBeenFetched) {
+        return Promise.resolve(this.vues)
+      }
+      const fetchVuesForCreatorQuery = gql`
+        query StoreFetchVues($token: String!, $oid: String) {
+          vues(from: { token: $token }, where: { oid: $oid }) {
+            oid
+            name
+            query
+            script
+            template
+            vue
+          }
+        }
+      `
+      const { data, error: queryError } = await apolloClient.query({
+        query: fetchVuesForCreatorQuery,
+        variables: { token: storedGitHubToken.value, oid },
+      })
+      if (data?.images?.length && !queryError) {
+        // console.log('images fetched', albumId)
+      } else if (queryError) {
+        console.error(queryError)
+      }
+    },
+  },
 })

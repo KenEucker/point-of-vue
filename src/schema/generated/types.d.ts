@@ -402,7 +402,7 @@ export type Query = {
 
 
 export type QueryAlbumsArgs = {
-  from: Requestor;
+  from?: InputMaybe<Requestor>;
   where?: InputMaybe<ImageAlbumsWhereInput>;
 };
 
@@ -420,7 +420,7 @@ export type QueryCreatorsArgs = {
 
 
 export type QueryDocsArgs = {
-  from: Requestor;
+  from?: InputMaybe<Requestor>;
 };
 
 
@@ -440,7 +440,7 @@ export type QueryGoogleArgs = {
 
 
 export type QueryImagesArgs = {
-  from: Requestor;
+  from?: InputMaybe<Requestor>;
   where?: InputMaybe<ImagesWhereInput>;
 };
 
@@ -491,11 +491,12 @@ export type QueryViewerArgs = {
 
 
 export type QueryVuesArgs = {
-  from: Requestor;
+  from?: InputMaybe<Requestor>;
   where?: InputMaybe<VuesWhereInput>;
 };
 
 export type Requestor = {
+  readonly connection?: InputMaybe<Scalars['String']>;
   readonly email?: InputMaybe<Scalars['String']>;
   readonly id?: InputMaybe<Scalars['String']>;
   readonly ip?: InputMaybe<Scalars['String']>;
@@ -969,14 +970,14 @@ export type PostSubscriptionPayloadResolvers<ContextType = any, ParentType exten
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  albums?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurAlbum']>>, ParentType, ContextType, RequireFields<QueryAlbumsArgs, 'from'>>;
+  albums?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurAlbum']>>, ParentType, ContextType, Partial<QueryAlbumsArgs>>;
   creator?: Resolver<Maybe<ResolversTypes['Creator']>, ParentType, ContextType, Partial<QueryCreatorArgs>>;
   creators?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Creator']>>>, ParentType, ContextType, Partial<QueryCreatorsArgs>>;
-  docs?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Docule']>>, ParentType, ContextType, RequireFields<QueryDocsArgs, 'from'>>;
+  docs?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Docule']>>, ParentType, ContextType, Partial<QueryDocsArgs>>;
   getPostInteractions?: Resolver<Maybe<ResolversTypes['GetPostInteractionsPayload']>, ParentType, ContextType, RequireFields<QueryGetPostInteractionsArgs, 'id'>>;
   github?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryGithubArgs, 'from'>>;
   google?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryGoogleArgs, 'from'>>;
-  images?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurImage']>>, ParentType, ContextType, RequireFields<QueryImagesArgs, 'from'>>;
+  images?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurImage']>>, ParentType, ContextType, Partial<QueryImagesArgs>>;
   imgur?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryImgurArgs, 'from'>>;
   interaction?: Resolver<Maybe<ResolversTypes['Interaction']>, ParentType, ContextType, Partial<QueryInteractionArgs>>;
   interactions?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Interaction']>>>, ParentType, ContextType, Partial<QueryInteractionsArgs>>;
@@ -985,7 +986,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   searchPosts?: Resolver<Maybe<ResolversTypes['SearchPostsPayload']>, ParentType, ContextType, RequireFields<QuerySearchPostsArgs, 'search'>>;
   self?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QuerySelfArgs>>;
   viewer?: Resolver<Maybe<ResolversTypes['RequestorMirror']>, ParentType, ContextType, Partial<QueryViewerArgs>>;
-  vues?: Resolver<Maybe<ReadonlyArray<ResolversTypes['VueComponent']>>, ParentType, ContextType, RequireFields<QueryVuesArgs, 'from'>>;
+  vues?: Resolver<Maybe<ReadonlyArray<ResolversTypes['VueComponent']>>, ParentType, ContextType, Partial<QueryVuesArgs>>;
 };
 
 export type RequestorMirrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['RequestorMirror'] = ResolversParentTypes['RequestorMirror']> = {

@@ -5,10 +5,10 @@ type Query {
   imgur(from: Requestor!): CreatorAccount
   github(from: Requestor!): CreatorAccount
   
-  vues(from: Requestor!, where: VuesWhereInput): [VueComponent!]
-  images(from: Requestor!, where: ImagesWhereInput): [ImgurImage!]
-  albums(from: Requestor!, where: ImageAlbumsWhereInput): [ImgurAlbum!]
-  docs(from: Requestor!): [Docule!]
+  vues(from: Requestor, where: VuesWhereInput): [VueComponent!]
+  images(from: Requestor, where: ImagesWhereInput): [ImgurImage!]
+  albums(from: Requestor, where: ImageAlbumsWhereInput): [ImgurAlbum!]
+  docs(from: Requestor): [Docule!]
 
   creator(where: CreatorByInput, id: Int): Creator
   creators(where: CreatorByInput, by: ForOptionsInput): [Creator]
