@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SignUpForm from './SignUpForm.vue'
 import { useCreatorState } from '../../store/state'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const label = ref('Signup for your own Point Of Vue!')
 const formRef = ref()
@@ -17,14 +17,15 @@ if (creatorState.isLoggedIn && !creatorState.isCreatorSignedUp) {
 const signUp = async (e: Event) => {
   e.preventDefault()
 
-  const email = emailRef.value.value
-  const emailInUse = await creatorState.isEmailInUse(email)
+  const emailInUse = await creatorState.isEmailInUse(email.value)
   if (emailInUse) {
-    label.value = `email address [${email}] is already signed up.`
+    label.value = `email address [${email.value}] is already signed up.`
   } else {
     showSignupModal.value = true
   }
 }
+
+const email = computed(() => emailRef.value.value)
 </script>
 <template>
   <div class="w-full px-8 pt-6 pb-8 mb-4 bg-gray-900 rounded-lg shadow-lg">
@@ -58,6 +59,6 @@ const signUp = async (e: Event) => {
         </button>
       </div>
     </form>
-    <sign-up-form v-if="showSignupModal" :email="emailRef" />
+    <sign-up-form v-if="showSignupModal" :email="email" />
   </div>
 </template>
