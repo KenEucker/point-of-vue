@@ -166,7 +166,7 @@ export const useCreatorState = defineStore({
       `
       const { data, error: queryError } = await apolloClient.query({
         query: getCreatorViaEmailAndIdPair,
-        variables: { id: creator.id, email: creator.email },
+        variables: { id: creator.id ?? 0, email: creator.email },
       })
       let error = null
 
@@ -266,6 +266,7 @@ export const useCreatorState = defineStore({
           this.creator =
             data.self.requestor?.imgur ?? data.self.requestor?.github ?? data.self.requestor.google
         }
+
         this.authentication = data.self?.authentication
         if (this.authentication) {
           storedImgurToken.value = this.authentication.imgur?.length

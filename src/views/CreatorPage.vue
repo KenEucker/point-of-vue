@@ -88,7 +88,7 @@ watch(postsResult, (r) => {
 })
 
 const state = reactive({
-  sec: ['Vues', 'Posts', 'Components', 'Favorites'],
+  sec: ['Vues', 'Posts', 'Favorites'],
   selected: 0,
 })
 
@@ -112,7 +112,7 @@ function selected(idx: number) {
       title="creatorError?.message ? 'Error Fetching Profile Data' : 'Error Fetching Post Data'"
       :full-screen="false"
     />
-    <div v-else class="w-full p-4 pr-6 max-w-fit mx-auto">
+    <div v-else class="w-full p-4 pr-6 mx-auto max-w-fit">
       <div class="ml-10 md:ml-0">
         <div class="flex p-1">
           <arrow-back
@@ -159,7 +159,7 @@ function selected(idx: number) {
           </button>
         </div>
       </div>
-      <div v-show="state.selected === 0" class="flex grid grid-cols-1">My points of view</div>
+      <div v-show="state.selected === 0" class="flex grid grid-cols-1"></div>
       <div v-show="state.selected === 1" class="flex grid grid-cols-1">
         <pov-post
           v-for="post in creatorPosts"

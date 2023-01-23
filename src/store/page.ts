@@ -15,6 +15,8 @@ export const getInitialPageState = (): {
   leftMenuOpen: boolean
   rightMenuOpen: boolean
   bottomMenuOpen: boolean
+  pageComponents: Map<string, string>
+  pageName: string
   disableAbout: boolean
 } => ({
   createPostOpen: false,
@@ -22,6 +24,8 @@ export const getInitialPageState = (): {
   leftMenuOpen: leftMenuOpen.value,
   rightMenuOpen: rightMenuOpen.value,
   bottomMenuOpen: bottomMenuOpen.value,
+  pageComponents: new Map(),
+  pageName: '',
   disableAbout: disableAbout.value,
 })
 
@@ -30,9 +34,12 @@ export const usePageState = defineStore('usePageState', {
   getters: {
     width: (s) => width.value,
     height: (s) => height.value,
+    getPageName: (s) => s.pageName,
+    getPageComponents: (s) => s.pageComponents.get(s.pageName),
     isCreatePostOpen: (s) => s.createPostOpen,
     isLeftMenuOpen: (s) => s.leftMenuOpen,
     isRightMenuOpen: (s) => s.rightMenuOpen,
+    isBottomMenuOpen: (s) => s.bottomMenuOpen,
     isSignupOpen: (s) => s.signupOpen,
     isAboutDisabled: (s) => s.disableAbout,
   },
