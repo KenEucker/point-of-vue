@@ -38,11 +38,11 @@ export enum StorageName {
 
 export interface PovComponent {
   name: string
-  category: string
-  vues: number
-  status: string
-  icon: string
-  description: string
+  category?: string
+  vues?: number
+  status?: string
+  icon?: string
+  description?: string
   background?: string
   publishedAt?: Date
   archivedAt?: Date
@@ -107,6 +107,7 @@ export const compileComponent = (
           ${errors}
           /// Hydration
           const query = ${JSON.stringify(d.data)}
+          const vue = ${payload.json}
           ${normalizedJS.output}
         </script>
         <template>
