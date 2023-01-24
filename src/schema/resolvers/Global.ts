@@ -19,6 +19,7 @@ const GithubClient = Client.default
 const auth0Configured = process.env.AUTH0_DOMAIN && process.env.AUTH0_CID
 
 let auth0ManagementToken: string | null = null
+const auth0UserCache = new Map()
 
 const ImgurImageMap = (d: ImgurImage) => ({
   id: d.id,
@@ -140,9 +141,11 @@ const getCreatorFromJwt = (authorization: string, auth0?: any, prisma?: any) => 
 
 const getAuthManagementToken = (requestor?: any, auth0?: any) => {
   if ((requestor.token && !auth0?.sub) || !auth0Configured) {
+    console.log('canceling auth0 management request', requestor)
     return Promise.resolve(null)
   }
   if (auth0ManagementToken) {
+    console.log('using saved management token', requestor)
     return Promise.resolve(auth0ManagementToken)
   }
 
@@ -173,39 +176,54 @@ const getIdentityProfile = (requestor: any, auth0?: any, prisma?: any) => {
   return new Promise((resolve) => {
     return getAuthManagementToken(requestor, auth0).then((token) => {
       if (!token || (!requestor.sub && !auth0?.sub)) {
+        console.log("i'm not your guy, buddy", requestor)
         return getCreatorFromJwt(requestor.token, auth0, prisma).then(resolve)
       } else if (requestor.token && requestor.connection) {
         /// Assuming that the profile already has all it needs from the requestor
+        console.log('got all you need buddy', requestor)
         return resolve(requestor)
       }
+
+      const useSubId = requestor.sub ?? auth0.sub
+
+      const convertProfileToIdenitity = (profile: any) => {
+        requestor.email = requestor.google?.email ?? requestor.github?.email ?? profile.email
+        requestor.ip = profile.last_ip
+        if (!requestor.sub) {
+          /// requested for info not authentication
+          return resolve(requestor)
+        } else {
+          /// If the token is being requested for a specific connection
+          if (requestor.connection) {
+            requestor.token = profile.identities?.find(
+              (i: { connection: string }) => i.connection === requestor.connection
+            )?.access_token
+          }
+          /// All fields, requested for authentication
+          return resolve({ ...requestor, ...profile })
+        }
+      }
+
+      const cachedSubProfile = auth0UserCache.get(useSubId)
+      if (cachedSubProfile) {
+        console.log('using cached profile', useSubId)
+        return convertProfileToIdenitity(cachedSubProfile)
+      }
+
+      console.log('auth0 requested', useSubId)
 
       const management = new auth0Client.ManagementClient({
         token,
         domain: process.env.AUTH0_DOMAIN ?? '',
       })
-
       return management
-        .getUser({ id: requestor.sub ?? auth0.sub })
-        .then(function (profile) {
-          requestor.email = requestor.google?.email ?? requestor.github?.email ?? profile.email
-          requestor.ip = profile.last_ip
-          if (!requestor.sub) {
-            /// requested for info not authentication
-            return resolve(requestor)
-          } else {
-            /// If the token is being requested for a specific connection
-            if (requestor.connection) {
-              requestor.token = profile.identities?.find(
-                (i: { connection: string }) => i.connection === requestor.connection
-              )?.access_token
-            }
-            /// All fields, requested for authentication
-            return resolve({ ...requestor, ...profile })
-          }
+        .getUser({ id: useSubId })
+        .then((p) => {
+          auth0UserCache.set(useSubId, p)
+          return convertProfileToIdenitity(p)
         })
         .catch(function (_err) {
           // The cliff swallow or American cliff swallow (Petrochelidon pyrrhonota) is a member of the passerine bird family Hirundinidae, the swallows and martins. The generic name Petrochelidon is derived from Ancient Greek petros meaning "rock" and khelidon "swallow", and the specific name pyrrhonota comes from purrhos meaning "flame-coloured" and -notos "-backed".
-
           console.error({ _err })
           resolve(requestor)
         })
@@ -343,7 +361,6 @@ const Global = {
       connection: 'github',
     }
     const identity: any = await getIdentityProfile(requestor, auth0, prisma)
-    console.log({ identity, requestor })
     if (!identity && !requestor.token) {
       throw new GraphQLError("You can't do that (E: 0004)")
     } else if (identity) {
