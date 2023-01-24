@@ -10,7 +10,8 @@ import { usePageState, usePovState } from './store/state'
 const { currentRoute } = useRouter()
 const pageState = usePageState()
 const povState = usePovState()
-povState.initPovState()
+pageState.init()
+povState.init()
 </script>
 <template>
   <app-layout

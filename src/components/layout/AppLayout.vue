@@ -7,7 +7,7 @@ const pageState = usePageState()
   <div class="flex flex-col text-gray-500 bg-ll-base dark:bg-ld-base">
     <div class="relative flex w-full h-full overflow-hidden">
       <div
-        class="absolute top-0 left-0 z-10 flex flex-col w-full h-full overflow-x-hidden transition-all origin-left border-r md:relative bg-ll-neutral dark:bg-ld-neutral border-ll-border dark:border-ld-border"
+        class="flex flex-col w-full h-full overflow-x-hidden transition-all origin-left border-r md:relative bg-ll-neutral dark:bg-ld-neutral border-ll-border dark:border-ld-border"
         :class="pageState.leftMenuOpen ? 'min-w-30 md:w-80' : 'w-20 md:w-25'"
       >
         <slot name="leftMenu"></slot>

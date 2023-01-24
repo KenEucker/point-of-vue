@@ -10,6 +10,10 @@ const disableAbout = useStorage('disableAbout', false)
 const debugMode = useStorage('debugMode', false)
 const { width, height } = useWindowSize()
 
+/// Take over logging
+const ogInfo = console.info
+const ogError = console.error
+
 export const getInitialPageState = (): {
   createPostOpen: boolean
   signupOpen: boolean
@@ -17,6 +21,7 @@ export const getInitialPageState = (): {
   rightMenuOpen: boolean
   bottomMenuOpen: boolean
   about: { title: string; body: string[] }
+  logs: { info: string[]; error: string[]; history: any[] }
   pageComponents: Map<string, string[]>
   pageName: string
   metaData: any
@@ -29,6 +34,7 @@ export const getInitialPageState = (): {
   rightMenuOpen: rightMenuOpen.value,
   bottomMenuOpen: bottomMenuOpen.value,
   pageComponents: new Map(),
+  logs: { info: [], error: [], history: [] },
   about: { title: 'About this page', body: ['no about information for this page', 'sorry'] },
   metaData: {},
   pageName: '',
@@ -42,6 +48,8 @@ export const usePageState = defineStore('usePageState', {
     width: (s) => width.value,
     height: (s) => height.value,
     isDataRoute: (s) => (s.pageName === 'Data' ? true : s.pageName === 'Graph'),
+    getLogsHistory: (s) => s.logs.history,
+    getLogs: (s) => ({ info: s.logs.info, error: s.logs.error }),
     getAboutPage: (s) => s.about,
     getPageName: (s) => s.pageName,
     getMetaData: (s) => s.metaData,
@@ -82,6 +90,37 @@ export const usePageState = defineStore('usePageState', {
     isDebugEnabled: (s) => s.debugMode,
   },
   actions: {
+    init() {
+      window.console.info = (m, d) => this.debug(m, undefined, d)
+      window.console.error = (m, d) => this.debug(undefined, m, d)
+    },
+    debug: function (
+      info: string[] | string | undefined,
+      error: string[] | string | undefined,
+      data: any
+    ) {
+      if (!this.debugMode) {
+        if (info) ogInfo(info, data)
+        if (error) ogError(error, data)
+        return
+      }
+
+      info = typeof info === 'string' ? [info] : info ?? []
+      error = typeof error === 'string' ? [error] : error ?? []
+      const timestamp = new Date().getTime()
+
+      info.forEach((m) => ogInfo(m, { data, timestamp }))
+      error.forEach((m) => ogError(m, { data, timestamp }))
+
+      if (this.logs.info.length) {
+        this.logs.history.push({ type: 'info', log: this.logs.info.join('; ') })
+      }
+      if (this.logs.error.length) {
+        this.logs.history.push({ type: 'error', log: this.logs.error.join('; ') })
+      }
+      this.logs.info = info
+      this.logs.error = error
+    },
     setMetadata(pageName: string | null = null, meta: any = {}) {
       if (pageName) {
         this.pageName = pageName

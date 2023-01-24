@@ -53,6 +53,7 @@ const renderComponent = () => {
       moduleCache: { vue: Vue },
       getFile: async () => {
         if (!(props.component?.json || props.component?.script || props.component?.template)) {
+          console.error('whyy?')
           logs.error = 'no files to load'
           return ''
         }
@@ -94,8 +95,9 @@ defineExpose({ renderComponent })
     class="component-outer w-auto m-8 text-gray-800 divide-y divide-gray-300 rounded-lg shadow-md sm:m-4"
     :class="`bg-${component.background ? component.background : 'white'}`"
   >
-    <div v-if="logs.error || logs.info" class="h-full">
+    <div v-if="logs.error?.length || logs.info?.length" class="h-full">
       <div
+        v-if="logs.error"
         class="px-4 py-3 text-teal-900 bg-teal-100 border-t-4 border-teal-500 rounded-b shadow-md"
         role="alert"
       >
@@ -112,8 +114,8 @@ defineExpose({ renderComponent })
             </svg>
           </div>
           <div>
-            <p class="font-bold">Our privacy policy has changed</p>
-            <p class="text-sm">Make sure you know how these changes affect you.</p>
+            <p class="font-bold">{{ logs.error }}</p>
+            <p class="text-sm">This error did not prevent the component from rendering.</p>
           </div>
         </div>
       </div>

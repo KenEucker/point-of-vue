@@ -139,7 +139,6 @@ index.beforeEach((p) => {
     NProgress.start()
   }
   const pageState = usePageState()
-  console.log(p)
   const meta = pageState.setMetadata(p.name?.toString(), p.meta)
   if (p.meta?.protected && meta.dependsOn?.length) {
     const creatorState = useCreatorState()

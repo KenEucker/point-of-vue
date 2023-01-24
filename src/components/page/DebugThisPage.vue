@@ -38,5 +38,14 @@ connections: {{
         }}
       </pre>
     </li>
+    <li class="">
+      <strong>Console</strong>
+      <pre class="p-0 -mt-5">
+        <span v-for="(log, i) in pageState.getLogsHistory" :key="`log-${i}`" class="flex">
+<span v-if="log.type ==='error'" class="inline-flex">{{i}}: {{ log.log }}</span>
+<span v-if="log.type ==='info'" class="inline-flex">{{i}}: {{ log.log }}</span>
+        </span>
+      </pre>
+    </li>
   </ul>
 </template>

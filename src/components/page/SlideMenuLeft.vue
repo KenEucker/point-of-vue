@@ -40,7 +40,7 @@ const creatorPanelClick = () => {
 <template>
   <div
     class="relative flex flex-col items-center w-full h-full overflow-x-hidden overflow-y-auto"
-    :class="props.isExpanded ? 'p-10 px-5' : 'p-2'"
+    :class="props.isExpanded ? 'p-10 px-5' : 'p-3'"
   >
     <creator-card
       class="cursor-pointer"
@@ -52,7 +52,7 @@ const creatorPanelClick = () => {
       <li
         v-for="route in routes"
         :key="route.name"
-        class="w-full max-w-50 py-2 flex items-center cursor-pointer active:scale-95 transform transition-transform select-none mb-4"
+        class="w-full min-w-max py-2 flex items-center cursor-pointer active:scale-95 transform transition-transform select-none mb-4"
         :class="`${props.isExpanded ? 'mb-2' : 'justify-center mb-4'} ${
           route.name == currentRoute.name ? 'text-ll-primary' : ''
         }`"
@@ -77,6 +77,7 @@ const creatorPanelClick = () => {
     </button>
 
     <button
+      v-show="props.isExpanded"
       class="absolute flex items-center w-8 h-8 mr-2 text-sm transition-transform transform border rounded-full md:hidden top-2 -right-1 bg-ll-neutral dark:bg-ld-neutral border-ll-border dark:border-ld-border active:scale-95"
       @click="pageState.closeLeftMenu()"
     >

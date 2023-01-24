@@ -141,11 +141,11 @@ const getProfileFromJwt = (authorization: string, auth0?: any, prisma?: any) => 
 
 const getAuthManagementToken = (requestor?: any, auth0?: any) => {
   if ((requestor.token && !auth0?.sub) || !auth0Configured) {
-    console.log('canceling auth0 management request', requestor)
+    console.info('canceling auth0 management request', requestor)
     return Promise.resolve(null)
   }
   if (auth0ManagementToken) {
-    console.log('using saved management token', requestor)
+    console.info('using saved management token', requestor)
     return Promise.resolve(auth0ManagementToken)
   }
 
@@ -176,11 +176,11 @@ const getIdentityProfile = (requestor: any, auth0?: any, prisma?: any) => {
   return new Promise((resolve) => {
     return getAuthManagementToken(requestor, auth0).then((token) => {
       if (!token || (!requestor.sub && !auth0?.sub)) {
-        console.log("i'm not your guy, buddy", requestor)
+        console.info("i'm not your guy, buddy", requestor)
         return getProfileFromJwt(requestor.token, auth0, prisma).then(resolve)
       } else if (requestor.token && requestor.connection) {
         /// Assuming that the profile already has all it needs from the requestor
-        console.log('you got all you need buddy', requestor)
+        console.info('you got all you need buddy', requestor)
         return resolve(requestor)
       }
 
@@ -206,11 +206,11 @@ const getIdentityProfile = (requestor: any, auth0?: any, prisma?: any) => {
 
       const cachedSubProfile = auth0UserCache.get(useSubId)
       if (cachedSubProfile) {
-        console.log('using cached profile', useSubId)
+        console.info('using cached profile', useSubId)
         return convertProfileToIdenitity(cachedSubProfile)
       }
 
-      console.log('auth0 requested', useSubId)
+      console.info('auth0 requested', useSubId)
 
       const management = new auth0Client.ManagementClient({
         token,

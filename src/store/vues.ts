@@ -209,7 +209,7 @@ export const useVuesState = defineStore({
         return Promise.resolve([])
       }
 
-      console.log('fetching vues')
+      console.info('fetching vues')
       const fetchVuesForCreatorQuery = gql`
         query StoreFetchVues($token: String!, $oid: String) {
           vues(from: { token: $token }, where: { oid: $oid }) {

@@ -52,7 +52,7 @@ export const usePovState = defineStore({
     getTopTrendingText: (s) => s.topTrending?.text,
   },
   actions: {
-    async initPovState() {
+    async init() {
       await this.fetchCreatorsToFollow()
     },
     async fetchCreatorsToFollow() {
