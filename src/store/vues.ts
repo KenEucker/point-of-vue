@@ -131,11 +131,6 @@ export const useVuesState = defineStore({
         </style>
         <script setup>
           import { onMounted, ref, computed } from 'vue'
-          const twScript = document.createElement("script")
-          twScript.setAttribute("src", "js/tailwindcss-jit-cdn.umd.min.js")
-          twScript.setAttribute("type", "text/javascript");
-          twScript.setAttribute("async", async);
-          document.body.appendChild(twScript)
 
           ${logs}
           ${errors}
