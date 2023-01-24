@@ -27,7 +27,7 @@ const pageState = usePageState()
       <div
         v-if="$slots.rightMenu"
         class="origin-left overflow-x-hidden transition-all border-l h-full bg-ll-neutral dark:bg-ld-neutral border-ll-border dark:border-ld-border flex flex-col"
-        :class="pageState.rightMenuOpen ? 'w-130' : 'w-0'"
+        :class="pageState.rightMenuOpen ? 'min-w-max' : 'w-0'"
       >
         <slot name="rightMenu"></slot>
       </div>

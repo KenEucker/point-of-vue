@@ -87,7 +87,9 @@ async function onPostInteraction() {
     data: updatingInteraction,
   })
 
-  emit('onInteraction', props.variant)
+  if (updatedPostInteraction?.data?.toggleInteraction?.id) {
+    emit('onInteraction', { interaction: props.variant, delta: props.active ? -1 : 1 })
+  }
 }
 
 const emit = defineEmits(['onInteraction'])

@@ -92,19 +92,25 @@ watch(result, ({ getPostInteractions }: any) => {
   interactions.shares = getPostInteractions.shares
 })
 
-const onInteractionSuccess = (interaction: string) => {
+const onInteractionSuccess = ({ interaction, delta }: { interaction: string; delta: number }) => {
+  /// Let the subscriptions handle themselves
+  if (props.subscribe) {
+    return
+  }
+
+  console.log({ delta })
   switch (interaction) {
     case 'like':
-      interactions.likes = interactions.likes + 1
+      interactions.likes = interactions.likes + delta
       break
     case 'love':
-      interactions.loves = interactions.loves + 1
+      interactions.loves = interactions.loves + delta
       break
     case 'repost':
-      interactions.reposts = interactions.reposts + 1
+      interactions.reposts = interactions.reposts + delta
       break
     case 'share':
-      interactions.shares = interactions.shares + 1
+      interactions.shares = interactions.shares + delta
       break
   }
 }
@@ -130,6 +136,7 @@ function onIntersectionObserver([{ isIntersecting }]: any) {
       :post-id="props.postId"
       :count="interactions.likes"
       :disable-interaction="props.isSelfPost"
+      @on-interaction="onInteractionSuccess"
     />
     <post-interaction
       variant="love"
@@ -137,6 +144,7 @@ function onIntersectionObserver([{ isIntersecting }]: any) {
       :post-id="props.postId"
       :count="interactions.loves"
       :disable-interaction="props.isSelfPost"
+      @on-interaction="onInteractionSuccess"
     />
     <post-interaction
       variant="repost"
@@ -144,6 +152,7 @@ function onIntersectionObserver([{ isIntersecting }]: any) {
       :creator-id="props.creatorId"
       :count="interactions.reposts"
       :disable-interaction="props.isSelfPost"
+      @on-interaction="onInteractionSuccess"
     />
     <post-interaction
       variant="share"
@@ -152,6 +161,7 @@ function onIntersectionObserver([{ isIntersecting }]: any) {
       :count="interactions.shares"
       :hide-count="!props.isSelfPost"
       :disable-interaction="props.isSelfPost"
+      @on-interaction="onInteractionSuccess"
     />
   </div>
 </template>
