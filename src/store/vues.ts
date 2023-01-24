@@ -82,6 +82,7 @@ export const useVuesState = defineStore({
       /// Add tailwind
       // console.log({ Sass })
       // let css = ''
+      // Sass.preloadFiles('://', 'styles', ['tailwind.css'])
       // await Sass.compile(
       //   `
       // @tailwind base;
@@ -95,6 +96,8 @@ export const useVuesState = defineStore({
       // console.log({ css })
       return {
         output: `
+        <!-- Cheap Hack -->
+        <script src="https://cdn.tailwindcss.com"></script>
         <script setup>
           ${logs}
           ${errors}
@@ -111,6 +114,9 @@ export const useVuesState = defineStore({
           </div>
         </template>
         <style scoped>
+          @tailwind base;
+          @tailwind components;
+          @tailwind utilities;
         </style>`,
         /// Feature disabled
         //   <style scoped>
