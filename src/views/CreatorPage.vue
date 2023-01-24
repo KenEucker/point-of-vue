@@ -16,7 +16,7 @@ const creatorState = useCreatorState()
 const handleParam = useRouteParams('handle')
 const handleParamIsSet = handleParam.value?.length
 if (!handleParamIsSet && !creatorState.getCreator?.handle) {
-  router.push('/')
+  router.push({ path: '/', replace: true })
 }
 const handle = handleParamIsSet ? handleParam : creatorState.getCreator.handle
 
@@ -70,7 +70,7 @@ watch(creatorResult, (r) => {
     isOwnPage.value = creator.value.handle === handle
     fetchPosts()
   } else {
-    router.push('/')
+    router.push({ path: '/', replace: true })
   }
 })
 

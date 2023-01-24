@@ -2,10 +2,19 @@
 import VueEditor from '../components/vues/VueEditor.vue'
 import VuesProfileCard from '../components/vues/VuesProfileCard.vue'
 import { useCreatorState, useVuesState } from '../store/state'
+import { useRouter } from 'vue-router'
+import { onMounted } from 'vue'
 const creatorState = useCreatorState()
 const vuesState = useVuesState()
 
-vuesState.fetchVues()
+onMounted(() => {
+  if (!vuesState.hasCredentials()) {
+    const router = useRouter()
+    router.push({ path: '/', replace: true })
+  }
+
+  vuesState.fetchVues()
+})
 
 const components = [
   {
@@ -73,6 +82,6 @@ const components = [
       :creator="creatorState.getCreator"
       :components="[...vuesState.vueComponents, ...components]"
     />
-    <vue-editor class="h-1/2" />
+    <vue-editor class="h-1/2" :initial-code="{}" />
   </main>
 </template>

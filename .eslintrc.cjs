@@ -37,6 +37,8 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
   },
 
+  ignorePatterns: ['public/**'],
+
   overrides: [
     {
       files: ['*.js'],

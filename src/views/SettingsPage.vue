@@ -25,7 +25,7 @@ const dirty = ref(false)
 
 if (creatorState.isCreatorSignedUp !== true) {
   console.log('no way josé')
-  router.push('/')
+  router.push({ path: '/', replace: true })
 }
 
 const fields = computed(() => [

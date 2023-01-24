@@ -11,6 +11,7 @@ export default defineConfig({
   plugins: [
     vue(),
     EnvironmentPlugin({
+      ENV: process.env.NODE_ENV,
       ORIGIN: process.env.ORIGIN ?? 'http://localhost',
       ORIGIN_PORT: process.env.ORIGIN_PORT ?? port.toString(),
       PORT: port.toString(),

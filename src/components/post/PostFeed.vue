@@ -55,7 +55,6 @@ const injectPosts = async (posts: any) => {
   leftPosts.splice(0, leftPosts.length)
   rightPosts.splice(0, rightPosts.length)
 
-  console.log('injectPosts')
   for (let i = 0; i < posts.length; ++i) {
     await sleep(50)
     if (i % 2 != 0) {

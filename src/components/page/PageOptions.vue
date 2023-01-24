@@ -3,16 +3,15 @@ import { useDark, useToggle } from '@vueuse/core'
 import LightIcon from 'vue-ionicons/dist/md-sunny.vue'
 import DarkIcon from 'vue-ionicons/dist/md-moon.vue'
 import FingerPrint from 'vue-ionicons/dist/md-finger-print.vue'
-import { useCreatorState } from '../../store/state'
-import { useRouter } from 'vue-router'
-import { useStorage, useClipboard } from '@vueuse/core'
+import { useCreatorState, usePageState } from '../../store/state'
+import { useClipboard } from '@vueuse/core'
 import Popper from 'vue3-popper'
-import { watch, ref, computed } from 'vue'
+import { watch, ref } from 'vue'
+import DebugIcon from 'vue-ionicons/dist/md-bug.vue'
+import AboutIcon from 'vue-ionicons/dist/md-information-circle-outline.vue'
 
-const storedToken = useStorage('creator-token', '')
 const { copy, isSupported } = useClipboard()
 
-const router = useRouter()
 const creatorState = useCreatorState()
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
@@ -24,9 +23,17 @@ watch(creatorState, () => {
   }
 })
 
-const isDataRoute = computed(() =>
-  router.currentRoute.value.path === '/data' ? true : router.currentRoute.value.path === '/graph'
-)
+const copyAuthorization = () => {
+  copy(
+    pageState.debugMode
+      ? JSON.stringify({
+          Authorization: `Bearer ${creatorState.getCreatorCredentials?.creatorToken}`,
+        })
+      : creatorState.getCreatorCredentials?.creatorToken
+  )
+}
+
+const pageState = usePageState()
 </script>
 
 <template>
@@ -41,16 +48,52 @@ const isDataRoute = computed(() =>
     <popper>
       <template #default>
         <button
-          v-show="isLoggedIn && isDataRoute"
+          v-show="isLoggedIn && pageState.isDataRoute"
           class="flex items-center justify-center w-10 h-10 ml-2 transition-transform transform border rounded-md border-ll-border dark:border-ld-border bg-ll-base dark:bg-ld-base dark:text-gray-200 active:scale-95"
-          @click="copy(storedToken)"
+          @click="copyAuthorization"
         >
           <finger-print class="w-5 h-5" h="20" w="20" />
         </button>
       </template>
       <template #content>
-        <p v-if="isSupported">Your authentication token has been copied to the clipboard</p>
-        <p v-else>Your browser does not support Clipboard API</p>
+        <p v-show="isSupported && !pageState.debugMode">
+          Your authentication token has been copied to the clipboard
+        </p>
+        <p v-show="isSupported && pageState.debugMode">
+          Authentication headers have been copied to the clipboard
+        </p>
+        <p v-show="!isSupported">Your browser does not support Clipboard API</p>
+      </template>
+    </popper>
+    <popper>
+      <template #default>
+        <button
+          class="flex items-center justify-center w-10 h-10 ml-2 transition-transform transform border rounded-md border-ll-border dark:border-ld-border active:scale-95"
+          :class="pageState.isAboutDisabled ? 'disabled' : ' dark:text-gray-200'"
+          @click="pageState.toggleAboutSidebar()"
+        >
+          <about-icon class="w-5 h-5" h="20" w="20" />
+        </button>
+      </template>
+      <template #content>
+        <p v-show="pageState.debugMode">About widget is now enabled</p>
+        <p v-show="!pageState.debugMode">About widget is disabled</p>
+      </template>
+    </popper>
+    <popper>
+      <template #default>
+        <button
+          v-show="isLoggedIn"
+          class="flex items-center justify-center w-10 h-10 ml-2 transition-transform transform border rounded-md border-ll-border dark:border-ld-border active:scale-95"
+          :class="!pageState.debugMode ? 'disabled' : ' dark:text-gray-200'"
+          @click="pageState.toggleDebugMode()"
+        >
+          <debug-icon class="w-5 h-5" h="20" w="20" />
+        </button>
+      </template>
+      <template #content>
+        <p v-show="pageState.debugMode">Debug mode is now enabled</p>
+        <p v-show="!pageState.debugMode">Debug mode is disabled</p>
       </template>
     </popper>
   </div>

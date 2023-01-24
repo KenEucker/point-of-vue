@@ -10,11 +10,13 @@ import { watch } from 'vue'
 const storedImgurToken = useStorage('imgur-token', '')
 
 export const getInitialImagesState = (): {
+  credentials: { creatorToken?: string; imgurToken?: string }
   fetchingImages: boolean
   albumsFetched: boolean
   images: Map<string, ImageData[]>
   albums: AlbumData[]
 } => ({
+  credentials: {},
   fetchingImages: false,
   albumsFetched: false,
   images: new Map(),
@@ -30,6 +32,26 @@ export const useImagesState = defineStore({
     getAlbums: (s) => s.albums,
   },
   actions: {
+    hasCredentials() {
+      /// Only imgur credentials required
+      if (this.credentials.imgurToken?.length) {
+        return true
+      }
+
+      const creatorState = useCreatorState()
+      const credentials = creatorState.getCreatorCredentials
+
+      /// Allow any imgur user, regardless of signed up or not
+      if (credentials.imgur) {
+        this.credentials = {
+          creatorToken: credentials.creatorToken,
+          imgurToken: credentials.imgur,
+        }
+        return true
+      } else {
+        return false
+      }
+    },
     checkFetchAlbumImages(albumId: string) {
       if (this.images.has(albumId)) {
         return true
@@ -39,6 +61,7 @@ export const useImagesState = defineStore({
       return this.fetchImages(albumId) && false
     },
     async fetchAlbums() {
+      console.log('fetching albums')
       const creatorState = useCreatorState()
       const queryAlbumsForCreator = async () => {
         if (!(creatorState.getCreator.name?.length > 1)) {
@@ -70,7 +93,7 @@ export const useImagesState = defineStore({
         `
         const { data, error: queryError } = await apolloClient.query({
           query: fetchAlbumsQuery,
-          variables: { token: storedImgurToken.value, userName: creatorState.getCreator.name },
+          variables: { token: this.credentials.imgurToken, userName: creatorState.getCreator.name },
         })
         if (data?.albums?.length && !queryError) {
           this.albumsFetched = true
@@ -86,6 +109,7 @@ export const useImagesState = defineStore({
       }
     },
     async fetchImages(albumId: string) {
+      console.log('fetching images', albumId)
       if (albumId.length) {
         const loginViaEmailQuery = gql`
           query StoreFetchImages($token: String!, $albumId: String!) {
@@ -101,7 +125,7 @@ export const useImagesState = defineStore({
         `
         const { data, error: queryError } = await apolloClient.query({
           query: loginViaEmailQuery,
-          variables: { token: storedImgurToken.value, albumId },
+          variables: { token: this.credentials.imgurToken, albumId },
         })
         if (data?.images?.length && !queryError) {
           console.log('images fetched', albumId)

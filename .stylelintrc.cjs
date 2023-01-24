@@ -5,7 +5,7 @@ module.exports = {
     'stylelint-config-prettier',
   ],
   plugins: ['stylelint-order', 'stylelint-selector-bem-pattern'],
-  ignoreFiles: ['node_modules/**', 'src/assets/fonts/**', 'src/assets/style/reset.css'],
+  ignoreFiles: ['node_modules/**', 'src/assets/fonts/**', 'src/assets/style/reset.css', 'public/**'],
   overrides: [
     {
       files: ['*.vue', '**/*.vue'],

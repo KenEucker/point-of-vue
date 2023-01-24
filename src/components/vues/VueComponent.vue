@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import PlanetIcon from 'vue-ionicons/dist/md-planet.vue'
 import BaseballIcon from 'vue-ionicons/dist/md-baseball.vue'
 import BasketIcon from 'vue-ionicons/dist/md-basket.vue'
@@ -10,6 +10,11 @@ import HeadsetIcon from 'vue-ionicons/dist/md-headset.vue'
 import PullIcon from 'vue-ionicons/dist/md-git-pull-request.vue'
 import { onClickOutside } from '@vueuse/core'
 import type { PovComponent } from '../../utilities'
+import { loadModule } from 'vue3-sfc-loader'
+import { useVuesState } from '../../store/state'
+import * as Vue from 'vue'
+
+const vuesState = useVuesState()
 const props = defineProps({
   component: {
     type: Object,
@@ -24,6 +29,11 @@ const props = defineProps({
 const showStatus = ref(false)
 const emit = defineEmits(['edit'])
 const containerRef = ref()
+const componentRef = ref()
+const logs = reactive<{ error: string | null; info: string | null }>({
+  error: null,
+  info: null,
+})
 onClickOutside(containerRef, () => (showStatus.value = false))
 
 const getOptions = (component: PovComponent) => {
@@ -36,13 +46,101 @@ const getOptions = (component: PovComponent) => {
       return ['view']
   }
 }
+
+const renderComponent = () => {
+  if (componentRef.value) {
+    const options = {
+      moduleCache: { vue: Vue },
+      getFile: async () => {
+        if (!(props.component?.json || props.component?.script || props.component?.template)) {
+          logs.error = 'no files to load'
+          return ''
+        }
+        const compiled = await vuesState.compileComponent(props.component)
+        if (compiled.logs) {
+          if (compiled.logs.info) {
+            logs.info = compiled.logs.info
+          }
+          if (compiled.logs.error) {
+            logs.error = compiled.logs.error
+          }
+        }
+
+        return compiled.output
+      },
+      addStyle: async (textContent: any) => {
+        // console.log({ textContent })
+        // Feature blocked
+        // const style = Object.assign(document.createElement('style'), { textContent })
+        // const ref = document.head.getElementsByTagName('style')[0] || null
+        // document.head.insertBefore(style, ref)
+      },
+    }
+
+    Vue.createApp(Vue.defineAsyncComponent(() => loadModule('file.vue', options))).mount(
+      componentRef.value
+    )
+    // refreshTailwindCss()
+  }
+}
+
+onMounted(renderComponent)
+
+defineExpose({ renderComponent })
 </script>
 <template>
   <div
     ref="containerRef"
-    class="w-auto m-8 text-gray-800 divide-y divide-gray-300 rounded-lg shadow-md sm:m-4"
+    class="component-outer w-auto m-8 text-gray-800 divide-y divide-gray-300 rounded-lg shadow-md sm:m-4"
     :class="`bg-${component.background ? component.background : 'white'}`"
   >
+    <div v-if="logs.error || logs.info" class="h-full">
+      <div
+        class="px-4 py-3 text-teal-900 bg-teal-100 border-t-4 border-teal-500 rounded-b shadow-md"
+        role="alert"
+      >
+        <div class="flex">
+          <div class="py-1">
+            <svg
+              class="w-6 h-6 mr-4 text-teal-500 fill-current"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"
+              />
+            </svg>
+          </div>
+          <div>
+            <p class="font-bold">Our privacy policy has changed</p>
+            <p class="text-sm">Make sure you know how these changes affect you.</p>
+          </div>
+        </div>
+      </div>
+      <div
+        v-if="logs.info"
+        class="px-4 py-3 text-teal-900 bg-teal-100 border-t-4 border-teal-500 rounded-b shadow-md"
+        role="alert"
+      >
+        <div class="flex">
+          <div class="py-1">
+            <svg
+              class="w-6 h-6 mr-4 text-teal-500 fill-current"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"
+              />
+            </svg>
+          </div>
+          <div>
+            <p class="font-bold">Our privacy policy has changed</p>
+            <p class="text-sm">Make sure you know how these changes affect you.</p>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="flex items-start px-4 py-5">
       <div class="mr-3 my-auto">
         <planet-icon v-if="props.component.icon === 'planet'" h="40" w="40" />
@@ -108,7 +206,8 @@ const getOptions = (component: PovComponent) => {
         </nav>
       </div>
     </div>
-    <div class="">
+    <div class="component-inner">
+      <div ref="componentRef"></div>
       <slot></slot>
     </div>
   </div>

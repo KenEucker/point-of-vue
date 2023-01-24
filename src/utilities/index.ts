@@ -47,6 +47,10 @@ export interface PovComponent {
   publishedAt?: Date
   archivedAt?: Date
   erroredAt?: Date
+  raw?: string
+  query?: string
+  script?: string
+  template?: string
 }
 
 /// From Chatbot
@@ -251,7 +255,6 @@ export const getImgurImageSized = (
     .replace('.png', `${size}.png`)
     .replace('.mp4', `${size}.mp4`)
 
-  console.log({ link, ret })
   return ret
 }
 
