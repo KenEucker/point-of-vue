@@ -9,6 +9,7 @@ import {
   removeAllAndSomeTagsFromHtml,
   removeNodesWithKeywords,
 } from '../utilities'
+import Sass from 'sass.js/dist/sass.sync.js'
 
 // Local storage state
 const storedGitHubToken = useStorage('github-token', '')
@@ -77,6 +78,21 @@ export const useVuesState = defineStore({
 
       /// TODO: check this payload value
       const normalizedJson = payload.json ?? '{}'
+
+      /// Add tailwind
+      // console.log({ Sass })
+      // let css = ''
+      // await Sass.compile(
+      //   `
+      // @tailwind base;
+      // @tailwind components;
+      // @tailwind utilities;`,
+      //   (s) => {
+      //     console.log({ s })
+      //     return (css = s)
+      //   }
+      // )
+      // console.log({ css })
       return {
         output: `
         <script setup>
@@ -93,14 +109,16 @@ export const useVuesState = defineStore({
               ${normalizedHTML.output}
             </div>
           </div>
-        </template>`,
+        </template>
+        <style scoped>
+        </style>`,
+        /// Feature disabled
+        //   <style scoped>
+        //     ${payload.css}
+        //   </style>
+        // `
         logs: undefined,
       }
-      /// Feature disabled
-      //   <style scoped>
-      //     ${payload.css}
-      //   </style>
-      // `
     },
 
     compileComponentHTML(payload: Record<string, any>, isDark?: boolean) {

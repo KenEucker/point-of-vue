@@ -8,3 +8,5 @@ declare module '*.vue' {
 declare module 'vue3-emoji-picker'
 declare module 'vue3-sfc-loader'
 declare module 'number-abbreviate'
+declare module 'sass.js/dist/sass.sync.js'
+declare module 'sass.js'

@@ -10,7 +10,6 @@ import EditorTabs from './EditorTabs.vue'
 import { useMagicKeys } from '@vueuse/core'
 import VueComponent from './VueComponent.vue'
 import { usePageState, useVuesState } from '../../store/state'
-import Sass from 'sass.js/dist/sass.sync.js'
 
 const tabs = {
   vue: 'json',
@@ -55,7 +54,7 @@ const component = reactive({
   erroredAt: undefined,
 })
 
-const { ctrl_s } = useMagicKeys({
+useMagicKeys({
   passive: false,
   onEventFired(e) {
     if ((e.metaKey || e.ctrlKey) && e.key === 's' && e.type === 'keydown') {
@@ -94,12 +93,13 @@ const onPlay = async () => {
         // const style = Object.assign(document.createElement('style'), { textContent })
         // const ref = document.head.getElementsByTagName('style')[0] || null
         // document.head.insertBefore(style, ref)
-
         /// Add tailwind
-        return Sass.compileSync(`
-          @tailwind base;
-          @tailwind components;
-          @tailwind utilities;`)
+        // const sass = Sass.compileSync(`
+        //   @tailwind base;
+        //   @tailwind components;
+        //   @tailwind utilities;`)
+        // console.log({ sass })
+        // return sass
       },
     }
     const updatedComponentValues = JSON.parse(code.value.json)

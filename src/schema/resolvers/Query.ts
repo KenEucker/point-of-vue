@@ -46,7 +46,7 @@ const Query = {
 
     /// Check and throw error or pear down the creator response based on permissions here
     /// Maybe check for mutual "following"?
-    if (!authedRequest && creator) {
+    if (!authedRequest && creator && auth0Configured) {
       creator.id = 0
       creator.email = ''
     }
