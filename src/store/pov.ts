@@ -1,3 +1,4 @@
+import { getGraphUrl } from './../utilities/index'
 import { apolloClient } from '.'
 import { defineStore } from 'pinia'
 import { gql } from '@apollo/client/core'
@@ -10,6 +11,8 @@ export const getInitialPovState = (): {
   trendingTitle: string
   topTrending: any
   simple: boolean
+  healthy: boolean
+  ready: boolean
 } => ({
   creatorsToFollow: [],
   trending: [
@@ -38,6 +41,8 @@ export const getInitialPovState = (): {
   },
   trendingTitle: "What's happening",
   simple: false,
+  ready: false,
+  healthy: false,
 })
 
 export const usePovState = defineStore({
@@ -50,10 +55,30 @@ export const usePovState = defineStore({
     getTrendingTitle: (s) => s.trendingTitle,
     getTopTrendingTitle: (s) => s.topTrending?.title,
     getTopTrendingText: (s) => s.topTrending?.text,
+    isHealthy: (s) => s.healthy,
+    isReady: (s) => s.ready,
+    isProduction: (s) => process.env.ENV === 'production',
   },
   actions: {
     async init() {
-      await this.fetchCreatorsToFollow()
+      // eslint-disable-next-line no-async-promise-executor
+      return new Promise(async (resolve) => {
+        this.fetchCreatorsToFollow()
+        fetch(getGraphUrl('ready'))
+          .then((r) => {
+            console.log({ r, ths: this.ready })
+            this.ready = r.ok
+            if (this.ready) {
+              return fetch(getGraphUrl('health')).then((h) => {
+                this.healthy = h.ok
+              })
+            }
+          })
+          .catch((r) => {
+            console.error('readiness', r.message)
+          })
+          .finally(resolve as () => void)
+      })
     },
     async fetchCreatorsToFollow() {
       const getCreatorsToFollowQuery = gql`

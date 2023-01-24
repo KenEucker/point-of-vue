@@ -139,10 +139,10 @@ export const useVuesState = defineStore({
           const vue = ${normalizedJson}
           ${normalizedJS.output}
 
-          onMounted(() => {
-            console.log('window.tailwindCSS', window.tailwindCSS)
+          // onMounted(() => {
+            // console.log('window.tailwindCSS', window.tailwindCSS)
             // window.tailwindCSS.refresh()
-          })
+          // })
         </script>`,
         /// Feature disabled
         //   <style scoped>

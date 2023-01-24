@@ -69,7 +69,8 @@ const creatorPanelClick = () => {
 
     <button
       v-show="creatorState.isLoggedIn"
-      class="flex items-center justify-center w-full px-2 py-3 text-white transition-transform transform rounded-lg max-w-50 md:max-w-90 bg-ll-primary dark:bg-ld-primary active:scale-95"
+      class="flex items-center justify-center w-full py-3 text-white transition-transform transform rounded-lg max-w-50 md:max-w-90 bg-ll-primary dark:bg-ld-primary active:scale-95"
+      :class="`${props.isExpanded ? '' : 'px-6'}`"
       @click="postButtonClick"
     >
       <p v-show="props.isExpanded" class="mr-4">Post</p>

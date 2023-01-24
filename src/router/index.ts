@@ -73,17 +73,17 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/data',
     name: 'Data',
-    component: () => import('../views/DataPage.vue'),
+    component: () => import('../views/FramedPage.vue'),
     meta: {
       protected: true,
-      mainMenu: process.env.NODE_ENV !== 'production',
+      mainMenu: process.env.ENV !== 'production',
     },
     beforeEnter: useAuthGuard,
   },
   {
     path: '/graph',
     name: 'Graph',
-    component: () => import('../views/GraphPage.vue'),
+    component: () => import('../views/FramedPage.vue'),
     meta: {
       protected: true,
       mainMenu: true,

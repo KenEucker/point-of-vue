@@ -1,6 +1,6 @@
 import { createGlobalState, useDark } from '@vueuse/core'
 
-export const getGraphUrl = (addAuthHeader = false) => {
+export const getGraphUrl = (endpoint: string | undefined = undefined, addAuthHeader = false) => {
   let authHeader = ''
   if (addAuthHeader) {
     authHeader = `?headers=${encodeURIComponent(
@@ -10,7 +10,7 @@ export const getGraphUrl = (addAuthHeader = false) => {
 
   return `${process.env.GRAPH_URL}${
     process.env.GRAPH_PORT !== '80' ? `:${process.env.GRAPH_PORT}` : ''
-  }/${process.env.GRAPH_PATH}${authHeader}`
+  }/${endpoint ?? process.env.GRAPH_PATH}${authHeader}`
 }
 
 export const studioUrl = process.env.STUDIO_URL

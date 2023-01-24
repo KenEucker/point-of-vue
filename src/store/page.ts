@@ -25,6 +25,7 @@ export const getInitialPageState = (): {
   pageComponents: Map<string, string[]>
   pageName: string
   metaData: any
+  frameUrl: string
   disableAbout: boolean
   debugMode: boolean
 } => ({
@@ -38,6 +39,7 @@ export const getInitialPageState = (): {
   about: { title: 'About this page', body: ['no about information for this page', 'sorry'] },
   metaData: {},
   pageName: '',
+  frameUrl: '',
   disableAbout: disableAbout.value,
   debugMode: process.env.ENV !== 'production',
 })
@@ -48,9 +50,17 @@ export const usePageState = defineStore('usePageState', {
     width: (s) => width.value,
     height: (s) => height.value,
     isDataRoute: (s) => (s.pageName === 'Data' ? true : s.pageName === 'Graph'),
+    isFramed: (s) => s.frameUrl.length,
     getLogsHistory: (s) => s.logs.history,
     getLogs: (s) => ({ info: s.logs.info, error: s.logs.error }),
     getAboutPage: (s) => s.about,
+    getPageFrameUrl: (s) => s.frameUrl,
+    getPageFrameUrlShortened: (s) =>
+      s.frameUrl
+        .replace(location.origin, '')
+        .replace(location.host, '')
+        .replace(/https?:\/\//i, '')
+        .split('?')[0],
     getPageName: (s) => s.pageName,
     getMetaData: (s) => s.metaData,
     getLeftMenuComponents: (s) => {
@@ -121,10 +131,14 @@ export const usePageState = defineStore('usePageState', {
       this.logs.info = info
       this.logs.error = error
     },
+    setIsFramed(url: string) {
+      this.frameUrl = url
+    },
     setMetadata(pageName: string | null = null, meta: any = {}) {
       if (pageName) {
         this.pageName = pageName
         this.metaData = {}
+        this.frameUrl = ''
         if (meta.components) {
           this.pageComponents.set(pageName, meta.components)
           delete meta.components
