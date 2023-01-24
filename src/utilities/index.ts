@@ -47,6 +47,10 @@ export interface PovComponent {
   publishedAt?: Date
   archivedAt?: Date
   erroredAt?: Date
+  raw?: string
+  query?: string
+  script?: string
+  template?: string
 }
 
 /// From Chatbot

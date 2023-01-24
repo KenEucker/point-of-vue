@@ -17,6 +17,7 @@ export const getInitialPageState = (): {
   bottomMenuOpen: boolean
   pageComponents: Map<string, string>
   pageName: string
+  metaData: any
   disableAbout: boolean
 } => ({
   createPostOpen: false,
@@ -25,6 +26,7 @@ export const getInitialPageState = (): {
   rightMenuOpen: rightMenuOpen.value,
   bottomMenuOpen: bottomMenuOpen.value,
   pageComponents: new Map(),
+  metaData: {},
   pageName: '',
   disableAbout: disableAbout.value,
 })
@@ -35,6 +37,7 @@ export const usePageState = defineStore('usePageState', {
     width: (s) => width.value,
     height: (s) => height.value,
     getPageName: (s) => s.pageName,
+    getMetaData: (s) => s.metaData,
     getPageComponents: (s) => s.pageComponents.get(s.pageName),
     isCreatePostOpen: (s) => s.createPostOpen,
     isLeftMenuOpen: (s) => s.leftMenuOpen,
@@ -44,6 +47,13 @@ export const usePageState = defineStore('usePageState', {
     isAboutDisabled: (s) => s.disableAbout,
   },
   actions: {
+    setMetadata(pageName: string | null = null, meta = {}) {
+      if (pageName) {
+        this.pageName = pageName
+        this.metaData = {}
+      }
+      return (this.metaData = { ...this.metaData, ...meta })
+    },
     enableAboutSidebar() {
       disableAbout.value = this.disableAbout = false
     },

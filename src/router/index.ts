@@ -2,7 +2,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
 import NProgress from 'nprogress'
 import useAuthGuard from '../auth/authGuard'
-import { useCreatorState } from '../store/state'
+import { useCreatorState, usePageState } from '../store/state'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -133,13 +133,15 @@ index.beforeEach((p) => {
   if (!NProgress.isStarted()) {
     NProgress.start()
   }
-  const meta = (p.meta ?? {}) as any
+  const pageState = usePageState()
+  console.log(p)
+  const meta = pageState.setMetadata(p.name?.toString(), p.meta)
   if (p.meta?.protected && meta.dependsOn?.length) {
     const creatorState = useCreatorState()
     const authentication: any = creatorState.getCreatorCredentials
     for (let i = 0; i < meta.dependsOn.length; ++i) {
       const dep = meta.dependsOn[i]
-      if (!authentication[dep] && !authentication[dep].length) {
+      if (!authentication[dep] && !authentication[dep]?.length) {
         return false
       }
     }

@@ -50,9 +50,13 @@ export const useVuesState = defineStore({
         return false
       }
     },
-    async compileComponent(payload: Record<string, any>): Promise<{ output: string; logs: any }> {
+    async compileComponent(
+      payload: Record<string, string>
+    ): Promise<{ output: string; logs: any }> {
       let dataRequest
-      if (payload.graphql.trim().length) {
+      if (payload.query.trim().length) {
+        /// check for bad stuff here
+        const query = payload.query
         const options = {
           method: 'post',
           headers: {
@@ -60,7 +64,7 @@ export const useVuesState = defineStore({
             Authorization: `Bearer ${this.credentials.creatorToken}`,
           },
           body: JSON.stringify({
-            query: `${payload.graphql}`,
+            query,
           }),
         }
 
@@ -68,11 +72,11 @@ export const useVuesState = defineStore({
       }
 
       const normalizedHTML = removeAllAndSomeTagsFromHtml(
-        payload.html,
+        payload.template,
         ['head', 'link', 'script', 'style'],
         ['body', 'html']
       )
-      const normalizedJS = removeNodesWithKeywords(payload.javascript, [
+      const normalizedJS = removeNodesWithKeywords(payload.script, [
         'window',
         'alert',
         'import',
@@ -93,7 +97,7 @@ export const useVuesState = defineStore({
         : ''
 
       /// TODO: check this payload value
-      const normalizedJson = payload.json ?? '{}'
+      const normalizedJson = payload.raw ?? '{}'
 
       /// Add tailwind
       // console.log({ Sass })
@@ -113,15 +117,6 @@ export const useVuesState = defineStore({
       return {
         output: `
         <!-- Cheap Hack -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script setup>
-          ${logs}
-          ${errors}
-          /// Hydration
-          const query = ${JSON.stringify(dataRequest?.data ?? {})}
-          const vue = ${normalizedJson}
-          ${normalizedJS.output}
-        </script>
         <template>
           <div class="flex justify-center">
             <div class="block p-6 rounded-lg shadow-lg bg-white max-w-sm">
@@ -133,7 +128,27 @@ export const useVuesState = defineStore({
           @tailwind base;
           @tailwind components;
           @tailwind utilities;
-        </style>`,
+        </style>
+        <script setup>
+          import { onMounted, ref, computed } from 'vue'
+          const twScript = document.createElement("script")
+          twScript.setAttribute("src", "js/tailwindcss-jit-cdn.umd.min.js")
+          twScript.setAttribute("type", "text/javascript");
+          twScript.setAttribute("async", async);
+          document.body.appendChild(twScript)
+
+          ${logs}
+          ${errors}
+          /// Hydration
+          const query = ${JSON.stringify(dataRequest?.data ?? {})}
+          const vue = ${normalizedJson}
+          ${normalizedJS.output}
+
+          onMounted(() => {
+            console.log('window.tailwindCSS', window.tailwindCSS)
+            // window.tailwindCSS.refresh()
+          })
+        </script>`,
         /// Feature disabled
         //   <style scoped>
         //     ${payload.css}
@@ -148,7 +163,7 @@ export const useVuesState = defineStore({
         <head>
             <style id="_style">${payload.css}</style>
             <script type="module" id="_script">
-                ${payload.javascript}
+                ${payload.script}
                 window.addEventListener('message', function(event) {
                     console.log(event)
                     if (event.data === 'theme-dark') {
@@ -167,7 +182,7 @@ export const useVuesState = defineStore({
                   "Authorization": \`Bearer ${this.credentials.creatorToken}\`
                 },
                 body: JSON.stringify({
-                  query: \`${payload.graphql}\`
+                  query: \`${payload.query}\`
                 })
               };
           
@@ -182,7 +197,7 @@ export const useVuesState = defineStore({
         </head>
         <body>
             <div id="_html">
-              ${payload.html}
+              ${payload.template}
             </div>
             <div>
               <h1>DATA</h1>
