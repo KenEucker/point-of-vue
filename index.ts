@@ -38,17 +38,15 @@ const plugins =
       []
 
 /// Add logged in user caching
-plugins.push(
-  useResponseCache({
-    // cache based on the authentication header
-    session: (request) => request.headers.get('authentication'),
-  })
-)
-/// Invalidate stale cache upon data changes
-// pubsub.subscribe(() => {
-//   console.log('resetting')
-//   server.resetStore()
-// })
+if (!process.env.DISABLE_CACHE) {
+  plugins.push(
+    useResponseCache({
+      ttl: 2000,
+      // cache based on the authentication header
+      session: (request) => request.headers.get('authentication'),
+    })
+  )
+}
 
 /// Add readines checks
 plugins.push(
