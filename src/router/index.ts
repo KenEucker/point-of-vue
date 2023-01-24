@@ -21,6 +21,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/PostsPage.vue'),
     meta: {
       mainMenu: true,
+      components: ['rightMenu:whats-happening', 'rightMenu:follow-more'],
+      about: {
+        title: 'This is the POV posts feed page',
+        body: ['this page contains posts from the entire POV globe'],
+      },
     },
   },
   {
