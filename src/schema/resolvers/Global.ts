@@ -100,7 +100,7 @@ const validateJwt = async (authorization: string, options: any) => {
   }
 }
 
-const getCreatorFromJwt = (authorization: string, auth0?: any, prisma?: any) => {
+const getProfileFromJwt = (authorization: string, auth0?: any, prisma?: any) => {
   if (!authorization?.length) {
     return Promise.resolve(null)
   }
@@ -177,10 +177,10 @@ const getIdentityProfile = (requestor: any, auth0?: any, prisma?: any) => {
     return getAuthManagementToken(requestor, auth0).then((token) => {
       if (!token || (!requestor.sub && !auth0?.sub)) {
         console.log("i'm not your guy, buddy", requestor)
-        return getCreatorFromJwt(requestor.token, auth0, prisma).then(resolve)
+        return getProfileFromJwt(requestor.token, auth0, prisma).then(resolve)
       } else if (requestor.token && requestor.connection) {
         /// Assuming that the profile already has all it needs from the requestor
-        console.log('got all you need buddy', requestor)
+        console.log('you got all you need buddy', requestor)
         return resolve(requestor)
       }
 

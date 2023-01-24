@@ -2,7 +2,6 @@ import { VueComponent } from './../schema/generated/types.d'
 import { apolloClient } from '.'
 import { defineStore } from 'pinia'
 import { gql } from '@apollo/client/core'
-import { useStorage } from '@vueuse/core'
 import {
   getGraphUrl,
   PovComponent,
@@ -10,15 +9,15 @@ import {
   removeNodesWithKeywords,
 } from '../utilities'
 import Sass from 'sass.js/dist/sass.sync.js'
-
-// Local storage state
-const storedGitHubToken = useStorage('github-token', '')
+import { useCreatorState } from './creator'
 
 export const getInitialVuesState = (): {
+  credentials: { creatorToken?: string; githubToken?: string }
   vuesFetched: boolean
   vues: Array<VueComponent>
   vueComponents: Array<PovComponent>
 } => ({
+  credentials: {},
   vues: [],
   vueComponents: [],
   vuesFetched: false,
@@ -33,15 +32,32 @@ export const useVuesState = defineStore({
     getVueComponents: (s) => s.vueComponents,
   },
   actions: {
+    hasCredentials() {
+      if (this.credentials?.creatorToken?.length && this.credentials?.githubToken?.length) {
+        return true
+      }
+
+      const creatorState = useCreatorState()
+      const credentials = creatorState.getCreatorCredentials
+
+      if (credentials.creatorToken && credentials.github) {
+        this.credentials = {
+          creatorToken: credentials.creatorToken,
+          githubToken: credentials.github,
+        }
+        return true
+      } else {
+        return false
+      }
+    },
     async compileComponent(payload: Record<string, any>): Promise<{ output: string; logs: any }> {
-      const token = localStorage.getItem('creator-token')
       let dataRequest
       if (payload.graphql.trim().length) {
         const options = {
           method: 'post',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.credentials.creatorToken}`,
           },
           body: JSON.stringify({
             query: `${payload.graphql}`,
@@ -128,7 +144,6 @@ export const useVuesState = defineStore({
     },
 
     compileComponentHTML(payload: Record<string, any>, isDark?: boolean) {
-      const token = localStorage.getItem('creator-token')
       return `<html class="${isDark ? 'dark' : ''}">
         <head>
             <style id="_style">${payload.css}</style>
@@ -149,7 +164,7 @@ export const useVuesState = defineStore({
                 method: "post",
                 headers: {
                   "Content-Type": "application/json",
-                  "Authorization": \`Bearer ${token}\`
+                  "Authorization": \`Bearer ${this.credentials.creatorToken}\`
                 },
                 body: JSON.stringify({
                   query: \`${payload.graphql}\`
@@ -180,7 +195,11 @@ export const useVuesState = defineStore({
     async fetchVues(oid?: string) {
       if (this.vuesFetched) {
         return Promise.resolve(this.vues)
+      } else if (!this.credentials.githubToken?.length) {
+        return Promise.resolve([])
       }
+
+      console.log('fetching vues')
       const fetchVuesForCreatorQuery = gql`
         query StoreFetchVues($token: String!, $oid: String) {
           vues(from: { token: $token }, where: { oid: $oid }) {
@@ -195,7 +214,7 @@ export const useVuesState = defineStore({
       `
       const { data, error: queryError } = await apolloClient.query({
         query: fetchVuesForCreatorQuery,
-        variables: { token: storedGitHubToken.value, oid },
+        variables: { token: this.credentials.githubToken, oid },
       })
       if (data?.vues?.length && !queryError) {
         this.vuesFetched = true

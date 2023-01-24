@@ -90,7 +90,7 @@ const onPlay = async () => {
         return compiled.output
       },
       addStyle: async (textContent: any) => {
-        console.log({ textContent })
+        // console.log({ textContent })
         // Feature blocked
         // const style = Object.assign(document.createElement('style'), { textContent })
         // const ref = document.head.getElementsByTagName('style')[0] || null
@@ -114,7 +114,8 @@ onMounted(() => {
   if (pageState.width > 700) {
     Split(['#editor', '#component'])
   }
-  onPlay()
+  /// Don't auto compile
+  // onPlay()
 })
 </script>
 

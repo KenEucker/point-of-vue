@@ -2,6 +2,8 @@ import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
 import NProgress from 'nprogress'
 import useAuthGuard from '../auth/authGuard'
+import { useCreatorState } from '../store/state'
+
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -46,8 +48,8 @@ const routes: RouteRecordRaw[] = [
     name: 'Images',
     component: () => import('../views/ImagesPage.vue'),
     meta: {
-      requires: ['imgur'],
-      protected: true,
+      dependsOn: ['imgur'],
+      // protected: true,
       mainMenu: true,
     },
     beforeEnter: useAuthGuard,
@@ -57,7 +59,7 @@ const routes: RouteRecordRaw[] = [
     name: 'Threads',
     component: () => import('../views/ThreadsPage.vue'),
     meta: {
-      requires: ['google'],
+      dependsOn: ['google'],
       protected: true,
       mainMenu: true,
     },
@@ -88,7 +90,7 @@ const routes: RouteRecordRaw[] = [
     name: 'Vues',
     component: () => import('../views/VuesPage.vue'),
     meta: {
-      requires: ['github'],
+      dependsOn: ['github'],
       protected: true,
       mainMenu: true,
     },
@@ -127,9 +129,20 @@ const index = createRouter({
   routes,
 })
 
-index.beforeEach(() => {
+index.beforeEach((p) => {
   if (!NProgress.isStarted()) {
     NProgress.start()
+  }
+  const meta = (p.meta ?? {}) as any
+  if (p.meta?.protected && meta.dependsOn?.length) {
+    const creatorState = useCreatorState()
+    const authentication: any = creatorState.getCreatorCredentials
+    for (let i = 0; i < meta.dependsOn.length; ++i) {
+      const dep = meta.dependsOn[i]
+      if (!authentication[dep] && !authentication[dep].length) {
+        return false
+      }
+    }
   }
 })
 

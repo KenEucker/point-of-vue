@@ -251,7 +251,6 @@ export const getImgurImageSized = (
     .replace('.png', `${size}.png`)
     .replace('.mp4', `${size}.mp4`)
 
-  console.log({ link, ret })
   return ret
 }
 
