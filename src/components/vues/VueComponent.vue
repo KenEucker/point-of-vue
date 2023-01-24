@@ -50,6 +50,8 @@ const getOptions = (component: PovComponent) => {
 const renderComponent = (component: any = undefined) => {
   component = component ?? props.component
   if (componentRef.value) {
+    logs.error = ''
+    logs.info = ''
     const options = {
       moduleCache: { vue: Vue },
       getFile: async () => {
