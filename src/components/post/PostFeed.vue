@@ -46,6 +46,7 @@ const newPostSubscription = `
         }
         text
         media
+        createdAt
       }
     }
   }

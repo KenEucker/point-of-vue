@@ -44,6 +44,7 @@ const creatorPostsByHandleQuery = gql`
         title
         text
         media
+        createdAt
         creator {
           id
           handle

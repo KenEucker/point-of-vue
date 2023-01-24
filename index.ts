@@ -44,7 +44,13 @@ plugins.push(
     session: (request) => request.headers.get('authentication'),
   })
 )
+/// Invalidate stale cache upon data changes
+// pubsub.subscribe(() => {
+//   console.log('resetting')
+//   server.resetStore()
+// })
 
+/// Add readines checks
 plugins.push(
   useReadinessCheck({
     endpoint: '/ready', // default
@@ -69,9 +75,6 @@ const serverUrl = `${graphUrl}:${port}/${graphPath}`
 
 // Create a Yoga instance with a GraphQL schema.
 const yoga = createYoga({
-  // graphiql: {
-  //   credentials: 'include',
-  // },
   plugins,
   schema: authIsConfigured ? applyMiddleware(schema, permissions) : schema,
   context: {
