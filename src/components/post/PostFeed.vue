@@ -46,6 +46,7 @@ const newPostSubscription = `
         }
         text
         media
+        createdAt
       }
     }
   }
@@ -124,7 +125,7 @@ if (!postsState.postsHaveBeenLoaded && !postsState.getPostsLoading) {
     <div
       v-show="!postsState.getPostsLoading && !postsState.getPostsError"
       class="grid w-full transition-all"
-      :class="props.oneColumn ? 'md:grid-cols-1 px-20 pt-5' : 'md:grid-cols-2'"
+      :class="props.oneColumn ? 'md:grid-cols-1 px-2 pt-5' : 'md:grid-cols-2'"
     >
       <div class="flex flex-col p-2">
         <pov-post

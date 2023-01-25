@@ -139,10 +139,10 @@ export const useVuesState = defineStore({
           const vue = ${normalizedJson}
           ${normalizedJS.output}
 
-          onMounted(() => {
-            console.log('window.tailwindCSS', window.tailwindCSS)
+          // onMounted(() => {
+            // console.log('window.tailwindCSS', window.tailwindCSS)
             // window.tailwindCSS.refresh()
-          })
+          // })
         </script>`,
         /// Feature disabled
         //   <style scoped>
@@ -209,7 +209,7 @@ export const useVuesState = defineStore({
         return Promise.resolve([])
       }
 
-      console.log('fetching vues')
+      console.info('fetching vues')
       const fetchVuesForCreatorQuery = gql`
         query StoreFetchVues($token: String!, $oid: String) {
           vues(from: { token: $token }, where: { oid: $oid }) {
@@ -231,7 +231,13 @@ export const useVuesState = defineStore({
         this.vues = data.vues
         this.vueComponents = this.vues.map((v) => {
           const vueComponentJson = JSON.parse(v.vue ?? '{}')
-          return { name: vueComponentJson.name ?? '' }
+          return {
+            name: vueComponentJson.name ?? '',
+            vue: v.vue,
+            script: v.script,
+            template: v.template,
+            query: v.query,
+          }
         })
       } else if (queryError) {
         console.error(queryError)

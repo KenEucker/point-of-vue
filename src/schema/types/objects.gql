@@ -100,12 +100,12 @@ type Docule {
 type Creator {
   id: Int!
   handle: String!
+  email: String!
   subs: [String]
   verified: Boolean
   posts: [Post!]
   permissions: [Permissions!]
   interactions: [Interaction!]
-  email: String!
   name: String!
   avatar: String!
   banner: String

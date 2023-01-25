@@ -57,9 +57,11 @@
 .pinia {
   color: #ffd859;
 }
+
 h3 {
   font-size: 2.5rem;
 }
+
 div[class*='language-'] {
   position: relative;
   margin: 1rem -1.5rem;
@@ -67,7 +69,7 @@ div[class*='language-'] {
   overflow-x: auto;
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 
-  :before {
+  ::before {
     position: absolute;
     top: 0.6em;
     right: 1em;
@@ -87,12 +89,7 @@ div[class*='language-'] {
     word-spacing: normal;
     word-break: normal;
     word-wrap: normal;
-    -moz-tab-size: 4;
-    -o-tab-size: 4;
     tab-size: 4;
-    -webkit-hyphens: none;
-    -moz-hyphens: none;
-    -ms-hyphens: none;
     hyphens: none;
     background: transparent;
 
@@ -103,6 +100,7 @@ div[class*='language-'] {
       color: #eee;
     }
   }
+
   .token.comment,
   .token.prolog,
   .token.cdata {

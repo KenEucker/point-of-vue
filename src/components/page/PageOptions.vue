@@ -39,7 +39,7 @@ const pageState = usePageState()
 <template>
   <div class="px-2 mb-5 w-full flex">
     <button
-      class="flex items-center justify-center w-10 h-10 ml-2 transition-transform transform border rounded-md border-ll-border dark:border-ld-border bg-ll-base dark:bg-ld-base dark:text-gray-200 active:scale-95"
+      class="flex items-center justify-center w-10 h-10 p-2 transition-transform transform border rounded-md border-ll-border dark:border-ld-border bg-ll-base dark:bg-ld-base dark:text-gray-200 active:scale-95"
       @click="toggleDark()"
     >
       <dark-icon v-show="!isDark" class="w-5 h-5" h="20" w="20" />

@@ -24,6 +24,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  variant: {
+    type: String,
+    default: 'display',
+  },
 })
 
 const showStatus = ref(false)
@@ -47,16 +51,22 @@ const getOptions = (component: PovComponent) => {
   }
 }
 
-const renderComponent = () => {
-  if (componentRef.value) {
+const renderComponent = (component: any = undefined) => {
+  component = component ?? props.component
+  if (componentRef.value && props.variant === 'display') {
+    logs.error = ''
+    logs.info = ''
     const options = {
       moduleCache: { vue: Vue },
       getFile: async () => {
-        if (!(props.component?.json || props.component?.script || props.component?.template)) {
+        if (!(component?.json || component?.script || component?.template)) {
+          console.error('whyy?', component)
           logs.error = 'no files to load'
           return ''
+        } else {
+          console.info('success', component)
         }
-        const compiled = await vuesState.compileComponent(props.component)
+        const compiled = await vuesState.compileComponent(component)
         if (compiled.logs) {
           if (compiled.logs.info) {
             logs.info = compiled.logs.info
@@ -94,15 +104,16 @@ defineExpose({ renderComponent })
     class="component-outer w-auto m-8 text-gray-800 divide-y divide-gray-300 rounded-lg shadow-md sm:m-4"
     :class="`bg-${component.background ? component.background : 'white'}`"
   >
-    <div v-if="logs.error || logs.info" class="h-full">
+    <div v-if="logs.error?.length || logs.info?.length" class="h-full">
       <div
-        class="px-4 py-3 text-teal-900 bg-teal-100 border-t-4 border-teal-500 rounded-b shadow-md"
+        v-if="logs.error"
+        class="px-2 text-pink-900 bg-pink-100 border-4 border-pink-500 rounded-xl shadow-md"
         role="alert"
       >
         <div class="flex">
           <div class="py-1">
             <svg
-              class="w-6 h-6 mr-4 text-teal-500 fill-current"
+              class="w-6 h-6 mr-4 text-pink-500 fill-current"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
             >
@@ -112,15 +123,15 @@ defineExpose({ renderComponent })
             </svg>
           </div>
           <div>
-            <p class="font-bold">Our privacy policy has changed</p>
-            <p class="text-sm">Make sure you know how these changes affect you.</p>
+            <p class="font-bold">{{ logs.error }}</p>
+            <p class="text-sm">This prevented the component from rendering</p>
           </div>
         </div>
       </div>
       <div
         v-if="logs.info"
-        class="px-4 py-3 text-teal-900 bg-teal-100 border-t-4 border-teal-500 rounded-b shadow-md"
-        role="alert"
+        class="px-2 text-teal-900 bg-teal-100 border-t-4 border-teal-500 rounded-b shadow-md"
+        role="info"
       >
         <div class="flex">
           <div class="py-1">
@@ -135,8 +146,8 @@ defineExpose({ renderComponent })
             </svg>
           </div>
           <div>
-            <p class="font-bold">Our privacy policy has changed</p>
-            <p class="text-sm">Make sure you know how these changes affect you.</p>
+            <p class="font-bold">{{ logs.info }}</p>
+            <p class="text-sm">This did not prevent the component from rendering</p>
           </div>
         </div>
       </div>

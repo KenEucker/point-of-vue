@@ -1,8 +1,6 @@
 # Point Of Vue
 
-This started out as a project to learn graphql following a Udemy course. Halfway through that 
-course I discovered it was a couple years out of date and so I had to pivot the project I was 
-working on. This is still a project but I would be happy to evolve it into something more. I'
+Point Of Vue is a web 3 social sharing network for the programmable web. POV integrates with second-party APIs (second party are APIs you have access to as a user)
 
 # Stack
 
@@ -17,7 +15,9 @@ Right now it has two modes: demo (unauthenticated) and authenticated (using Auth
 
 With the authenticated mode you will need both an Auth0 application as well as an Auth0 API, the settings of which are included below. In demo mode you can login with an email for an existing creator (which requires creating an creator with Prisma Studio) and create posts. 
 
-The post interactions are fully wired up. You can register a new creator and update creator settings. You can create and delete posts but you cannot edit or share posts.
+The post interactions are fully wired up. You can register a new creator and update creator settings. You can create and delete posts but you cannot edit or share posts, yet.
+
+Three integrations are in the works at the moment: GitHub (vues), Imgur (images), Google (threads). The Vues page is semi functional but all three integrations are lacking any mutations in the graphql API as of January 2023.
 
 # Setup
 

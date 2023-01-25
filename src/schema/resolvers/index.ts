@@ -10,6 +10,9 @@ import Creator from './Creator'
 import Interaction from './Interaction'
 import Post from './Post'
 import Global from './Global'
+import Github from '../connections/Github'
+import Imgur from '../connections/Imgur'
+import Google from '../connections/Google'
 
 /// TS-IGNORE REASON: resolvers, included below, for each of the
 /// different types can produce the creator, post, or comment
@@ -17,7 +20,7 @@ import Global from './Global'
 /// return of these reducers, but works at runtime.
 export const resolvers: Resolvers = {
   Date,
-  Query: { ...Query, ...Global },
+  Query: { ...Query, ...Global, ...Github, ...Imgur, ...Google },
   Mutation,
   Subscription,
   Creator,

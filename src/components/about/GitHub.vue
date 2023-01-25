@@ -50,7 +50,7 @@
 </template>
 <style lang="scss" scoped>
 .github {
-  color: 36e40c9;
+  color: #6e40c9;
 }
 
 .g-box {
@@ -58,7 +58,7 @@
   background-color: #2f2f2f;
   transition: background-color 0.5s;
   padding: 5px 12px;
-  border: 1px solid rgb(84, 84, 84, 0.65);
+  border: 1px solid rgb(84 84 84 / 65%);
   border-radius: 8px;
 }
 </style>

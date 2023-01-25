@@ -61,7 +61,7 @@ export const useImagesState = defineStore({
       return this.fetchImages(albumId) && false
     },
     async fetchAlbums() {
-      console.log('fetching albums')
+      console.info('fetching albums')
       const creatorState = useCreatorState()
       const queryAlbumsForCreator = async () => {
         if (!(creatorState.getCreator.name?.length > 1)) {
@@ -109,7 +109,7 @@ export const useImagesState = defineStore({
       }
     },
     async fetchImages(albumId: string) {
-      console.log('fetching images', albumId)
+      console.info('fetching images', albumId)
       if (albumId.length) {
         const loginViaEmailQuery = gql`
           query StoreFetchImages($token: String!, $albumId: String!) {
@@ -128,7 +128,7 @@ export const useImagesState = defineStore({
           variables: { token: this.credentials.imgurToken, albumId },
         })
         if (data?.images?.length && !queryError) {
-          console.log('images fetched', albumId)
+          console.info('images fetched', albumId)
         } else if (queryError) {
           console.error(queryError)
         }

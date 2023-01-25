@@ -49,6 +49,10 @@ async function deletePost() {
   await useDeletePostMutation(where)
   isLoading.value = false
 }
+
+const ts = Math.round(new Date().getTime())
+const tsYesterday = ts - 24 * 3600 * 1000
+const postDateTime = new Date(props.post.createdAt).getTime()
 </script>
 
 <template>
@@ -77,6 +81,8 @@ async function deletePost() {
         v-if="!povStore.isSimpleMode"
         :creator-id="creatorState.getCreatorId"
         :post-id="props.post.id"
+        :subscribe="postDateTime > tsYesterday"
+        :is-self-post="props.isSelfPost"
       />
     </div>
   </div>

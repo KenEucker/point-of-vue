@@ -1,13 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { createServer } from 'node:http'
-import { createYoga } from 'graphql-yoga'
+import { createYoga, useReadinessCheck } from 'graphql-yoga'
 import { EnvelopArmorPlugin } from '@escape.tech/graphql-armor'
 import { schema, pubsub, prisma } from './src/schema'
 import { useAuth0 } from '@envelop/auth0'
 import { applyMiddleware } from 'graphql-middleware'
 import db from './src/store/seed'
 import permissions from './src/auth/permissions'
+import { useResponseCache } from '@graphql-yoga/plugin-response-cache'
 
 /// Environment Variables and their Defaults
 const originUrl = process.env.ORIGIN ?? 'http://localhost'
@@ -36,14 +37,42 @@ const plugins =
     : /// Non-auth plugins
       []
 
+/// Add logged in user caching
+if (!process.env.DISABLE_CACHE) {
+  plugins.push(
+    useResponseCache({
+      ttl: 2000,
+      // cache based on the authentication header
+      session: (request) => request.headers.get('authentication'),
+    })
+  )
+}
+
+/// Add readines checks
+plugins.push(
+  useReadinessCheck({
+    endpoint: '/ready', // default
+    check: async () => {
+      try {
+        const res = await prisma.$queryRaw`select 1`
+        // if true, respond with 200 OK
+
+        return !!res
+      } catch (err) {
+        // log the error on the server for debugging purposes
+        console.error(err)
+        // if false, respond with 504 Service Unavailable and no bdy
+        return false
+      }
+    },
+  })
+)
+
 /// Constructed server host url
 const serverUrl = `${graphUrl}:${port}/${graphPath}`
 
 // Create a Yoga instance with a GraphQL schema.
 const yoga = createYoga({
-  // graphiql: {
-  //   credentials: 'include',
-  // },
   plugins,
   schema: authIsConfigured ? applyMiddleware(schema, permissions) : schema,
   context: {
@@ -55,6 +84,7 @@ const yoga = createYoga({
     origin: `${originUrl}${originPort !== 80 ? `:${originPort}` : ''}`,
     credentials: true,
   },
+  healthCheckEndpoint: '/health',
 })
 
 // Pass it into a server to hook into request handlers.
