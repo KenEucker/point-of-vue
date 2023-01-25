@@ -66,7 +66,6 @@ export const usePovState = defineStore({
         this.fetchCreatorsToFollow()
         fetch(getGraphUrl('ready'))
           .then((r) => {
-            console.log({ r, ths: this.ready })
             this.ready = r.ok
             if (this.ready) {
               return fetch(getGraphUrl('health')).then((h) => {

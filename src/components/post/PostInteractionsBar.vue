@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import PostInteraction from './PostInteraction.vue'
 import { gql } from '@apollo/client/core'
-import { reactive, watch, ref } from 'vue'
+import { reactive, watch, ref, computed } from 'vue'
 import { useLazyQuery } from '@vue/apollo-composable'
 import { useSubscription } from '../../utilities'
 import { vIntersectionObserver } from '@vueuse/components'
+import CreatorStatus from '../creator/CreatorStatus.vue'
 
 const interactions = reactive({
+  active: new Array<string>(),
   likes: 0,
   loves: 0,
   reposts: 0,
@@ -53,6 +55,7 @@ if (props.subscribe) {
         love
         repost
         share
+        creatorId
       }
     }
   }`,
@@ -63,6 +66,23 @@ if (props.subscribe) {
         interactions.loves += delta.love
         interactions.reposts += delta.repost
         interactions.shares += delta.share
+
+        console.log('delta', delta, props.creatorId, delta.creatorId === props.creatorId)
+
+        if (delta.creatorId === props.creatorId) {
+          if (delta.like !== 0) {
+            representActiveDelta('like', delta.like)
+          }
+          if (delta.love !== 0) {
+            representActiveDelta('love', delta.love)
+          }
+          if (delta.repost !== 0) {
+            representActiveDelta('repost', delta.repost)
+          }
+          if (delta.share !== 0) {
+            representActiveDelta('share', delta.share)
+          }
+        }
       }
     }
   )
@@ -92,6 +112,21 @@ watch(result, ({ getPostInteractions }: any) => {
   interactions.shares = getPostInteractions.shares
 })
 
+const representActiveDelta = (interaction: string, delta: number) => {
+  console.log('represent', interaction, delta)
+  if (delta > 0) {
+    const shouldBeNegativeOne = interactions.active.indexOf(interaction)
+    if (shouldBeNegativeOne === -1) {
+      interactions.active.push(interaction)
+    }
+  } else if (delta < 0) {
+    const shouldNotBeNegativeOne = interactions.active.indexOf(interaction)
+    if (shouldNotBeNegativeOne !== -1) {
+      interactions.active.splice(shouldNotBeNegativeOne, 1)
+    }
+  }
+}
+
 const onInteractionSuccess = ({ interaction, delta }: { interaction: string; delta: number }) => {
   /// Let the subscriptions handle themselves
   if (props.subscribe) {
@@ -113,6 +148,8 @@ const onInteractionSuccess = ({ interaction, delta }: { interaction: string; del
       interactions.shares = interactions.shares + delta
       break
   }
+
+  representActiveDelta(interaction, delta)
 }
 
 const interactionsFetched = ref(false)
@@ -123,6 +160,13 @@ function onIntersectionObserver([{ isIntersecting }]: any) {
     load()
   }
 }
+
+const isInteractionActive = (interaction: string) => interactions.active.indexOf(interaction) !== -1
+
+const isLikeActive = computed(() => isInteractionActive('like'))
+const isLoveActive = computed(() => isInteractionActive('love'))
+const isRepostActive = computed(() => isInteractionActive('repost'))
+// const isShareActive = computed(() => isInteractionActive('share'))
 </script>
 
 <template>
@@ -136,6 +180,7 @@ function onIntersectionObserver([{ isIntersecting }]: any) {
       :post-id="props.postId"
       :count="interactions.likes"
       :disable-interaction="props.isSelfPost"
+      :active="isLikeActive"
       @on-interaction="onInteractionSuccess"
     />
     <post-interaction
@@ -144,6 +189,7 @@ function onIntersectionObserver([{ isIntersecting }]: any) {
       :post-id="props.postId"
       :count="interactions.loves"
       :disable-interaction="props.isSelfPost"
+      :active="isLoveActive"
       @on-interaction="onInteractionSuccess"
     />
     <post-interaction
@@ -152,6 +198,7 @@ function onIntersectionObserver([{ isIntersecting }]: any) {
       :creator-id="props.creatorId"
       :count="interactions.reposts"
       :disable-interaction="props.isSelfPost"
+      :active="isRepostActive"
       @on-interaction="onInteractionSuccess"
     />
     <post-interaction

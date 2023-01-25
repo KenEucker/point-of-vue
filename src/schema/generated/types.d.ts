@@ -210,9 +210,11 @@ export type InteractionByInput = {
 
 export type InteractionDelta = {
   readonly __typename?: 'InteractionDelta';
+  readonly creatorId: Scalars['Int'];
   readonly id: Scalars['Int'];
   readonly like: Scalars['Int'];
   readonly love: Scalars['Int'];
+  readonly postId: Scalars['Int'];
   readonly repost: Scalars['Int'];
   readonly share: Scalars['Int'];
   readonly text?: Maybe<Scalars['String']>;
@@ -911,9 +913,11 @@ export type InteractionResolvers<ContextType = any, ParentType extends Resolvers
 };
 
 export type InteractionDeltaResolvers<ContextType = any, ParentType extends ResolversParentTypes['InteractionDelta'] = ResolversParentTypes['InteractionDelta']> = {
+  creatorId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   like?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   love?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  postId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   repost?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   share?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

@@ -22,7 +22,6 @@ onMounted(() => {
 
 <template>
   <main class="border-t border-gray-200 dark:border-gray-700">
-    HELLOO
     <vues-profile-card :creator="creatorState.getCreator" :components="vuesState.vueComponents" />
     <vue-editor class="h-1/2" :initial-code="{}" />
   </main>
