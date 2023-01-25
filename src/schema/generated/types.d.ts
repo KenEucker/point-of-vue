@@ -385,6 +385,7 @@ export type Query = {
   readonly __typename?: 'Query';
   readonly albums?: Maybe<ReadonlyArray<ImgurAlbum>>;
   readonly creator?: Maybe<Creator>;
+  readonly creatorExists?: Maybe<Scalars['Boolean']>;
   readonly creators?: Maybe<ReadonlyArray<Maybe<Creator>>>;
   readonly docs?: Maybe<ReadonlyArray<Docule>>;
   readonly getPostInteractions?: Maybe<GetPostInteractionsPayload>;
@@ -411,6 +412,11 @@ export type QueryAlbumsArgs = {
 
 export type QueryCreatorArgs = {
   id?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<CreatorByInput>;
+};
+
+
+export type QueryCreatorExistsArgs = {
   where?: InputMaybe<CreatorByInput>;
 };
 
@@ -976,6 +982,7 @@ export type PostSubscriptionPayloadResolvers<ContextType = any, ParentType exten
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   albums?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurAlbum']>>, ParentType, ContextType, Partial<QueryAlbumsArgs>>;
   creator?: Resolver<Maybe<ResolversTypes['Creator']>, ParentType, ContextType, Partial<QueryCreatorArgs>>;
+  creatorExists?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, Partial<QueryCreatorExistsArgs>>;
   creators?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Creator']>>>, ParentType, ContextType, Partial<QueryCreatorsArgs>>;
   docs?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Docule']>>, ParentType, ContextType, Partial<QueryDocsArgs>>;
   getPostInteractions?: Resolver<Maybe<ResolversTypes['GetPostInteractionsPayload']>, ParentType, ContextType, RequireFields<QueryGetPostInteractionsArgs, 'id'>>;

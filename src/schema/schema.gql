@@ -16,6 +16,7 @@ type Query {
   albums(from: Requestor, where: ImageAlbumsWhereInput): [ImgurAlbum!]
   docs(from: Requestor): [Docule!]
 
+  creatorExists(where: CreatorByInput): Boolean
   creator(where: CreatorByInput, id: Int): Creator
   creators(where: CreatorByInput, by: ForOptionsInput): [Creator]
   interaction(where: InteractionByInput, id: Int): Interaction

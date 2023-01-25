@@ -359,17 +359,15 @@ export const useCreatorState = defineStore({
     async isEmailInUse(email: string) {
       const checkForEmailInUseQuery = gql`
         query StoreCreatorEmailInUse($email: String!) {
-          creator(where: { email: $email }) {
-            email
-          }
+          creatorExists(where: { email: $email })
         }
       `
-      const { data, error } = await apolloClient.query({
+      const { data } = await apolloClient.query({
         query: checkForEmailInUseQuery,
         variables: { email },
       })
 
-      return error ?? data?.creator
+      return data?.creatorExists
     },
   },
 })
