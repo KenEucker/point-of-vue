@@ -154,9 +154,8 @@ span {
 
 .vueuse {
   text-align: center;
-  background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
+  background: linear-gradient(315deg, #42d392 25%, #647eff);
   background-clip: text;
-  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 50px;
   line-height: 1.25;

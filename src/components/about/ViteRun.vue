@@ -65,9 +65,8 @@
 <style lang="scss" scoped>
 .tagline {
   text-align: center;
-  background: -webkit-linear-gradient(120deg, #bd34fe 30%, #41d1ff);
+  background: linear-gradient(120deg, #bd34fe 30%, #41d1ff);
   background-clip: text;
-  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 50px;
   line-height: 1.25;

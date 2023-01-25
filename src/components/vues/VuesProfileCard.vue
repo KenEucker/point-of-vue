@@ -159,7 +159,7 @@ const developerStats = [
                       width="35"
                       height="35"
                       alt="@brainkim"
-                      style="border-radius: 50%; box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px"
+                      style="border-radius: 50%; box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
                   /></a>
                 </div>
               </div>
@@ -190,7 +190,7 @@ const developerStats = [
                       width="35"
                       height="35"
                       alt="@directus"
-                      style="box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px"
+                      style="box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
                   /></a>
                 </div>
 
@@ -209,7 +209,7 @@ const developerStats = [
                       width="35"
                       height="35"
                       alt="@johnsoncodehk"
-                      style="border-radius: 50%; box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px"
+                      style="border-radius: 50%; box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
                   /></a>
                 </div>
               </div>
@@ -331,7 +331,7 @@ const developerStats = [
                 alt="Achievement: YOLO"
                 data-view-component="true"
                 class="border-none"
-                style="filter: drop-shadow(rgb(28, 33, 40) 0px 8px 24px)" /></a
+                style="filter: drop-shadow(rgb(28 33 40) 0 8px 24px)" /></a
             ><a
               href="/KenEucker?achievement=quickdraw&amp;tab=achievements"
               class="relative text-blue-400 bg-transparent cursor-pointer"
@@ -344,7 +344,7 @@ const developerStats = [
                 alt="Achievement: Quickdraw"
                 data-view-component="true"
                 class="border-none"
-                style="filter: drop-shadow(rgb(28, 33, 40) 0px 8px 24px)" /></a
+                style="filter: drop-shadow(rgb(28 33 40) 0 8px 24px)" /></a
             ><a
               href="/KenEucker?achievement=public-sponsor&amp;tab=achievements"
               class="relative text-blue-400 bg-transparent cursor-pointer"
@@ -357,7 +357,7 @@ const developerStats = [
                 alt="Achievement: Public Sponsor"
                 data-view-component="true"
                 class="border-none"
-                style="filter: drop-shadow(rgb(28, 33, 40) 0px 8px 24px)" /></a
+                style="filter: drop-shadow(rgb(28 33 40) 0 8px 24px)" /></a
             ><a
               href="/KenEucker?achievement=pull-shark&amp;tab=achievements"
               class="relative text-blue-400 bg-transparent cursor-pointer"
@@ -370,11 +370,11 @@ const developerStats = [
                 alt="Achievement: Pull Shark"
                 data-view-component="true"
                 class="border-none"
-                style="filter: drop-shadow(rgb(28, 33, 40) 0px 8px 24px)"
+                style="filter: drop-shadow(rgb(28 33 40) 0 8px 24px)"
               /><span
                 data-view-component="true"
                 class="absolute bottom-0 right-0 inline-block px-2 py-0 mb-1 text-xs font-semibold leading-4 border border-solid whitespace-nowrap border-zinc-200 bg-zinc-200 text-zinc-800"
-                style="box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px; border-radius: 32px"
+                style="box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px; border-radius: 32px"
                 >x3</span
               ></a
             ><a
@@ -389,7 +389,7 @@ const developerStats = [
                 alt="Achievement: Starstruck"
                 data-view-component="true"
                 class="border-none"
-                style="filter: drop-shadow(rgb(28, 33, 40) 0px 8px 24px)" /></a
+                style="filter: drop-shadow(rgb(28 33 40) 0 8px 24px)" /></a
             ><a
               href="/KenEucker?achievement=arctic-code-vault-contributor&amp;tab=achievements"
               class="relative text-blue-400 bg-transparent cursor-pointer"
@@ -402,7 +402,7 @@ const developerStats = [
                 alt="Achievement: Arctic Code Vault Contributor"
                 data-view-component="true"
                 class="border-none"
-                style="filter: drop-shadow(rgb(28, 33, 40) 0px 8px 24px)"
+                style="filter: drop-shadow(rgb(28 33 40) 0 8px 24px)"
             /></a>
           </div>
         </div>
@@ -467,7 +467,7 @@ const developerStats = [
               width="32"
               data-view-component="true"
               class="inline-block overflow-hidden flex-shrink-0 leading-none align-middle bg-gray-50 rounded-md border-none bg-opacity-[0.1]"
-              style="box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px"
+              style="box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
             />
           </a>
           <a
@@ -491,7 +491,7 @@ const developerStats = [
               width="32"
               data-view-component="true"
               class="inline-block overflow-hidden flex-shrink-0 leading-none align-middle bg-gray-50 rounded-md border-none bg-opacity-[0.1]"
-              style="box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px"
+              style="box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
             />
           </a>
           <a
@@ -515,7 +515,7 @@ const developerStats = [
               width="32"
               data-view-component="true"
               class="inline-block overflow-hidden flex-shrink-0 leading-none align-middle bg-gray-50 rounded-md border-none bg-opacity-[0.1]"
-              style="box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px"
+              style="box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
             />
           </a>
           <a
@@ -539,7 +539,7 @@ const developerStats = [
               width="32"
               data-view-component="true"
               class="inline-block overflow-hidden flex-shrink-0 leading-none align-middle bg-gray-50 rounded-md border-none bg-opacity-[0.1]"
-              style="box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px"
+              style="box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
             />
           </a>
         </div>

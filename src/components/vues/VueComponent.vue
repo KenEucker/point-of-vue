@@ -53,7 +53,6 @@ const getOptions = (component: PovComponent) => {
 
 const renderComponent = (component: any = undefined) => {
   component = component ?? props.component
-  console.log({ var: props.variant })
   if (componentRef.value && props.variant === 'display') {
     logs.error = ''
     logs.info = ''

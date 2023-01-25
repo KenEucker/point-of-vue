@@ -67,8 +67,6 @@ if (props.subscribe) {
         interactions.reposts += delta.repost
         interactions.shares += delta.share
 
-        console.log('delta', delta, props.creatorId, delta.creatorId === props.creatorId)
-
         if (delta.creatorId === props.creatorId) {
           if (delta.like !== 0) {
             representActiveDelta('like', delta.like)
@@ -113,7 +111,6 @@ watch(result, ({ getPostInteractions }: any) => {
 })
 
 const representActiveDelta = (interaction: string, delta: number) => {
-  console.log('represent', interaction, delta)
   if (delta > 0) {
     const shouldBeNegativeOne = interactions.active.indexOf(interaction)
     if (shouldBeNegativeOne === -1) {
@@ -133,7 +130,6 @@ const onInteractionSuccess = ({ interaction, delta }: { interaction: string; del
     return
   }
 
-  console.log({ delta })
   switch (interaction) {
     case 'like':
       interactions.likes = interactions.likes + delta

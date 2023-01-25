@@ -26,6 +26,7 @@ const viewerRef = ref()
 onClickOutside(viewerRef, () => emit('close'))
 </script>
 <template>
+  <span>iknow</span>
   <!-- <div class="absolute inset-0 z-0 bg-black opacity-80"></div>
     <div class="relative flex flex-col items-center justify-center min-h-full">
       <div class="container">

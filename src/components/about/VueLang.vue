@@ -90,7 +90,7 @@ const count = ref(0)
   background-color: #2f2f2f;
   transition: background-color 0.5s;
   padding: 5px 12px;
-  border: 1px solid rgb(84, 84, 84, 0.65);
+  border: 1px solid rgb(84 84 84 / 65%);
   border-radius: 8px;
   font-size: 0.9em;
   font-weight: 600;
@@ -98,40 +98,13 @@ const count = ref(0)
 
 .tagline {
   text-align: center;
-  background: -webkit-linear-gradient(315deg, #42d392 25%, #647eff);
+  background: linear-gradient(315deg, #42d392 25%, #647eff);
   background-clip: text;
-  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 50px;
   line-height: 1.25;
   font-weight: 900;
   letter-spacing: -1.5px;
-}
-
-[class*='language-'] pre,
-[class*='language-'] code {
-  text-align: left;
-  white-space: pre;
-  word-spacing: normal;
-  word-break: normal;
-  word-wrap: normal;
-  -moz-tab-size: 4;
-  -o-tab-size: 4;
-  tab-size: 4;
-  -webkit-hyphens: none;
-  -moz-hyphens: none;
-  -ms-hyphens: none;
-  hyphens: none;
-}
-.lang {
-  position: absolute;
-  top: 4px;
-  right: 10px;
-  z-index: 2;
-  font-size: 12px;
-  font-weight: 500;
-  color: rgba(235, 235, 235, 0.38);
-  transition: color 0.5s;
 }
 
 pre {
@@ -142,9 +115,33 @@ pre {
   background: transparent;
   overflow-x: auto;
 }
+
+[class*='language-'] pre,
+[class*='language-'] code {
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  tab-size: 4;
+  hyphens: none;
+}
+
+.lang {
+  position: absolute;
+  top: 4px;
+  right: 10px;
+  z-index: 2;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgb(235 235 235 / 38%);
+  transition: color 0.5s;
+}
+
 .dark .demo {
   background-color: #242424;
 }
+
 .dark div[class*='language-'] {
   background-color: #242424;
 }
