@@ -17,9 +17,10 @@ if (creatorState.isLoggedIn && !creatorState.isCreatorSignedUp) {
 const signUp = async (e: Event) => {
   e.preventDefault()
 
-  const emailInUse = await creatorState.isEmailInUse(email.value)
+  const emailToCheck = emailRef.value.value
+  const emailInUse = await creatorState.isEmailInUse(emailToCheck)
   if (emailInUse) {
-    label.value = `email address [${email.value}] is already signed up.`
+    label.value = `email address [${emailToCheck}] is already signed up.`
   } else {
     showSignupModal.value = true
   }

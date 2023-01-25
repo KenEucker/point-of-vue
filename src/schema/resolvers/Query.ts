@@ -14,6 +14,15 @@ const getDefaultQueryOptions = (by: ForOptionsInput) => ({
 })
 
 const Query = {
+  creatorExists: async (parent: never, args: any, { prisma, auth0 }: any, info: any) => {
+    const where = {
+      email: args.where?.email,
+    }
+
+    const creator = await prisma.creator.findUnique({ where })
+
+    return !!creator
+  },
   creator: async (parent: never, args: any, { prisma, auth0 }: any, info: any) => {
     const where = {
       ...args.where,
