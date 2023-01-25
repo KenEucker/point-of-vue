@@ -2,6 +2,7 @@ import { ForOptionsInput } from '../generated/types.d'
 import { GraphQLError } from 'graphql'
 import { Prisma } from '@prisma/client'
 import auth0Client from 'auth0'
+const auth0Configured = process.env.AUTH0_DOMAIN && process.env.AUTH0_CID
 
 const getDefaultQueryOptions = (by: ForOptionsInput) => ({
   take: by?.take ?? 20,
@@ -22,12 +23,12 @@ const Query = {
     const emailWhereIsSet = where?.email?.length
     const idWhereIsSet = !!where?.id
     const idWhereIsZeroedOut = idWhereIsSet && where.id === -1
-    const authedRequest = idWhereIsSet || idWhereIsZeroedOut || emailWhereIsSet
+    const authedRequest = (idWhereIsSet || idWhereIsZeroedOut || emailWhereIsSet) && auth0Configured
     const noSearchParams = Object.keys(args?.where ?? {}).length == 0
 
     if (noSearchParams && !idWhereIsSet) {
       throw new GraphQLError('You must specify which creator to query.')
-    } else if (authedRequest && !auth0) {
+    } else if (authedRequest && !auth0 && auth0Configured) {
       throw new GraphQLError("You can't do that (E: 0008)")
     } else if (idWhereIsSet && !emailWhereIsSet) {
       throw new GraphQLError("You aren't allowed to search by ID only")
@@ -45,7 +46,7 @@ const Query = {
 
     /// Check and throw error or pear down the creator response based on permissions here
     /// Maybe check for mutual "following"?
-    if (!authedRequest && creator) {
+    if (!authedRequest && creator && auth0Configured) {
       creator.id = 0
       creator.email = ''
     }

@@ -109,7 +109,7 @@
 </template>
 <style lang="scss" scoped>
 .tailwind {
-  color: rgba(72, 176, 241);
+  color: rgb(72 176 241);
 }
 
 .token.class-name,
@@ -124,6 +124,7 @@
 .token.attr-equals,
 .token.punctuation {
   --tw-text-opacity: 1;
+
   color: rgb(100 116 139 / var(--tw-text-opacity));
 }
 
@@ -131,6 +132,7 @@
 .token.class,
 .token.string {
   --tw-text-opacity: 1;
+
   color: rgb(125 211 252 / var(--tw-text-opacity));
 }
 </style>

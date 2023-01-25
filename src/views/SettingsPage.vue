@@ -24,8 +24,8 @@ const errorMessage = ref('')
 const dirty = ref(false)
 
 if (creatorState.isCreatorSignedUp !== true) {
-  console.log('no way josé')
-  router.push('/')
+  console.info('no way josé', { creatorNotSignedUp: true, path: '/settings' })
+  router.push({ path: '/', replace: true })
 }
 
 const fields = computed(() => [

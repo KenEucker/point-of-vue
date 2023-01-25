@@ -87,14 +87,16 @@ async function onPostInteraction() {
     data: updatingInteraction,
   })
 
-  emit('onInteraction', props.variant)
+  if (updatedPostInteraction?.data?.toggleInteraction?.id) {
+    emit('onInteraction', { interaction: props.variant, delta: props.active ? -1 : 1 })
+  }
 }
 
 const emit = defineEmits(['onInteraction'])
 
 const popoverContent = computed(() =>
   props.disableInteraction
-    ? 'you cannot do that'
+    ? "you can't triple stamp a double stamp"
     : props.creatorId < 0
     ? 'you must be logged in'
     : props.creatorId < 1
@@ -105,13 +107,13 @@ const popoverContent = computed(() =>
 
 <template>
   <pop-button :variant="variant" :popover-content="popoverContent" @click="onPostInteraction">
-    <div v-if="props.variant === 'like'">
-      <points w="25" h="25" :class="props.active ? 'text-yellow-600' : ''" class="align-middle" />
+    <div v-if="props.variant === 'like'" :class="props.active ? 'text-yellow-600' : ''">
+      <points w="25" h="25" class="align-middle" />
       <span v-show="!props.hideCount" class="ml-1 align-middle">{{ props.count }}</span>
     </div>
     <div v-if="props.variant === 'love'" class="ml-1">
-      <span v-if="props.active" class="ml-1 align-middle">
-        <heart w="25" h="25" class="align-middle text-amber-300" />
+      <span v-if="props.active" class="ml-1 align-middle text-purple-500">
+        <heart w="25" h="25" class="align-middle" />
         <span v-show="!props.hideCount" class="ml-1 align-middle">{{ props.count }}</span>
       </span>
       <span v-else class="align-middle">
@@ -119,11 +121,11 @@ const popoverContent = computed(() =>
         <span v-show="!props.hideCount" class="ml-1 align-middle">{{ props.count }}</span>
       </span>
     </div>
-    <div v-if="props.variant === 'repost'">
-      <repost w="25" h="25" class="align-middle" :class="active ? 'text-yellow-600' : ''" />
+    <div v-if="props.variant === 'repost'" :class="active ? 'text-green-600' : ''">
+      <repost w="25" h="25" class="align-middle" />
       <span v-show="!props.hideCount" class="ml-1 align-middle">{{ props.count }}</span>
     </div>
-    <div v-if="props.variant === 'share'">
+    <div v-if="props.variant === 'share'" :class="active ? 'text-blue-600' : ''">
       <share w="25" h="25" class="align-middle" />
       <span v-show="!props.hideCount" class="ml-1 align-middle">{{ props.count }}</span>
     </div>

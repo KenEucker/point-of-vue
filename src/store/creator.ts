@@ -1,3 +1,4 @@
+import { creatorToken } from './../utilities/index'
 import { apolloClient } from './'
 import { defineStore } from 'pinia'
 import { gql } from '@apollo/client/core'
@@ -9,7 +10,7 @@ import { watch } from 'vue'
 // Local storage state
 const storedEmail = useStorage('creator-email', '')
 const storedId = useStorage('creator-id', 0)
-const storedToken = useStorage('creator-token', '')
+const storedCreatorToken = useStorage('creator-token', '')
 const storedGoogleToken = useStorage('google-token', '')
 const storedGitHubToken = useStorage('github-token', '')
 const storedImgurToken = useStorage('imgur-token', '')
@@ -19,7 +20,7 @@ export const getInitialCreatorState = (): {
   creator: Creator
   signedUp: boolean
   auth0Configured: boolean
-  auth0Token: string
+  creatorToken: string
   authentication: any
 } => ({
   loggedIn: false,
@@ -34,7 +35,7 @@ export const getInitialCreatorState = (): {
     handle: '',
     verified: false,
   },
-  auth0Token: '',
+  creatorToken: '',
   authentication: {},
 })
 
@@ -44,6 +45,12 @@ export const useCreatorState = defineStore({
   getters: {
     isAuth0: (s) => s.auth0Configured,
     isCreatorSignedUp: (s) => s.signedUp,
+    getCreatorCredentials: (s) => ({
+      creatorToken: s.creatorToken,
+      google: s.authentication.google,
+      github: s.authentication.github,
+      imgur: s.authentication.imgur,
+    }),
     isLoggedIn: (s) => s.loggedIn,
     getCreator: (s) => s.creator,
     getCreatorId: (s) => (s.loggedIn ? (s.signedUp ? s.creator?.id : 0) : -1),
@@ -112,12 +119,9 @@ export const useCreatorState = defineStore({
               verified: false,
             }
 
-            if (!storedToken.value.length) {
-              this.auth0Token = await auth.getAccessTokenSilently()
-
-              if (this.auth0Token.length) {
-                storedToken.value = this.auth0Token
-              }
+            this.creatorToken = await auth.getAccessTokenSilently()
+            if (this.creatorToken.length) {
+              storedCreatorToken.value = this.creatorToken
             }
 
             if (creatorValuesStored) {
@@ -129,7 +133,7 @@ export const useCreatorState = defineStore({
           }
         })
       } else {
-        if (await this.login()) {
+        if ((await this.login()) !== null) {
           this.logout()
         }
       }
@@ -166,7 +170,7 @@ export const useCreatorState = defineStore({
       `
       const { data, error: queryError } = await apolloClient.query({
         query: getCreatorViaEmailAndIdPair,
-        variables: { id: creator.id, email: creator.email },
+        variables: { id: creator.id ?? 0, email: creator.email },
       })
       let error = null
 
@@ -174,6 +178,10 @@ export const useCreatorState = defineStore({
         this.creator = data.creator
         storedId.value = this.creator.id
         storedEmail.value = this.creator.email
+        /// Load these saved values if not already set
+        this.authentication.github = this.authentication.github ?? storedGitHubToken.value
+        this.authentication.google = this.authentication.google ?? storedGoogleToken.value
+        this.authentication.imgur = this.authentication.imgur ?? storedImgurToken.value
         this.signedUp = true
         this.loggedIn = true
       } else if (queryError) {
@@ -252,7 +260,7 @@ export const useCreatorState = defineStore({
       `
       const { data, error: queryError } = await apolloClient.query({
         query: getSelfViaToken,
-        variables: { token: storedToken.value },
+        variables: { token: storedCreatorToken.value },
       })
       let error = null
 
@@ -266,6 +274,7 @@ export const useCreatorState = defineStore({
           this.creator =
             data.self.requestor?.imgur ?? data.self.requestor?.github ?? data.self.requestor.google
         }
+
         this.authentication = data.self?.authentication
         if (this.authentication) {
           storedImgurToken.value = this.authentication.imgur?.length
@@ -338,7 +347,7 @@ export const useCreatorState = defineStore({
       this.loggedIn = false
       storedId.value = null
       storedEmail.value = null
-      storedToken.value = null
+      storedCreatorToken.value = null
       storedGitHubToken.value = null
       storedGoogleToken.value = null
       storedImgurToken.value = null

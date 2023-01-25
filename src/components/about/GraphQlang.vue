@@ -73,47 +73,32 @@
 
 <style lang="scss" scoped>
 h3 {
-  font-family: Rubik, Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: Rubik, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
+
 .intro {
   display: flex;
+
   h3 {
     color: #fff;
     line-height: 1;
     margin: 0 0 1em;
     white-space: pre;
   }
+
   .named-logo {
     animation: fade 1.2s ease-in-out;
     animation-fill-mode: both;
     margin-right: 18px;
     text-align: center;
   }
-  .marketing-col:nth-child(2) {
-    animation: fade 1s ease-in-out 1s both;
-  }
-  .marketing-col {
-    flex: 1 1;
-    background-color: #2f2f2f;
-    transition: background-color 0.5s;
-    padding: 5px 12px;
-    border: 1px solid rgb(84, 84, 84, 0.65);
-    border-radius: 8px;
-    font-size: 0.9em;
-    font-weight: 600;
-  }
-  .marketing-col .prism {
-    -webkit-font-smoothing: auto;
-    -moz-osx-font-smoothing: auto;
-    color: #fff;
-  }
+
   .prism {
     color: #202020;
     direction: ltr;
-    font-family: Roboto Mono, Menlo, Monaco, monospace;
+    font-family: 'Roboto Mono', Menlo, Monaco, monospace;
     font-size: 13px;
     font-weight: 400;
-    -webkit-hyphens: none;
     hyphens: none;
     line-height: 17px;
     position: relative;
@@ -143,6 +128,27 @@ h3 {
       color: #1f61a0;
     }
   }
+}
+
+.marketing-col {
+  flex: 1 1;
+  background-color: #2f2f2f;
+  transition: background-color 0.5s;
+  padding: 5px 12px;
+  border: 1px solid rgb(84 84 84 / 65%);
+  border-radius: 8px;
+  font-size: 0.9em;
+  font-weight: 600;
+
+  &:nth-child(2) {
+    animation: fade 1s ease-in-out 1s both;
+  }
+}
+
+.marketing-col .prism {
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  color: #fff;
 }
 
 .string,

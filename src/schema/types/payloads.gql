@@ -14,6 +14,8 @@ type InteractionSubscriptionPayload {
 
 type InteractionDelta {
   id: Int!
+  creatorId: Int!
+  postId: Int!
   text: String
   like: Int!
   love: Int!

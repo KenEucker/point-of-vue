@@ -9,10 +9,18 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  variant: {
+    type: String,
+    default: 'display',
+  },
 })
 </script>
 <template>
-  <vue-component :component="props.component" :show-status="true">
+  <vue-component
+    :component="props.component"
+    :variant="props.variant"
+    :show-status="props.variant === 'info'"
+  >
     <div class="flex px-6 py-4">
       <div class="text-base font-light text-gray-800 max-w-75">
         <span class="block text-sm text-gray-600">{{ component.description }}</span>

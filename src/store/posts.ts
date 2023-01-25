@@ -35,6 +35,9 @@ export const usePostsState = defineStore({
             data {
               id
               title
+              text
+              media
+              createdAt
               creator {
                 id
                 name
@@ -42,8 +45,6 @@ export const usePostsState = defineStore({
                 verified
                 avatar
               }
-              text
-              media
             }
           }
         }
@@ -75,14 +76,15 @@ export const usePostsState = defineStore({
             posts {
               id
               title
+              text
+              media
+              createdAt
               creator {
                 name
                 handle
                 verified
                 avatar
               }
-              text
-              media
             }
           }
         `

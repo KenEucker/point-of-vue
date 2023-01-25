@@ -46,6 +46,7 @@ const newPostSubscription = `
         }
         text
         media
+        createdAt
       }
     }
   }
@@ -55,7 +56,6 @@ const injectPosts = async (posts: any) => {
   leftPosts.splice(0, leftPosts.length)
   rightPosts.splice(0, rightPosts.length)
 
-  console.log('injectPosts')
   for (let i = 0; i < posts.length; ++i) {
     await sleep(50)
     if (i % 2 != 0) {
@@ -125,7 +125,7 @@ if (!postsState.postsHaveBeenLoaded && !postsState.getPostsLoading) {
     <div
       v-show="!postsState.getPostsLoading && !postsState.getPostsError"
       class="grid w-full transition-all"
-      :class="props.oneColumn ? 'md:grid-cols-1 px-20 pt-5' : 'md:grid-cols-2'"
+      :class="props.oneColumn ? 'md:grid-cols-1 px-2 pt-5' : 'md:grid-cols-2'"
     >
       <div class="flex flex-col p-2">
         <pov-post

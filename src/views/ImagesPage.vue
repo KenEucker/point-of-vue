@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { ref, computed, watch, reactive } from 'vue'
+import { ref, computed, watch, reactive, onMounted } from 'vue'
 import ImageCard from '../components/images/ImageCard.vue'
 import PaginationButtons from '../components/atomic/PaginationButtons.vue'
 import { getImgurImageSized, getRange } from '../utilities'
 import { useImagesState } from '../store/state'
 import SpinnerWithError from '../components/atomic/SpinnerWithError.vue'
 import AddIcon from 'vue-ionicons/dist/md-add-circle-outline.vue'
+import { useRouter } from 'vue-router'
 
-const imagesState = useImagesState()
 const loadedImageState = reactive<any>({
   images: [],
-  albums: [...imagesState.getAlbums],
+  albums: [],
   selectedAlbum: null,
   loading: true,
 })
@@ -20,7 +20,6 @@ const mapImageToGalleryImageSrc = (i: any) => i
 const loadAlbumImages = () => {
   const imagesToLoad = imagesState.getImagesMap.get(loadedImageState.selectedAlbum) ?? []
   loadedImageState.images = imagesToLoad.map(mapImageToGalleryImageSrc)
-  console.log(loadedImageState.images)
   loadedImageState.loading = false
   showLb.value = true
 }
@@ -30,28 +29,6 @@ const selectAlbum = async (selectedAlbum: any) => {
   if (imagesState.checkFetchAlbumImages(loadedImageState.selectedAlbum)) {
     loadAlbumImages()
   }
-}
-
-watch(imagesState, async () => {
-  loadedImageState.loading = true
-  if (loadedImageState.albums.length !== imagesState.getAlbums?.length) {
-    loadedImageState.loading = false
-    loadedImageState.albums = imagesState.getAlbums
-    currentAlbumsPage.value = 1
-  }
-  if (
-    loadedImageState.selectedAlbum &&
-    imagesState.checkFetchAlbumImages(loadedImageState.selectedAlbum)
-  ) {
-    loadAlbumImages()
-  }
-})
-
-if (!imagesState.albumsHaveBeenFetched) {
-  imagesState.fetchAlbums()
-  loadedImageState.loading = true
-} else {
-  loadedImageState.loading = false
 }
 
 const albumsPerPage = 4
@@ -66,7 +43,6 @@ const totalImages = computed(() => loadedImageState.images.length)
 const fromTo = (current: number, perPage: number, total: number) => {
   const from = current > 1 ? current * perPage - 1 : 0
   const to = from + perPage > total ? total - 1 : from + perPage - 1
-  console.log({ start: from, end: to })
   return getRange({ start: from, end: to })
 }
 
@@ -79,6 +55,36 @@ const fromToImages = computed(() =>
 
 const createNewAlbum = () => {
   // imagesState.createNewAlbum()
+}
+
+const imagesState = useImagesState()
+if (!imagesState.hasCredentials()) {
+  const router = useRouter()
+  router.push({ path: '/', replace: true })
+} else {
+  onMounted(() => {
+    watch(imagesState, async () => {
+      loadedImageState.loading = true
+      if (loadedImageState.albums.length !== imagesState.getAlbums?.length) {
+        loadedImageState.loading = false
+        loadedImageState.albums = imagesState.getAlbums
+        currentAlbumsPage.value = 1
+      }
+      if (
+        loadedImageState.selectedAlbum &&
+        imagesState.checkFetchAlbumImages(loadedImageState.selectedAlbum)
+      ) {
+        loadAlbumImages()
+      }
+    })
+
+    if (!imagesState.albumsHaveBeenFetched) {
+      imagesState.fetchAlbums()
+      loadedImageState.loading = true
+    } else {
+      loadedImageState.loading = false
+    }
+  })
 }
 </script>
 

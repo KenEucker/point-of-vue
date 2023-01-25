@@ -11,6 +11,8 @@ export default defineConfig({
   plugins: [
     vue(),
     EnvironmentPlugin({
+      ENV: process.env.NODE_ENV,
+      DISABLE_CACHE: process.env.DISABLE_CACHE === 'true' ? 'true' : 'false',
       ORIGIN: process.env.ORIGIN ?? 'http://localhost',
       ORIGIN_PORT: process.env.ORIGIN_PORT ?? port.toString(),
       PORT: port.toString(),

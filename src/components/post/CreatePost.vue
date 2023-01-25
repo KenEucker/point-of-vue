@@ -66,7 +66,6 @@ async function createNewPost() {
   try {
     newPostData.creatorId = creatorState.getCreatorId
     const newlyCreatedPost = await useCreatePostMutation({ post: newPostData })
-    console.log({ newlyCreatedPost })
     newPostLoading.value = false
     newPostData.media = []
     newPostData.status = ''
