@@ -36,7 +36,11 @@ bottomMenuOpen: {{ pageState.isBottomMenuOpen }}
       <pre>
 loggedIn: {{ creatorState.isLoggedIn }}
 SignedUp: {{ creatorState.isCreatorSignedUp }}
-creator: {{ creatorState.getCreator.name }}
+creator: {{
+          `${creatorState.getCreator.handle ? '@' : ''}${
+            creatorState.getCreator.handle ?? creatorState.getCreator.name
+          }`
+        }}
 connections: {{
           Object.keys(creatorState.getCreatorCredentials).filter(
             (s) => s !== 'creatorToken' && (creatorState.getCreatorCredentials as any)[s]?.length

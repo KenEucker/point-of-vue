@@ -1,3 +1,4 @@
+/// TODO: update all of this data for the demo
 export const creators = [
   {
     id: '0001',

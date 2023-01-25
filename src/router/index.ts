@@ -33,12 +33,15 @@ index.beforeEach((p) => {
   }
   const pageState = usePageState()
   const meta = pageState.setMetadata(p.name?.toString(), p.meta)
+
   if (p.meta?.protected && meta.dependsOn?.length) {
     const creatorState = useCreatorState()
     const authentication: any = creatorState.getCreatorCredentials
+    /// TODO: race condition for getting credentials here
     for (let i = 0; i < meta.dependsOn.length; ++i) {
       const dep = meta.dependsOn[i]
       if (!authentication[dep] && !authentication[dep]?.length) {
+        console.info('no way josé', { dependencyUmnet: dep, path: p.path })
         return false
       }
     }

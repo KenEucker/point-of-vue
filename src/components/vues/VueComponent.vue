@@ -24,6 +24,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  variant: {
+    type: String,
+    default: 'display',
+  },
 })
 
 const showStatus = ref(false)
@@ -49,7 +53,8 @@ const getOptions = (component: PovComponent) => {
 
 const renderComponent = (component: any = undefined) => {
   component = component ?? props.component
-  if (componentRef.value) {
+  console.log({ var: props.variant })
+  if (componentRef.value && props.variant === 'display') {
     logs.error = ''
     logs.info = ''
     const options = {

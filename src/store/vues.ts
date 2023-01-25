@@ -231,7 +231,13 @@ export const useVuesState = defineStore({
         this.vues = data.vues
         this.vueComponents = this.vues.map((v) => {
           const vueComponentJson = JSON.parse(v.vue ?? '{}')
-          return { name: vueComponentJson.name ?? '' }
+          return {
+            name: vueComponentJson.name ?? '',
+            vue: v.vue,
+            script: v.script,
+            template: v.template,
+            query: v.query,
+          }
         })
       } else if (queryError) {
         console.error(queryError)

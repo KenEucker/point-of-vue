@@ -2,11 +2,6 @@
 import PovCreator from '../creator/PovCreator.vue'
 import { PovComponent } from '../../utilities'
 import PovVueCard from './PovVueCard.vue'
-import ApertureIcon from 'vue-ionicons/dist/md-aperture.vue'
-import CommentsIcon from 'vue-ionicons/dist/md-chatboxes.vue'
-import CubeIcon from 'vue-ionicons/dist/md-cube.vue'
-import MoreIcon from 'vue-ionicons/dist/md-more.vue'
-import abbreviate from 'number-abbreviate'
 import { usePageState } from '../../store/state'
 
 const pageState = usePageState()
@@ -565,6 +560,7 @@ const developerStats = [
         v-for="component in props.components"
         :key="`component-${component.name}`"
         class="flex-none w-2/3 mr-8 border rounded-lg md:w-1/3 md:pb-4"
+        variant="info"
         :component="component"
       ></pov-vue-card>
     </div>
