@@ -1,39 +1,9 @@
 import { ImgurAccount, GoogleAccount, GitHubAccount } from './../generated/types.d'
 import { GraphQLError } from 'graphql'
 import { getIdentityProfile } from '../common'
-
-const constructImgurUser = (profile: any): ImgurAccount => ({
-  id: profile.data.id,
-  name: profile.data.url,
-  avatar: profile.data.avatar,
-  bio: profile.data.bio,
-  city: profile.user_metadata.city,
-  country: profile.user_metadata.country,
-  timezone: profile.user_metadata.timezone,
-})
-const constructGoogleUser = (profile: any): GoogleAccount => ({
-  id: profile.user_id,
-  email: profile.email,
-  email_verified: profile.email_verified,
-  name: profile.nickname,
-  avatar: profile.picture,
-  city: profile.user_metadata.city,
-  country: profile.user_metadata.country,
-  timezone: profile.user_metadata.timezone,
-})
-const constructGitHubUser = (profile: any): GitHubAccount => ({
-  id: profile.user_id,
-  email: profile.email,
-  email_verified: profile.email_verified,
-  name: profile.nickname,
-  avatar: profile.picture,
-  bio: profile.bio,
-  hireable: profile.hireable,
-  profile: profile.html_url,
-  city: profile.user_metadata.city,
-  country: profile.user_metadata.country,
-  timezone: profile.user_metadata.timezone,
-})
+import { constructGithubCreator } from '../connections/Github'
+import { constructImgurCreator } from '../connections/Imgur'
+import { constructGoogleCreator } from '../connections/Google'
 
 const Global = {
   viewer: async (
@@ -113,13 +83,13 @@ const Global = {
           )?.access_token
 
           if (authentication.imgur) {
-            requestor.imgur = constructImgurUser(profile)
+            requestor.imgur = constructImgurCreator(profile)
           }
           if (authentication.google) {
-            requestor.google = constructGoogleUser(profile)
+            requestor.google = constructGoogleCreator(profile)
           }
           if (authentication.github) {
-            requestor.github = constructGitHubUser(profile)
+            requestor.github = constructGithubCreator(profile)
           }
         })
         .catch(function (_err) {

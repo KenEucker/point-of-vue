@@ -10,6 +10,16 @@ import { getIdentityProfile } from '../common'
 // @ts-expect-error
 const ImgurClient = imgur.ImgurClient
 
+export const constructImgurCreator = (profile: any): ImgurAccount => ({
+  id: profile.data.id,
+  name: profile.data.url,
+  avatar: profile.data.avatar,
+  bio: profile.data.bio,
+  city: profile.user_metadata.city,
+  country: profile.user_metadata.country,
+  timezone: profile.user_metadata.timezone,
+})
+
 const ImgurImageMap = (d: ImgurImage) => ({
   id: d.id,
   link: d.link,

@@ -108,13 +108,13 @@ export const getAuthManagementToken = (requestor?: any, auth0?: any) => {
 export const getIdentityProfile = (requestor: any, auth0?: any, prisma?: any) => {
   return new Promise((resolve) => {
     return getAuthManagementToken(requestor, auth0).then((token) => {
-      if (!token || (!requestor.sub && !auth0?.sub)) {
-        console.info("i'm not your guy, buddy", requestor)
-        return getProfileFromJwt(requestor.token, auth0, prisma).then(resolve)
-      } else if (requestor.token && requestor.connection) {
+      if (requestor.token && requestor.connection) {
         /// Assuming that the profile already has all it needs from the requestor
         console.info('you got all you need buddy', requestor)
         return resolve(requestor)
+      } else if (!token || (!requestor.sub && !auth0?.sub)) {
+        console.info("i'm not your guy, buddy", requestor)
+        return getProfileFromJwt(requestor.token, auth0, prisma).then(resolve)
       }
 
       const useSubId = requestor.sub ?? auth0.sub

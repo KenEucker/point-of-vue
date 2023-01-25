@@ -3263,13 +3263,9 @@
                 "name": "from",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "Requestor",
-                    "ofType": null
-                  }
+                  "kind": "INPUT_OBJECT",
+                  "name": "Requestor",
+                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -3292,13 +3288,9 @@
                 "name": "from",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "Requestor",
-                    "ofType": null
-                  }
+                  "kind": "INPUT_OBJECT",
+                  "name": "Requestor",
+                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -3366,13 +3358,9 @@
                 "name": "from",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "Requestor",
-                    "ofType": null
-                  }
+                  "kind": "INPUT_OBJECT",
+                  "name": "Requestor",
+                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,

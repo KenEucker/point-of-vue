@@ -1,7 +1,9 @@
-import GitHub from './GitHub'
+import Github from './Github'
+import Google from './Google'
 import Imgur from './Imgur'
 
 export default {
-  GitHub,
+  Github,
+  Google,
   Imgur,
 }

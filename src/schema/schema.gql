@@ -1,9 +1,15 @@
 type Query {
+  # versions of self
+  # Authenticate self
   self(from: Requestor): CreatorAccount
+  # Unauthenticated? self
   viewer(from: Requestor): RequestorMirror
-  google(from: Requestor!): CreatorAccount
-  imgur(from: Requestor!): CreatorAccount
-  github(from: Requestor!): CreatorAccount
+  # Authenticated Google self
+  google(from: Requestor): CreatorAccount
+  # Authenticated Github self
+  github(from: Requestor): CreatorAccount
+  # Authenticated Imgur self
+  imgur(from: Requestor): CreatorAccount
   
   vues(from: Requestor, where: VuesWhereInput): [VueComponent!]
   images(from: Requestor, where: ImagesWhereInput): [ImgurImage!]

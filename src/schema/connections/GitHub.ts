@@ -1,4 +1,4 @@
-import { GitHubAccount } from './../generated/types.d'
+import { GitHubAccount } from '../generated/types'
 import { GraphQLError } from 'graphql'
 
 import Client, { auth, gql, getMethod } from '@github-graph/api'
@@ -6,31 +6,99 @@ import { getIdentityProfile } from '../common'
 // @ts-expect-error
 const GithubClient = Client.default
 
-const GitHub = {
-  // GitHub
+export const constructGithubCreator = (profile: any) => ({
+  id: Number(profile.user_id) ? profile.user_id : 0,
+  email: profile.email,
+  verified: profile.email_verified,
+  handle: profile.nickname ?? profile.login,
+  name: profile.name,
+  website: profile.blog ?? profile.websiteUrl,
+  avatar: profile.picture ?? profile.avatarUrl,
+  updatedAt: profile.updated_at ?? profile.updatedAt,
+  joined: profile.created_at ?? profile.createdAt,
+  createdAt: profile.created_at ?? profile.createdAt,
+  status: profile.status?.emoji,
+  bio: profile.bio,
+  location: profile.location ?? `${profile.user_metadata?.city}, ${profile.user_metadata?.country}`,
+})
+
+const vetGithubRequest = async (from: any, auth0: any, prisma: any) => {
+  /// right back at ya
+  const requestor = {
+    token: from?.token,
+    email: from?.email,
+    id: from?.id,
+    sub: auth0?.sub,
+    connection: 'github',
+  }
+
+  const identity: any = await getIdentityProfile(requestor, auth0, prisma)
+  if (!identity && !requestor.token) {
+    throw new GraphQLError("You can't do that (E: 0004)")
+  } else if (identity) {
+    requestor.token = identity.token
+  }
+
+  const githubClient = new GithubClient({
+    auth: auth.createTokenAuth(requestor.token),
+  })
+
+  return { identity, requestor, githubClient }
+}
+
+const Github = {
+  github: async (
+    _parent: never,
+    args: { from: { token: string; id: string | number; email: string } },
+    { prisma, auth0 }: any,
+    info: any
+  ) => {
+    const { requestor, identity, githubClient } = await vetGithubRequest(args.from, auth0, prisma)
+
+    if (identity && auth0) {
+      return { creator: constructGithubCreator(identity) }
+    }
+
+    let creator: any = {}
+    const query = `
+    query githubAccount {
+        viewer {
+          email
+          name
+          avatarUrl
+          login
+          location
+          updatedAt
+          createdAt
+          bio
+          status {
+            emoji
+          }
+          websiteUrl
+        }
+      }
+  `
+    const getGithubAccount = getMethod(gql(query))
+
+    const { viewer } = (await getGithubAccount(githubClient)) as any
+
+    if (viewer) {
+      creator = constructGithubCreator(viewer)
+    }
+
+    return {
+      requestor,
+      creator,
+    }
+  },
   vues: async (
     _parent: never,
     args: { from: any; where: { oid: string } },
     { auth0, prisma }: any,
     _info: any
   ) => {
-    const requestor = {
-      token: args.from?.token,
-      email: args.from?.email,
-      id: args.from?.id,
-      sub: auth0?.sub,
-      connection: 'github',
-    }
-    const identity: any = await getIdentityProfile(requestor, auth0, prisma)
-    if (!identity && !requestor.token) {
-      throw new GraphQLError("You can't do that (E: 0004)")
-    } else if (identity) {
-      requestor.token = identity.token
-    }
+    const { githubClient } = await vetGithubRequest(args.from, auth0, prisma)
 
-    const githubClient = new GithubClient({
-      auth: auth.createTokenAuth(requestor.token),
-    })
     const oid = args?.where?.oid
     const oidQuery = oid ? `,oid:"${oid}"` : ''
     const query = `
@@ -91,4 +159,4 @@ const GitHub = {
   },
 }
 
-export default GitHub
+export default Github

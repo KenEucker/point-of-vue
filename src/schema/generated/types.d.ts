@@ -432,12 +432,12 @@ export type QueryGetPostInteractionsArgs = {
 
 
 export type QueryGithubArgs = {
-  from: Requestor;
+  from?: InputMaybe<Requestor>;
 };
 
 
 export type QueryGoogleArgs = {
-  from: Requestor;
+  from?: InputMaybe<Requestor>;
 };
 
 
@@ -448,7 +448,7 @@ export type QueryImagesArgs = {
 
 
 export type QueryImgurArgs = {
-  from: Requestor;
+  from?: InputMaybe<Requestor>;
 };
 
 
@@ -979,10 +979,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   creators?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Creator']>>>, ParentType, ContextType, Partial<QueryCreatorsArgs>>;
   docs?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Docule']>>, ParentType, ContextType, Partial<QueryDocsArgs>>;
   getPostInteractions?: Resolver<Maybe<ResolversTypes['GetPostInteractionsPayload']>, ParentType, ContextType, RequireFields<QueryGetPostInteractionsArgs, 'id'>>;
-  github?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryGithubArgs, 'from'>>;
-  google?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryGoogleArgs, 'from'>>;
+  github?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QueryGithubArgs>>;
+  google?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QueryGoogleArgs>>;
   images?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurImage']>>, ParentType, ContextType, Partial<QueryImagesArgs>>;
-  imgur?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, RequireFields<QueryImgurArgs, 'from'>>;
+  imgur?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QueryImgurArgs>>;
   interaction?: Resolver<Maybe<ResolversTypes['Interaction']>, ParentType, ContextType, Partial<QueryInteractionArgs>>;
   interactions?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Interaction']>>>, ParentType, ContextType, Partial<QueryInteractionsArgs>>;
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, Partial<QueryPostArgs>>;
