@@ -5,7 +5,6 @@ import { reactive, watch, ref, computed } from 'vue'
 import { useLazyQuery } from '@vue/apollo-composable'
 import { useSubscription } from '../../utilities'
 import { vIntersectionObserver } from '@vueuse/components'
-import CreatorStatus from '../creator/CreatorStatus.vue'
 
 const interactions = reactive({
   active: new Array<string>(),

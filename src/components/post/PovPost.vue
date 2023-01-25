@@ -82,6 +82,7 @@ const postDateTime = new Date(props.post.createdAt).getTime()
         :creator-id="creatorState.getCreatorId"
         :post-id="props.post.id"
         :subscribe="postDateTime > tsYesterday"
+        :is-self-post="props.isSelfPost"
       />
     </div>
   </div>

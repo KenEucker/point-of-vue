@@ -96,7 +96,7 @@ const emit = defineEmits(['onInteraction'])
 
 const popoverContent = computed(() =>
   props.disableInteraction
-    ? 'you cannot do that'
+    ? "you can't triple stamp a double stamp"
     : props.creatorId < 0
     ? 'you must be logged in'
     : props.creatorId < 1

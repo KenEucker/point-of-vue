@@ -37,7 +37,8 @@ index.beforeEach((p) => {
   if (p.meta?.protected && meta.dependsOn?.length) {
     const creatorState = useCreatorState()
     const authentication: any = creatorState.getCreatorCredentials
-    /// TODO: race condition for getting credentials here
+    /// TODO: race condition for getting credentials here,
+    /// TODO: probably just by watching the creator and using the router after the fact
     for (let i = 0; i < meta.dependsOn.length; ++i) {
       const dep = meta.dependsOn[i]
       if (!authentication[dep] && !authentication[dep]?.length) {
