@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import * as Vue from 'vue'
-import { onMounted, ref, reactive } from 'vue'
+import { onMounted, ref, toRefs, watch } from 'vue'
 import { useStorage } from '@vueuse/core'
 import Split from 'split.js'
 import { PovComponent, StorageName, useDarkGlobal } from '../../utilities'
@@ -28,6 +28,10 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  oid: {
+    type: String,
+    default: '',
+  },
 })
 
 const pageState = usePageState()
@@ -35,6 +39,7 @@ const code = ref<Record<string, any>>(props.initialCode)
 /// TODO: clear the storage on log out
 const currentTab = useStorage(StorageName.ACTIVE_TAB, 'vue')
 const componentRef = ref()
+const refProps = toRefs(props)
 const component = ref<PovComponent>({
   name: '',
   category: '',
@@ -46,7 +51,6 @@ const component = ref<PovComponent>({
   publishedAt: undefined,
   archivedAt: undefined,
   erroredAt: undefined,
-  oid: props.component.oid,
   ...props.component.value,
 })
 
@@ -56,6 +60,16 @@ if (component.value.oid) {
   code.value.javascript = component.value.script
   code.value.graphql = component.value.query
 }
+
+watch(refProps.component, (c: any) => {
+  component.value = c
+  if (component.value.oid) {
+    code.value.json = component.value.raw ?? ''
+    code.value.html = component.value.template ?? ''
+    code.value.javascript = component.value.script ?? ''
+    code.value.graphql = component.value.query ?? ''
+  }
+})
 
 useMagicKeys({
   passive: false,

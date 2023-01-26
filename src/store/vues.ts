@@ -7,6 +7,7 @@ import {
   PovComponent,
   removeAllAndSomeTagsFromHtml,
   removeNodesWithKeywords,
+  trimAndRemoveQueryWrap,
 } from '../utilities'
 // import Sass from 'sass.js/dist/sass.sync.js'
 import { useCreatorState } from './creator'
@@ -58,25 +59,17 @@ export const useVuesState = defineStore({
     async compileComponent(
       payload: any
     ): Promise<{ output: string; logs: { errors: string[]; info: string[] } }> {
-      const trimAndRemove = (str: string): string => {
-        const match = str.match(/^\s*query\s*\{/)
-        if (match) {
-          str = str.substring(match[0].length)
-          str = str.substring(0, str.lastIndexOf('}'))
-        }
-        return str.trim()
-      }
       let dataRequest
       let info: string[] = []
       let errors: string[] = []
       let normalizedHTML = ''
       let normalizedJS = ''
-      let stringifiedData = ''
+      let stringifiedData = '{}'
       let normalizedJson = '{}'
 
       if (payload.query.trim().length) {
         /// check for bad stuff here
-        const query = trimAndRemove(payload.query)
+        const query = trimAndRemoveQueryWrap(payload.query)
         const options = {
           method: 'post',
           headers: {
@@ -142,7 +135,7 @@ export const useVuesState = defineStore({
         normalizedHTML = htmlNormalized.output
         normalizedJS = jsNormalized.output
         /// TODO: check this payload value
-        normalizedJson = payload.raw ?? '{}'
+        normalizedJson = payload.raw?.length ?? '{}'
       }
       /// Add tailwind
       // console.log({ Sass })
@@ -160,14 +153,6 @@ export const useVuesState = defineStore({
       // )
       // console.log({ css })
 
-      console.log({
-        normalizedHTML,
-        info,
-        errors,
-        stringifiedData,
-        normalizedJson,
-        normalizedJS,
-      })
       return {
         output: `
         <!-- Cheap Hack -->
@@ -184,13 +169,14 @@ export const useVuesState = defineStore({
           @tailwind utilities;
         </style>
         <script setup>
+          /// Auto Import
           import { onMounted, ref, computed } from 'vue'
 
-          ${info}
-          ${errors}
           /// Hydration
           const query = ${stringifiedData}
           const vue = ${normalizedJson}
+          
+          /// Script
           ${normalizedJS}
 
           // onMounted(() => {

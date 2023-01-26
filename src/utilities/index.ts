@@ -260,3 +260,12 @@ export const getImgurImageSized = (
 }
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+export const trimAndRemoveQueryWrap = (str: string): string => {
+  const match = str.match(/^\s*query\s*/i)
+  if (match) {
+    str = str.substring(str.indexOf('{') + 1)
+    str = str.substring(0, str.lastIndexOf('}'))
+  }
+  return str.trim()
+}

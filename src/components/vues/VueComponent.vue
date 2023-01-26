@@ -82,7 +82,6 @@ const renderComponent = (component: any = undefined) => {
             return ''
           }
         }
-        console.log({ errors: logs.errors })
 
         return compiled.output
       },
