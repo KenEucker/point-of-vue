@@ -95,6 +95,10 @@ watch(isDark, (value) => {
   })
 })
 
+watch(props.modelValue, (value) => {
+  console.log({ value })
+})
+
 const editorObserver = useResizeObserver(outputContainer, () => {
   editor.layout()
 })

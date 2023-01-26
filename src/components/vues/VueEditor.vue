@@ -35,7 +35,7 @@ const props = defineProps({
 })
 
 const pageState = usePageState()
-const code = ref<Record<string, any>>(props.initialCode)
+const code = ref<Record<string, any>>({})
 /// TODO: clear the storage on log out
 const currentTab = useStorage(StorageName.ACTIVE_TAB, 'vue')
 const componentRef = ref()
@@ -55,7 +55,7 @@ const component = ref<PovComponent>({
 })
 
 if (component.value.oid) {
-  code.value.json = component.value.raw
+  code.value.json = component.value.vue
   code.value.html = component.value.template
   code.value.javascript = component.value.script
   code.value.graphql = component.value.query
@@ -64,10 +64,16 @@ if (component.value.oid) {
 watch(refProps.component, (c: any) => {
   component.value = c
   if (component.value.oid) {
-    code.value.json = component.value.raw ?? ''
+    code.value.json = component.value.vue ?? ''
     code.value.html = component.value.template ?? ''
     code.value.javascript = component.value.script ?? ''
     code.value.graphql = component.value.query ?? ''
+    /// Hack
+    const temp = `${currentTab.value}`
+    currentTab.value = ''
+    currentTab.value = temp
+
+    console.log({ c: component.value, code: code.value })
   }
 })
 
@@ -87,7 +93,6 @@ const onChange = (payload: any) => {
 }
 
 const onPlay = async () => {
-  console.log({ html: code.value.html, script: code.value.javascript, raw: code.value.json })
   const updatedComponentValues = code.value.json.length ? JSON.parse(code.value.json) : {}
   component.value.name = updatedComponentValues.name
   component.value.background = updatedComponentValues.background
@@ -95,7 +100,7 @@ const onPlay = async () => {
   component.value.status = 'good' /// TODO: calculate this
   component.value.category = updatedComponentValues.category
   component.value.description = updatedComponentValues.description
-  component.value.raw = code.value.json
+  component.value.vue = code.value.json
   component.value.template = code.value.html
   component.value.script = code.value.javascript
   component.value.query = code.value.graphql

@@ -48,7 +48,7 @@ export interface PovComponent {
   publishedAt?: Date
   archivedAt?: Date
   erroredAt?: Date
-  raw?: string
+  vue?: string
   query?: string
   script?: string
   template?: string

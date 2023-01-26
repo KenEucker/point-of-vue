@@ -135,7 +135,7 @@ export const useVuesState = defineStore({
         normalizedHTML = htmlNormalized.output
         normalizedJS = jsNormalized.output
         /// TODO: check this payload value
-        normalizedJson = payload.raw?.length ?? '{}'
+        normalizedJson = payload.vue?.length ?? '{}'
       }
       /// Add tailwind
       // console.log({ Sass })
