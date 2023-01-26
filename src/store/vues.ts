@@ -50,13 +50,26 @@ export const useVuesState = defineStore({
         return false
       }
     },
-    async compileComponent(
-      payload: Record<string, string>
-    ): Promise<{ output: string; logs: any }> {
+    async compileComponent(payload: any): Promise<{ output: string; logs: any }> {
+      const trimAndRemove = (str: string): string => {
+        const match = str.match(/^\s*query\s*\{/)
+        if (match) {
+          str = str.substring(match[0].length)
+          str = str.substring(0, str.lastIndexOf('}'))
+        }
+        return str.trim()
+      }
       let dataRequest
+      const logs = ''
+      let errors = ''
+      let normalizedHTML = ''
+      let normalizedJS = ''
+      let stringifiedData = ''
+      let normalizedJson = '{}'
+
       if (payload.query.trim().length) {
         /// check for bad stuff here
-        const query = payload.query
+        const query = trimAndRemove(payload.query)
         const options = {
           method: 'post',
           headers: {
@@ -64,41 +77,62 @@ export const useVuesState = defineStore({
             Authorization: `Bearer ${this.credentials.creatorToken}`,
           },
           body: JSON.stringify({
-            query,
+            query: `query {${query}}`,
           }),
         }
 
-        dataRequest = await fetch(getGraphUrl(), options).then((res) => res.json())
+        dataRequest = await fetch(getGraphUrl(), options)
+          .then((res) => res.json())
+          .catch((err) => {
+            // this.logs.error(err)
+            console.log({ err })
+            errors = err.message
+          })
+        console.log({ dataRequest })
+
+        if (!dataRequest || dataRequest?.errors) {
+          errors = dataRequest.errors.reduce(
+            (o: string, v: any) =>
+              (o += `line ${v.locations[0].line}:${v.locations[0].column} -- ${v.message}`),
+            ''
+          )
+          console.log({ errors })
+        } else {
+          stringifiedData = JSON.stringify(dataRequest?.data ?? {})
+        }
       }
 
-      const normalizedHTML = removeAllAndSomeTagsFromHtml(
-        payload.template,
-        ['head', 'link', 'script', 'style'],
-        ['body', 'html']
-      )
-      const normalizedJS = removeNodesWithKeywords(payload.script, [
-        'window',
-        'alert',
-        'import',
-        'fetch',
-        'require',
-        'console.log',
-      ])
+      if (!errors.length) {
+        const htmlNormalized = removeAllAndSomeTagsFromHtml(
+          payload.template,
+          ['head', 'link', 'script', 'style'],
+          ['body', 'html']
+        )
+        const jsNormalized = removeNodesWithKeywords(payload.script, [
+          'window',
+          'alert',
+          'import',
+          'fetch',
+          'require',
+          'console.log',
+        ])
 
-      const itemsWereRemoved = normalizedJS.removed.length > 0 || normalizedHTML.removed.length > 0
-      const logs = ''
-      const errorsMessage = 'Lines with the following keywords were removed during compilation'
-      const errorsObject = {
-        template: normalizedHTML.removed,
-        script: normalizedJS.removed,
+        const itemsWereRemoved =
+          jsNormalized.removed.length > 0 || htmlNormalized.removed.length > 0
+        const errorsMessage = 'Lines with the following keywords were removed during compilation'
+        const errorsObject = {
+          template: htmlNormalized.removed,
+          script: jsNormalized.removed,
+        }
+        normalizedHTML = htmlNormalized.output
+        normalizedJS = jsNormalized.output
+        errors = itemsWereRemoved
+          ? `console.log('${errorsMessage}', ${JSON.stringify(errorsObject)}, new Date())`
+          : ''
+
+        /// TODO: check this payload value
+        normalizedJson = payload.raw ?? '{}'
       }
-      const errors = itemsWereRemoved
-        ? `console.log('${errorsMessage}', ${JSON.stringify(errorsObject)}, new Date())`
-        : ''
-
-      /// TODO: check this payload value
-      const normalizedJson = payload.raw ?? '{}'
-
       /// Add tailwind
       // console.log({ Sass })
       // let css = ''
@@ -120,7 +154,7 @@ export const useVuesState = defineStore({
         <template>
           <div class="flex justify-center">
             <div class="block p-6 rounded-lg shadow-lg bg-white max-w-sm">
-              ${normalizedHTML.output}
+              ${normalizedHTML}
             </div>
           </div>
         </template>
@@ -135,9 +169,9 @@ export const useVuesState = defineStore({
           ${logs}
           ${errors}
           /// Hydration
-          const query = ${JSON.stringify(dataRequest?.data ?? {})}
+          const query = ${stringifiedData}
           const vue = ${normalizedJson}
-          ${normalizedJS.output}
+          ${normalizedJS}
 
           // onMounted(() => {
             // console.log('window.tailwindCSS', window.tailwindCSS)
@@ -149,7 +183,10 @@ export const useVuesState = defineStore({
         //     ${payload.css}
         //   </style>
         // `
-        logs: undefined,
+        logs: {
+          info: logs,
+          errors: errors,
+        },
       }
     },
 

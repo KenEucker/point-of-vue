@@ -28,6 +28,10 @@ const props = defineProps({
     type: String,
     default: 'display',
   },
+  lazy: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const showStatus = ref(false)
@@ -66,13 +70,15 @@ const renderComponent = (component: any = undefined) => {
         } else {
           console.info('success', component)
         }
+
         const compiled = await vuesState.compileComponent(component)
         if (compiled.logs) {
-          if (compiled.logs.info) {
+          if (compiled.logs.info?.length) {
             logs.info = compiled.logs.info
           }
-          if (compiled.logs.error) {
-            logs.error = compiled.logs.error
+          if (compiled.logs.errors?.length) {
+            logs.error = compiled.logs.errors
+            return ''
           }
         }
 
@@ -94,7 +100,9 @@ const renderComponent = (component: any = undefined) => {
   }
 }
 
-onMounted(renderComponent)
+if (!props.lazy) {
+  onMounted(renderComponent)
+}
 
 defineExpose({ renderComponent })
 </script>

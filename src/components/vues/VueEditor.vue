@@ -94,7 +94,7 @@ onMounted(() => {
       <monaco-editor v-model="code" :active-tab="currentTab" class="h-full" @change="onChange" />
     </div>
     <div id="component" class="w-full h-full">
-      <vue-component ref="componentRef" :component="component" />
+      <vue-component ref="componentRef" :component="component" :lazy="true" />
     </div>
   </div>
 </template>

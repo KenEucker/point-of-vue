@@ -11,9 +11,13 @@ type Query {
   # Authenticated Imgur self
   imgur(from: Requestor): CreatorAccount
   
+  # Github repository connection for POV vues
   vues(from: Requestor, where: VuesWhereInput): [VueComponent!]
+  # Imgur images request for POV sharing
   images(from: Requestor, where: ImagesWhereInput): [ImgurImage!]
+  # Imgur albums request for POV sharing and organizing
   albums(from: Requestor, where: ImageAlbumsWhereInput): [ImgurAlbum!]
+  # Google files for request for POV (storage? tools? pruning?)
   docs(from: Requestor): [Docule!]
 
   creatorExists(where: CreatorByInput): Boolean
