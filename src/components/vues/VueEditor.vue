@@ -32,21 +32,30 @@ const props = defineProps({
 
 const pageState = usePageState()
 const code = ref<Record<string, any>>(props.initialCode)
+/// TODO: clear the storage on log out
 const currentTab = useStorage(StorageName.ACTIVE_TAB, 'vue')
 const componentRef = ref()
-const component = reactive<PovComponent>({
-  ...props.component,
+const component = ref<PovComponent>({
   name: '',
   category: '',
   vues: 0,
-  status: '',
+  status: 'good',
   icon: '',
   description: '',
   background: undefined,
   publishedAt: undefined,
   archivedAt: undefined,
   erroredAt: undefined,
+  oid: props.component.oid,
+  ...props.component.value,
 })
+
+if (component.value.oid) {
+  code.value.json = component.value.raw
+  code.value.html = component.value.template
+  code.value.javascript = component.value.script
+  code.value.graphql = component.value.query
+}
 
 useMagicKeys({
   passive: false,
@@ -64,16 +73,18 @@ const onChange = (payload: any) => {
 }
 
 const onPlay = async () => {
-  const updatedComponentValues = JSON.parse(code.value.json)
-  component.name = updatedComponentValues.name
-  component.background = updatedComponentValues.background
-  component.icon = updatedComponentValues.icon
-  component.category = updatedComponentValues.category
-  component.description = updatedComponentValues.description
-  component.raw = code.value.json
-  component.template = code.value.html
-  component.script = code.value.javascript
-  component.query = code.value.graphql
+  console.log({ html: code.value.html, script: code.value.javascript, raw: code.value.json })
+  const updatedComponentValues = code.value.json.length ? JSON.parse(code.value.json) : {}
+  component.value.name = updatedComponentValues.name
+  component.value.background = updatedComponentValues.background
+  component.value.icon = updatedComponentValues.icon
+  component.value.status = 'good' /// TODO: calculate this
+  component.value.category = updatedComponentValues.category
+  component.value.description = updatedComponentValues.description
+  component.value.raw = code.value.json
+  component.value.template = code.value.html
+  component.value.script = code.value.javascript
+  component.value.query = code.value.graphql
 
   componentRef.value.renderComponent()
 }
@@ -91,7 +102,7 @@ onMounted(() => {
   <div class="flex h-full">
     <div id="editor" class="w-full">
       <editor-tabs v-model="currentTab" :tabs="tabs" @play="onPlay" />
-      <monaco-editor v-model="code" :active-tab="currentTab" class="h-full" @change="onChange" />
+      <monaco-editor v-model="code" :active-tab="currentTab" class="h-full" />
     </div>
     <div id="component" class="w-full h-full">
       <vue-component ref="componentRef" :component="component" :lazy="true" />

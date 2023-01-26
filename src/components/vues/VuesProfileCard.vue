@@ -27,6 +27,8 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['edit', 'view', 'archive', 'delete', 'logs'])
+
 const developerStats = [
   {
     icon: 'messages',
@@ -562,6 +564,11 @@ const developerStats = [
         class="flex-none w-2/3 mr-8 border rounded-lg md:w-1/3 md:pb-4"
         variant="info"
         :component="component"
+        @edit="(i) => emit('edit', i)"
+        @logs="(i) => emit('logs', i)"
+        @archive="(i) => emit('archive', i)"
+        @delete="(i) => emit('delete', i)"
+        @view="(i) => emit('view', i)"
       ></pov-vue-card>
     </div>
   </div>

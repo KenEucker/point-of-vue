@@ -35,12 +35,12 @@ const props = defineProps({
 })
 
 const showStatus = ref(false)
-const emit = defineEmits(['edit'])
+const emit = defineEmits(['edit', 'view', 'archive', 'delete', 'logs'])
 const containerRef = ref()
 const componentRef = ref()
-const logs = reactive<{ error: string | null; info: string | null }>({
-  error: null,
-  info: null,
+const logs = reactive<{ errors: string[]; info: string[] }>({
+  errors: [],
+  info: [],
 })
 onClickOutside(containerRef, () => (showStatus.value = false))
 
@@ -49,7 +49,7 @@ const getOptions = (component: PovComponent) => {
     case 'good':
       return ['edit', 'archive']
     case 'error':
-      return ['edit', 'view logs']
+      return ['edit', 'logs']
     default:
       return ['view']
   }
@@ -58,17 +58,18 @@ const getOptions = (component: PovComponent) => {
 const renderComponent = (component: any = undefined) => {
   component = component ?? props.component
   if (componentRef.value && props.variant === 'display') {
-    logs.error = ''
-    logs.info = ''
+    /// Clear the logs
+    logs.errors = []
+    logs.info = []
     const options = {
       moduleCache: { vue: Vue },
       getFile: async () => {
         if (!(component?.json || component?.script || component?.template)) {
           console.error('whyy?', component)
-          logs.error = 'no files to load'
+          logs.errors.push('no files to load')
           return ''
         } else {
-          console.info('success', component)
+          // console.info('success', component)
         }
 
         const compiled = await vuesState.compileComponent(component)
@@ -77,10 +78,11 @@ const renderComponent = (component: any = undefined) => {
             logs.info = compiled.logs.info
           }
           if (compiled.logs.errors?.length) {
-            logs.error = compiled.logs.errors
+            logs.errors = compiled.logs.errors
             return ''
           }
         }
+        console.log({ errors: logs.errors })
 
         return compiled.output
       },
@@ -93,15 +95,56 @@ const renderComponent = (component: any = undefined) => {
       },
     }
 
-    Vue.createApp(Vue.defineAsyncComponent(() => loadModule('file.vue', options))).mount(
-      componentRef.value
-    )
+    try {
+      Vue.createApp(
+        Vue.defineAsyncComponent(async () => {
+          try {
+            return await loadModule('file.vue', options)
+          } catch (error) {
+            console.error('load module error', error)
+            logs.errors.push('compilation error')
+            logs.errors.push(e.message)
+
+            return Promise.resolve()
+          }
+        })
+      ).mount(componentRef.value)
+    } catch (e: any) {
+      console.error('compilation error', e)
+      logs.errors.push('compilation error')
+      logs.errors.push(e.message)
+    }
     // refreshTailwindCss()
   }
 }
 
 if (!props.lazy) {
   onMounted(renderComponent)
+}
+
+const onStatusButtonClick = (option: string) => {
+  /// It's a hack eat hack world out there
+  switch (option) {
+    case 'edit':
+      emit('edit', props.component.oid)
+      break
+
+    case 'view':
+      emit('view', props.component.oid)
+      break
+
+    case 'archive':
+      emit('archive', props.component.oid)
+      break
+
+    case 'delete':
+      emit('delete', props.component.oid)
+      break
+
+    case 'logs':
+      emit('logs', props.component.oid)
+      break
+  }
 }
 
 defineExpose({ renderComponent })
@@ -112,9 +155,9 @@ defineExpose({ renderComponent })
     class="component-outer w-auto m-8 text-gray-800 divide-y divide-gray-300 rounded-lg shadow-md sm:m-4"
     :class="`bg-${component.background ? component.background : 'white'}`"
   >
-    <div v-if="logs.error?.length || logs.info?.length" class="h-full">
+    <div v-if="logs.errors?.length || logs.info?.length" class="h-full">
       <div
-        v-if="logs.error"
+        v-if="logs.errors?.length"
         class="px-2 text-pink-900 bg-pink-100 border-4 border-pink-500 rounded-xl shadow-md"
         role="alert"
       >
@@ -131,14 +174,16 @@ defineExpose({ renderComponent })
             </svg>
           </div>
           <div>
-            <p class="font-bold">{{ logs.error }}</p>
+            <pre class="font-bold flex flex-wrap text-sm">
+              <div v-for="(error, i) in logs.errors" :key="`error-${i}`" class="">{{ error }}</div>
+            </pre>
             <p class="text-sm">This prevented the component from rendering</p>
           </div>
         </div>
       </div>
       <div
-        v-if="logs.info"
-        class="px-2 text-teal-900 bg-teal-100 border-t-4 border-teal-500 rounded-b shadow-md"
+        v-if="logs.info?.length"
+        class="px-2 text-teal-900 bg-teal-100 border-4 border-teal-500 rounded-xl shadow-md"
         role="info"
       >
         <div class="flex">
@@ -154,7 +199,10 @@ defineExpose({ renderComponent })
             </svg>
           </div>
           <div>
-            <p class="font-bold">{{ logs.info }}</p>
+            <pre class="font-bold flex flex-wrap text-sm">
+              <div
+v-for="(log, i) in logs.info" :key="`log-${i}`" class="">{{ log }}</div>
+            </pre>
             <p class="text-sm">This did not prevent the component from rendering</p>
           </div>
         </div>
@@ -218,7 +266,7 @@ defineExpose({ renderComponent })
             v-for="option in getOptions(props.component as PovComponent)"
             :key="`${props.component.name}-option-${option}`"
             class="flex items-center px-3 py-1 w-full sm:px-2 hover:bg-gray-200"
-            @click="emit('edit')"
+            @click="onStatusButtonClick(option)"
           >
             {{ option }}
           </button>

@@ -8,7 +8,7 @@ import {
   removeAllAndSomeTagsFromHtml,
   removeNodesWithKeywords,
 } from '../utilities'
-import Sass from 'sass.js/dist/sass.sync.js'
+// import Sass from 'sass.js/dist/sass.sync.js'
 import { useCreatorState } from './creator'
 
 export const getInitialVuesState = (): {
@@ -32,6 +32,10 @@ export const useVuesState = defineStore({
     getVueComponents: (s) => s.vueComponents,
   },
   actions: {
+    getVueComponent(oid: string): PovComponent | undefined {
+      return this.vueComponents.find((c: PovComponent) => c.oid === oid)
+    },
+
     hasCredentials() {
       if (this.credentials?.creatorToken?.length && this.credentials?.githubToken?.length) {
         return true
@@ -50,7 +54,10 @@ export const useVuesState = defineStore({
         return false
       }
     },
-    async compileComponent(payload: any): Promise<{ output: string; logs: any }> {
+
+    async compileComponent(
+      payload: any
+    ): Promise<{ output: string; logs: { errors: string[]; info: string[] } }> {
       const trimAndRemove = (str: string): string => {
         const match = str.match(/^\s*query\s*\{/)
         if (match) {
@@ -60,8 +67,8 @@ export const useVuesState = defineStore({
         return str.trim()
       }
       let dataRequest
-      const logs = ''
-      let errors = ''
+      let info: string[] = []
+      let errors: string[] = []
       let normalizedHTML = ''
       let normalizedJS = ''
       let stringifiedData = ''
@@ -85,18 +92,20 @@ export const useVuesState = defineStore({
           .then((res) => res.json())
           .catch((err) => {
             // this.logs.error(err)
-            console.log({ err })
-            errors = err.message
+            console.error('data fetch error', { err })
+            errors.push(err.message)
           })
-        console.log({ dataRequest })
 
         if (!dataRequest || dataRequest?.errors) {
-          errors = dataRequest.errors.reduce(
-            (o: string, v: any) =>
-              (o += `line ${v.locations[0].line}:${v.locations[0].column} -- ${v.message}`),
-            ''
+          errors = errors.concat(
+            dataRequest.errors.reduce(
+              (o: string[], v: any) => {
+                o.push(`line ${v.locations[0].line}:${v.locations[0].column} -- ${v.message}`)
+                return o
+              },
+              ['query errors']
+            )
           )
-          console.log({ errors })
         } else {
           stringifiedData = JSON.stringify(dataRequest?.data ?? {})
         }
@@ -117,19 +126,21 @@ export const useVuesState = defineStore({
           'console.log',
         ])
 
-        const itemsWereRemoved =
-          jsNormalized.removed.length > 0 || htmlNormalized.removed.length > 0
-        const errorsMessage = 'Lines with the following keywords were removed during compilation'
-        const errorsObject = {
-          template: htmlNormalized.removed,
-          script: jsNormalized.removed,
+        const htmlLinesWereRemoved = htmlNormalized.removed.length
+        const jsLinesWereRemoved = jsNormalized.removed.length
+        if (jsLinesWereRemoved || htmlLinesWereRemoved) {
+          info.push('Lines with the following keywords were removed during compilation')
+
+          if (htmlLinesWereRemoved) {
+            info = info.concat([' template ', ...htmlNormalized.removed])
+          }
+          if (jsLinesWereRemoved) {
+            info = info.concat([' script ', ...jsNormalized.removed])
+          }
         }
+
         normalizedHTML = htmlNormalized.output
         normalizedJS = jsNormalized.output
-        errors = itemsWereRemoved
-          ? `console.log('${errorsMessage}', ${JSON.stringify(errorsObject)}, new Date())`
-          : ''
-
         /// TODO: check this payload value
         normalizedJson = payload.raw ?? '{}'
       }
@@ -148,6 +159,15 @@ export const useVuesState = defineStore({
       //   }
       // )
       // console.log({ css })
+
+      console.log({
+        normalizedHTML,
+        info,
+        errors,
+        stringifiedData,
+        normalizedJson,
+        normalizedJS,
+      })
       return {
         output: `
         <!-- Cheap Hack -->
@@ -166,7 +186,7 @@ export const useVuesState = defineStore({
         <script setup>
           import { onMounted, ref, computed } from 'vue'
 
-          ${logs}
+          ${info}
           ${errors}
           /// Hydration
           const query = ${stringifiedData}
@@ -184,8 +204,8 @@ export const useVuesState = defineStore({
         //   </style>
         // `
         logs: {
-          info: logs,
-          errors: errors,
+          info,
+          errors,
         },
       }
     },
@@ -246,7 +266,6 @@ export const useVuesState = defineStore({
         return Promise.resolve([])
       }
 
-      console.info('fetching vues')
       const fetchVuesForCreatorQuery = gql`
         query StoreFetchVues($token: String!, $oid: String) {
           vues(from: { token: $token }, where: { oid: $oid }) {
@@ -269,10 +288,12 @@ export const useVuesState = defineStore({
         this.vueComponents = this.vues.map((v) => {
           const vueComponentJson = JSON.parse(v.vue ?? '{}')
           return {
-            name: vueComponentJson.name ?? '',
+            oid: v.oid,
+            name: vueComponentJson.name ?? v.name ?? '',
             vue: v.vue,
             script: v.script,
             template: v.template,
+            status: 'good', /// TODO: calculate this
             query: v.query,
           }
         })
