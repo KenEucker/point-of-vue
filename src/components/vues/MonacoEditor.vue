@@ -15,6 +15,7 @@ import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 const props = defineProps<{
   modelValue: typeof editorValue.value
   activeTab: string
+  loadFromStoage?: boolean
 }>()
 
 const emit = defineEmits<(e: 'update:modelValue', payload: typeof editorValue.value) => void>()
@@ -69,7 +70,8 @@ onMounted(() => {
   )
 
   // Set values from storage on load
-  if (editorValue.value[activeTab.value]) {
+  /// TODO: add check for the same creator-id
+  if (props.loadFromStoage && editorValue.value[activeTab.value]) {
     editor.setValue(editorValue.value[activeTab.value])
     editor.restoreViewState(editorState.value[activeTab.value])
   }
@@ -80,13 +82,23 @@ watch(activeTab, (currentTab, prevTab) => {
 
   editorState.value[prevTab] = editor.saveViewState()
 
-  if (editorValue.value[currentTab]) editor.setValue(editorValue.value[currentTab])
-  else editor.setValue('')
+  if (editorValue.value[currentTab]) {
+    editor.setValue(editorValue.value[currentTab])
+  } else {
+    editor.setValue('')
+  }
 
   if (editorState.value[currentTab]) {
-    editor.restoreViewState(editorState.value[currentTab]!)
-    editor.focus()
+    resetEditorView(currentTab)
   }
+})
+
+watch(props.modelValue, (updatedValue: Record<string, any>) => {
+  console.log({ editorValue: editorValue.value })
+  editorState.value = updatedValue
+  editorValue.value = updatedValue
+  editor.setValue(editorState.value[activeTab.value])
+  resetEditorView()
 })
 
 watch(isDark, (value) => {
@@ -95,13 +107,16 @@ watch(isDark, (value) => {
   })
 })
 
-watch(props.modelValue, (value) => {
-  console.log({ value })
-})
-
 const editorObserver = useResizeObserver(outputContainer, () => {
   editor.layout()
 })
+
+const resetEditorView = (currentTab?: string | undefined) => {
+  editor.restoreViewState(editorState.value[currentTab ?? activeTab.value]!)
+  editor.focus()
+}
+
+defineExpose({ resetEditorView })
 
 onUnmounted(() => {
   editor?.dispose()

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import * as Vue from 'vue'
-import { onMounted, ref, toRefs, watch } from 'vue'
+import { onMounted, ref, toRefs, watch, reactive } from 'vue'
 import { useStorage } from '@vueuse/core'
 import Split from 'split.js'
 import { PovComponent, StorageName, useDarkGlobal } from '../../utilities'
@@ -35,10 +35,11 @@ const props = defineProps({
 })
 
 const pageState = usePageState()
-const code = ref<Record<string, any>>({})
+const code = reactive<Record<string, any>>({})
 /// TODO: clear the storage on log out
 const currentTab = useStorage(StorageName.ACTIVE_TAB, 'vue')
 const componentRef = ref()
+const editorRef = ref()
 const refProps = toRefs(props)
 const component = ref<PovComponent>({
   name: '',
@@ -55,25 +56,27 @@ const component = ref<PovComponent>({
 })
 
 if (component.value.oid) {
-  code.value.json = component.value.vue
-  code.value.html = component.value.template
-  code.value.javascript = component.value.script
-  code.value.graphql = component.value.query
+  code.json = component.value.vue
+  code.html = component.value.template
+  code.javascript = component.value.script
+  code.graphql = component.value.query
 }
 
 watch(refProps.component, (c: any) => {
   component.value = c
   if (component.value.oid) {
-    code.value.json = component.value.vue ?? ''
-    code.value.html = component.value.template ?? ''
-    code.value.javascript = component.value.script ?? ''
-    code.value.graphql = component.value.query ?? ''
+    console.log({ code })
+    code.json = component.value.vue ?? ''
+    code.html = component.value.template ?? ''
+    code.javascript = component.value.script ?? ''
+    code.graphql = component.value.query ?? ''
     /// Hack
     const temp = `${currentTab.value}`
     currentTab.value = ''
     currentTab.value = temp
 
-    console.log({ c: component.value, code: code.value })
+    editorRef.value.resetEditorView()
+    console.log({ c: component.value, code: code })
   }
 })
 
@@ -93,17 +96,17 @@ const onChange = (payload: any) => {
 }
 
 const onPlay = async () => {
-  const updatedComponentValues = code.value.json.length ? JSON.parse(code.value.json) : {}
+  const updatedComponentValues = code.json.length ? JSON.parse(code.json) : {}
   component.value.name = updatedComponentValues.name
   component.value.background = updatedComponentValues.background
   component.value.icon = updatedComponentValues.icon
   component.value.status = 'good' /// TODO: calculate this
   component.value.category = updatedComponentValues.category
   component.value.description = updatedComponentValues.description
-  component.value.vue = code.value.json
-  component.value.template = code.value.html
-  component.value.script = code.value.javascript
-  component.value.query = code.value.graphql
+  component.value.vue = code.json
+  component.value.template = code.html
+  component.value.script = code.javascript
+  component.value.query = code.graphql
 
   componentRef.value.renderComponent()
 }
@@ -121,7 +124,7 @@ onMounted(() => {
   <div class="flex h-full">
     <div id="editor" class="w-full">
       <editor-tabs v-model="currentTab" :tabs="tabs" @play="onPlay" />
-      <monaco-editor v-model="code" :active-tab="currentTab" class="h-full" />
+      <monaco-editor ref="editorRef" v-model="code" :active-tab="currentTab" class="h-full" />
     </div>
     <div id="component" class="w-full h-full">
       <vue-component ref="componentRef" :component="component" :lazy="true" />

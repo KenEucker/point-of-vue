@@ -21,7 +21,7 @@ onMounted(() => {
 
 const onLaunchEditVue = (vueId: string) => {
   componentToEdit.value = vuesState.getVueComponent(vueId)
-  console.log('LaunchEditVue', vueId)
+  console.info('LaunchEditVue', vueId)
 }
 const onViewLogs = (vueId: string) => {
   console.log('ViewLogs', vueId)
