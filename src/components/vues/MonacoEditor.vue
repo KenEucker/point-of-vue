@@ -60,8 +60,8 @@ const { activeTab } = refProps
 const editorState = useStorage<Record<string, any>>(StorageName.EDITOR_STATE, {})
 const editorValue = useStorage<Record<string, any>>(StorageName.EDITOR_VALUE, {})
 
-const updateEditorState = (
-  newState?: any,
+const updateEditorValue = (
+  newValue?: any,
   currentTab?: string | undefined,
   prevTab?: string | undefined
 ) => {
@@ -69,25 +69,25 @@ const updateEditorState = (
   // monaco.editor.setModelLanguage(editor.getModel()!, tab)
 
   /// store previous state
-  if (prevTab) {
+  if (prevTab && !newValue) {
     editorState.value[prevTab] = editor.saveViewState()
   }
 
-  /// setting/resetting the state
-  if (newState) {
-    if (typeof newState === 'boolean') {
-      editorState.value = null
+  /// setting/resetting the state and/or value
+  if (newValue) {
+    editorState.value = {}
+    if (typeof newValue === 'boolean') {
+      editorValue.value = null
     } else {
-      editorState.value = newState
-      editor.setValue('')
+      editorValue.value = newValue
     }
   }
 
-  /// load the editor from state
+  /// set the editor value
   if (editorValue.value[tab]) {
     editor.setValue(editorValue.value[tab])
 
-    /// If the current tab is set, restore the state if possible
+    /// If the current tab is set coming in, restore the state if possible
     if (currentTab) {
       editor.restoreViewState(editorState.value[tab])
       editor.focus()
@@ -107,15 +107,13 @@ onMounted(() => {
     fontSize: 20,
   })
 
-  emit('update:modelValue', editorValue.value)
-  console.info('mounting and setting editor value', editorValue.value)
-
   editor.onDidChangeModelContent(
     useDebounceFn(() => {
       if (editorValue.value[activeTab.value] !== editor.getValue()!) {
-        editorValue.value[activeTab.value] = editor.getValue()!
+        const newValue = editor.getValue()!
+        editorValue.value[activeTab.value] = newValue
         emit('update:modelValue', editorValue.value)
-        console.info('code updated, setting editor value', editorValue.value)
+        console.info('code updated, setting editor value', newValue)
       }
     }, 500)
   )
@@ -123,36 +121,18 @@ onMounted(() => {
   // Set values from storage on load
   /// TODO: add check for the same creator-id
   if (props.loadFromStorage && editorValue.value[activeTab.value]) {
-    console.info('loading editor value from existing state', editorValue.value[activeTab.value])
     editor.setValue(editorValue.value[activeTab.value])
     editor.restoreViewState(editorState.value[activeTab.value])
+    console.info('mounting and loaded editor value from existing state', editorValue.value)
+    emit('update:modelValue', editorValue.value)
+  } else {
+    editorValue.value = null
+    editorState.value = null
   }
 })
 
 watch(activeTab, (currentTab, prevTab) => {
-  monaco.editor.setModelLanguage(editor.getModel()!, currentTab)
-
-  editorState.value[prevTab] = editor.saveViewState()
-
-  if (editorValue.value[currentTab]) {
-    console.info('setting editor value to current tab')
-    editor.setValue(editorValue.value[currentTab])
-  } else {
-    console.info('setting editor value to empty')
-    editor.setValue('')
-  }
-
-  if (editorState.value[currentTab]) {
-    resetEditorView(currentTab)
-  }
-})
-
-watch(props.modelValue, (updatedValue: Record<string, any>) => {
-  console.info('updating editor state and value', updatedValue)
-  editorState.value = updatedValue
-  editorValue.value = updatedValue
-  editor.setValue(editorState.value[activeTab.value])
-  resetEditorView()
+  updateEditorValue(undefined, currentTab, prevTab)
 })
 
 watch(isDark, (value) => {
@@ -165,13 +145,7 @@ const editorObserver = useResizeObserver(outputContainer, () => {
   editor.layout()
 })
 
-const resetEditorView = (currentTab?: string | undefined) => {
-  console.info('resetting editor view state', editorState.value[currentTab ?? activeTab.value]!)
-  editor.restoreViewState(editorState.value[currentTab ?? activeTab.value]!)
-  editor.focus()
-}
-
-defineExpose({ resetEditorView })
+defineExpose({ updateEditorValue })
 
 onUnmounted(() => {
   /// Clear the editor on unmount

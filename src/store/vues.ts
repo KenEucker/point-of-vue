@@ -13,11 +13,13 @@ import {
 import { useCreatorState } from './creator'
 
 export const getInitialVuesState = (): {
+  code: any
   credentials: { creatorToken?: string; githubToken?: string }
   vuesFetched: boolean
   vues: Array<VueComponent>
   vueComponents: Array<PovComponent>
 } => ({
+  code: {},
   credentials: {},
   vues: [],
   vueComponents: [],
@@ -30,9 +32,34 @@ export const useVuesState = defineStore({
   getters: {
     vuesHaveBeenFetched: (s) => s.vuesFetched,
     getVues: (s) => s.vues,
+    getCodeState: (s) => s.code,
     getVueComponents: (s) => s.vueComponents,
   },
   actions: {
+    setCodeState(newState: any) {
+      console.info('setting new code state', newState)
+      this.code = newState
+    },
+
+    getComponentFromCodeState() {
+      const updatedComponentValues = this.code.json?.length ? JSON.parse(this.code.json) : {}
+      const component = {
+        name: updatedComponentValues.name,
+        background: updatedComponentValues.background,
+        icon: updatedComponentValues.icon,
+        status: 'good', /// TODO: calculate this,
+        category: updatedComponentValues.category,
+        description: updatedComponentValues.description,
+        vue: this.code.json ?? '',
+        template: this.code.html ?? '',
+        script: this.code.javascript ?? '',
+        query: this.code.graphql ?? '',
+      }
+      console.info('parsing code into component', this.code, component)
+
+      return component
+    },
+
     getVueComponent(oid: string): PovComponent | undefined {
       return this.vueComponents.find((c: PovComponent) => c.oid === oid)
     },

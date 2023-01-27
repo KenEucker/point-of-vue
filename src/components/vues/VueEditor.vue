@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import * as Vue from 'vue'
-import { onMounted, ref, toRefs, watch, reactive } from 'vue'
+import { onMounted, ref, toRefs, watch, computed } from 'vue'
 import { useStorage } from '@vueuse/core'
 import Split from 'split.js'
 import { PovComponent, StorageName, useDarkGlobal } from '../../utilities'
@@ -20,10 +20,6 @@ const tabs = {
 }
 
 const props = defineProps({
-  initialCode: {
-    type: Object,
-    default: () => ({}),
-  },
   component: {
     type: Object,
     default: () => ({}),
@@ -34,8 +30,8 @@ const props = defineProps({
   },
 })
 
+const vuesState = useVuesState()
 const pageState = usePageState()
-const code = reactive<Record<string, any>>({})
 /// TODO: clear the storage on log out
 const currentTab = useStorage(StorageName.ACTIVE_TAB, 'vue')
 const componentRef = ref()
@@ -44,28 +40,27 @@ const refProps: any = toRefs(props)
 const component = ref({ ...props.component })
 
 if (component.value.oid) {
-  code.json = component.value.vue
-  code.html = component.value.template
-  code.javascript = component.value.script
-  code.graphql = component.value.query
+  vuesState.setCodeState({
+    json: component.value.vue,
+    html: component.value.template,
+    javascript: component.value.script,
+    graphql: component.value.query,
+  })
 }
 
 watch(refProps.component, (c: any) => {
   console.info('component reactive updated, setting component', c)
   component.value = c
   if (component.value.oid) {
-    code.json = component.value.vue ?? ''
-    code.html = component.value.template ?? ''
-    code.javascript = component.value.script ?? ''
-    code.graphql = component.value.query ?? ''
-    /// Hack
-    // const temp = `${currentTab.value}`
-    // currentTab.value = ''
-    // currentTab.value = temp
+    vuesState.setCodeState({
+      json: component.value.vue ?? '',
+      html: component.value.template ?? '',
+      javascript: component.value.script ?? '',
+      graphql: component.value.query ?? '',
+    })
 
-    console.info('code state set by loaded component', code)
-    // editorRef.value.updateEditorState(code)
-    editorRef.value.resetEditorView()
+    console.info('code state set by loaded component', vuesState.getCodeState)
+    editorRef.value.updateEditorValue(vuesState.getCodeState)
   }
 })
 
@@ -84,33 +79,15 @@ const onChange = (payload: any) => {
   // console
 }
 
-const getComponentFromCode = () => {
-  const updatedComponentValues = code.json.length ? JSON.parse(code.json) : {}
-  const comp = {
-    name: updatedComponentValues.name,
-    background: updatedComponentValues.background,
-    icon: updatedComponentValues.icon,
-    status: 'good', /// TODO: calculate this,
-    category: updatedComponentValues.category,
-    description: updatedComponentValues.description,
-    vue: code.json,
-    template: code.html,
-    script: code.javascript,
-    query: code.graphql,
-  }
-  console.info('parsing code into component', code, component)
-  return comp
-}
-
 const onPlay = () => {
-  const c = getComponentFromCode()
+  const c = vuesState.getComponentFromCodeState()
   console.info('onPlay event setting component and calling render', c)
   component.value = c
   componentRef.value.renderComponent()
 }
 
 const onSave = async () => {
-  const c = getComponentFromCode()
+  const c = vuesState.getComponentFromCodeState()
   console.info('onSave event setting component and calling render', c)
   component.value = c
   componentRef.value.renderComponent(c)
@@ -122,6 +99,11 @@ onMounted(() => {
   }
   /// Don't auto compile
   // onPlay()
+})
+
+const code = computed({
+  get: () => vuesState.getCodeState,
+  set: (v) => vuesState.setCodeState(v),
 })
 </script>
 
