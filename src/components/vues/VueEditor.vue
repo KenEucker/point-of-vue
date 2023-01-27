@@ -40,20 +40,8 @@ const code = reactive<Record<string, any>>({})
 const currentTab = useStorage(StorageName.ACTIVE_TAB, 'vue')
 const componentRef = ref()
 const editorRef = ref()
-const refProps = toRefs(props)
-const component = ref<PovComponent>({
-  name: '',
-  category: '',
-  vues: 0,
-  status: 'good',
-  icon: '',
-  description: '',
-  background: undefined,
-  publishedAt: undefined,
-  archivedAt: undefined,
-  erroredAt: undefined,
-  ...props.component.value,
-})
+const refProps: any = toRefs(props)
+const component = ref({ ...props.component })
 
 if (component.value.oid) {
   code.json = component.value.vue
@@ -65,7 +53,6 @@ if (component.value.oid) {
 watch(refProps.component, (c: any) => {
   component.value = c
   if (component.value.oid) {
-    console.log({ code })
     code.json = component.value.vue ?? ''
     code.html = component.value.template ?? ''
     code.javascript = component.value.script ?? ''
@@ -76,7 +63,6 @@ watch(refProps.component, (c: any) => {
     currentTab.value = temp
 
     editorRef.value.resetEditorView()
-    console.log({ c: component.value, code: code })
   }
 })
 
@@ -95,20 +81,34 @@ const onChange = (payload: any) => {
   // console
 }
 
-const onPlay = async () => {
+const getComponentFromCode = () => {
   const updatedComponentValues = code.json.length ? JSON.parse(code.json) : {}
-  component.value.name = updatedComponentValues.name
-  component.value.background = updatedComponentValues.background
-  component.value.icon = updatedComponentValues.icon
-  component.value.status = 'good' /// TODO: calculate this
-  component.value.category = updatedComponentValues.category
-  component.value.description = updatedComponentValues.description
-  component.value.vue = code.json
-  component.value.template = code.html
-  component.value.script = code.javascript
-  component.value.query = code.graphql
+  return {
+    name: updatedComponentValues.name,
+    background: updatedComponentValues.background,
+    icon: updatedComponentValues.icon,
+    status: 'good', /// TODO: calculate this,
+    category: updatedComponentValues.category,
+    description: updatedComponentValues.description,
+    vue: code.json,
+    template: code.html,
+    script: code.javascript,
+    query: code.graphql,
+  }
+}
 
+const onPlay = () => {
+  const c = getComponentFromCode()
+  console.info('onPlayRender', c)
+  component.value = c
   componentRef.value.renderComponent()
+}
+
+const onPlay2 = async () => {
+  const c = getComponentFromCode()
+  // console.log({ componentRef: componentRef.value })
+  // console.log('componentRef.value', componentRef.value)
+  componentRef.value.renderComponent(c)
 }
 
 onMounted(() => {
@@ -127,7 +127,7 @@ onMounted(() => {
       <monaco-editor ref="editorRef" v-model="code" :active-tab="currentTab" class="h-full" />
     </div>
     <div id="component" class="w-full h-full">
-      <vue-component ref="componentRef" :component="component" :lazy="true" />
+      <vue-component ref="componentRef" :component="component" :skip-first-render="true" />
     </div>
   </div>
 </template>

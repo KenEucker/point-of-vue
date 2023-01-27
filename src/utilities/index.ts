@@ -269,3 +269,21 @@ export const trimAndRemoveQueryWrap = (str: string): string => {
   }
   return str.trim()
 }
+
+export const getLastFunctionName = (error?: Error): string | null => {
+  error = error ?? new Error()
+  Error.captureStackTrace(error)
+  const stack = error.stack
+  const stackArray = stack?.split('\n')
+  if (stackArray && stackArray.length >= 4) {
+    const lastFunctionLine = stackArray[3]
+    const lastFunctionLineMatch = lastFunctionLine.match(/at (.*?)\s/)
+    const lastFunctionName =
+      lastFunctionLineMatch?.length && lastFunctionLineMatch?.length > 1
+        ? lastFunctionLineMatch[1]
+        : 'unknown'
+    return lastFunctionName
+  }
+
+  return null
+}

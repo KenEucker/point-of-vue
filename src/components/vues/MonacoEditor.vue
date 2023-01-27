@@ -12,11 +12,21 @@ import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 
-const props = defineProps<{
-  modelValue: typeof editorValue.value
-  activeTab: string
-  loadFromStoage?: boolean
-}>()
+const props = defineProps({
+  modelValue: {
+    type: Object,
+    default: () => ({}),
+    sync: true,
+  },
+  activeTab: {
+    type: String,
+    default: '',
+  },
+  loadFromStorage: {
+    type: Boolean,
+    default: false,
+  },
+})
 
 const emit = defineEmits<(e: 'update:modelValue', payload: typeof editorValue.value) => void>()
 
@@ -71,7 +81,7 @@ onMounted(() => {
 
   // Set values from storage on load
   /// TODO: add check for the same creator-id
-  if (props.loadFromStoage && editorValue.value[activeTab.value]) {
+  if (props.loadFromStorage && editorValue.value[activeTab.value]) {
     editor.setValue(editorValue.value[activeTab.value])
     editor.restoreViewState(editorState.value[activeTab.value])
   }
@@ -94,7 +104,6 @@ watch(activeTab, (currentTab, prevTab) => {
 })
 
 watch(props.modelValue, (updatedValue: Record<string, any>) => {
-  console.log({ editorValue: editorValue.value })
   editorState.value = updatedValue
   editorValue.value = updatedValue
   editor.setValue(editorState.value[activeTab.value])
@@ -119,6 +128,10 @@ const resetEditorView = (currentTab?: string | undefined) => {
 defineExpose({ resetEditorView })
 
 onUnmounted(() => {
+  /// Clear the editor on unmount
+  /// TODO: make this configurable by prop
+  editorState.value = null
+  editorValue.value = null
   editor?.dispose()
   editorObserver.stop()
 })

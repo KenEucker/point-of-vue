@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, watch, onUnmounted, defineAsyncComponent, createApp } from 'vue'
 import PlanetIcon from 'vue-ionicons/dist/md-planet.vue'
 import BaseballIcon from 'vue-ionicons/dist/md-baseball.vue'
 import BasketIcon from 'vue-ionicons/dist/md-basket.vue'
@@ -14,6 +14,7 @@ import { loadModule } from 'vue3-sfc-loader'
 import { useVuesState } from '../../store/state'
 import * as Vue from 'vue'
 
+const AppRef = reactive<any>({ app: null })
 const vuesState = useVuesState()
 const props = defineProps({
   component: {
@@ -29,6 +30,10 @@ const props = defineProps({
     default: 'display',
   },
   lazy: {
+    type: Boolean,
+    default: false,
+  },
+  skipFirstRender: {
     type: Boolean,
     default: false,
   },
@@ -55,24 +60,24 @@ const getOptions = (component: PovComponent) => {
   }
 }
 
-const renderComponent = (component: any = undefined) => {
-  component = component ?? props.component
+const renderComponent = () => {
   if (componentRef.value && props.variant === 'display') {
+    console.info('rendering', { component: props.component })
     /// Clear the logs
     logs.errors = []
     logs.info = []
     const options = {
       moduleCache: { vue: Vue },
       getFile: async () => {
-        if (!(component?.json || component?.script || component?.template)) {
-          console.error('whyy?', component)
+        if (!(props.component?.json || props.component?.script || props.component?.template)) {
+          console.error('whyy?', props.component)
           logs.errors.push('no files to load')
           return ''
         } else {
           // console.info('success', component)
         }
 
-        const compiled = await vuesState.compileComponent(component)
+        const compiled = await vuesState.compileComponent(props.component)
         if (compiled.logs) {
           if (compiled.logs.info?.length) {
             logs.info = compiled.logs.info
@@ -95,8 +100,12 @@ const renderComponent = (component: any = undefined) => {
     }
 
     try {
-      Vue.createApp(
-        Vue.defineAsyncComponent(async () => {
+      if (AppRef.app) {
+        console.info('attempting unmount before re-render', AppRef.app)
+        AppRef.app.unmount(componentRef.value)
+      }
+      AppRef.app = createApp(
+        defineAsyncComponent(async () => {
           try {
             return await loadModule('file.vue', options)
           } catch (error) {
@@ -107,7 +116,8 @@ const renderComponent = (component: any = undefined) => {
             return Promise.resolve()
           }
         })
-      ).mount(componentRef.value)
+      )
+      AppRef.app.mount(componentRef.value)
     } catch (e: any) {
       console.error('compilation error', e)
       logs.errors.push('compilation error')
@@ -117,8 +127,18 @@ const renderComponent = (component: any = undefined) => {
   }
 }
 
-if (!props.lazy) {
+if (!props.lazy && !props.skipFirstRender) {
   onMounted(renderComponent)
+}
+
+onUnmounted(() => {
+  if (AppRef.app) {
+    AppRef.app.unmount(componentRef.value)
+  }
+})
+
+if (!props.lazy) {
+  watch(props.component, renderComponent)
 }
 
 const onStatusButtonClick = (option: string) => {
@@ -151,13 +171,13 @@ defineExpose({ renderComponent })
 <template>
   <div
     ref="containerRef"
-    class="component-outer w-auto m-8 text-gray-800 divide-y divide-gray-300 rounded-lg shadow-md sm:m-4"
+    class="w-auto m-8 text-gray-800 divide-y divide-gray-300 rounded-lg shadow-md component-outer sm:m-4"
     :class="`bg-${component.background ? component.background : 'white'}`"
   >
     <div v-if="logs.errors?.length || logs.info?.length" class="h-full">
       <div
         v-if="logs.errors?.length"
-        class="px-2 text-pink-900 bg-pink-100 border-4 border-pink-500 rounded-xl shadow-md"
+        class="px-2 text-pink-900 bg-pink-100 border-4 border-pink-500 shadow-md rounded-xl"
         role="alert"
       >
         <div class="flex">
@@ -173,7 +193,7 @@ defineExpose({ renderComponent })
             </svg>
           </div>
           <div>
-            <pre class="font-bold flex flex-wrap text-sm">
+            <pre class="flex flex-wrap text-sm font-bold">
               <div v-for="(error, i) in logs.errors" :key="`error-${i}`" class="">{{ error }}</div>
             </pre>
             <p class="text-sm">This prevented the component from rendering</p>
@@ -182,7 +202,7 @@ defineExpose({ renderComponent })
       </div>
       <div
         v-if="logs.info?.length"
-        class="px-2 text-teal-900 bg-teal-100 border-4 border-teal-500 rounded-xl shadow-md"
+        class="px-2 text-teal-900 bg-teal-100 border-4 border-teal-500 shadow-md rounded-xl"
         role="info"
       >
         <div class="flex">
@@ -198,7 +218,7 @@ defineExpose({ renderComponent })
             </svg>
           </div>
           <div>
-            <pre class="font-bold flex flex-wrap text-sm">
+            <pre class="flex flex-wrap text-sm font-bold">
               <div
 v-for="(log, i) in logs.info" :key="`log-${i}`" class="">{{ log }}</div>
             </pre>
@@ -208,7 +228,7 @@ v-for="(log, i) in logs.info" :key="`log-${i}`" class="">{{ log }}</div>
       </div>
     </div>
     <div class="flex items-start px-4 py-5">
-      <div class="mr-3 my-auto">
+      <div class="my-auto mr-3">
         <planet-icon v-if="props.component.icon === 'planet'" h="40" w="40" />
         <baseball-icon v-if="props.component.icon === 'baseball'" h="40" w="40" />
         <basket-icon v-if="props.component.icon === 'basket'" h="40" w="40" />
@@ -264,7 +284,7 @@ v-for="(log, i) in logs.info" :key="`log-${i}`" class="">{{ log }}</div>
           <button
             v-for="option in getOptions(props.component as PovComponent)"
             :key="`${props.component.name}-option-${option}`"
-            class="flex items-center px-3 py-1 w-full sm:px-2 hover:bg-gray-200"
+            class="flex items-center w-full px-3 py-1 sm:px-2 hover:bg-gray-200"
             @click="onStatusButtonClick(option)"
           >
             {{ option }}
