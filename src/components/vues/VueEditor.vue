@@ -51,6 +51,7 @@ if (component.value.oid) {
 }
 
 watch(refProps.component, (c: any) => {
+  console.info('component reactive updated, setting component', c)
   component.value = c
   if (component.value.oid) {
     code.json = component.value.vue ?? ''
@@ -58,10 +59,12 @@ watch(refProps.component, (c: any) => {
     code.javascript = component.value.script ?? ''
     code.graphql = component.value.query ?? ''
     /// Hack
-    const temp = `${currentTab.value}`
-    currentTab.value = ''
-    currentTab.value = temp
+    // const temp = `${currentTab.value}`
+    // currentTab.value = ''
+    // currentTab.value = temp
 
+    console.info('code state set by loaded component', code)
+    // editorRef.value.updateEditorState(code)
     editorRef.value.resetEditorView()
   }
 })
@@ -71,7 +74,7 @@ useMagicKeys({
   onEventFired(e) {
     if ((e.metaKey || e.ctrlKey) && e.key === 's' && e.type === 'keydown') {
       e.preventDefault()
-      Vue.nextTick(onPlay)
+      Vue.nextTick(onSave)
     }
   },
 })
@@ -83,7 +86,7 @@ const onChange = (payload: any) => {
 
 const getComponentFromCode = () => {
   const updatedComponentValues = code.json.length ? JSON.parse(code.json) : {}
-  return {
+  const comp = {
     name: updatedComponentValues.name,
     background: updatedComponentValues.background,
     icon: updatedComponentValues.icon,
@@ -95,19 +98,21 @@ const getComponentFromCode = () => {
     script: code.javascript,
     query: code.graphql,
   }
+  console.info('parsing code into component', code, component)
+  return comp
 }
 
 const onPlay = () => {
   const c = getComponentFromCode()
-  console.info('onPlayRender', c)
+  console.info('onPlay event setting component and calling render', c)
   component.value = c
   componentRef.value.renderComponent()
 }
 
-const onPlay2 = async () => {
+const onSave = async () => {
   const c = getComponentFromCode()
-  // console.log({ componentRef: componentRef.value })
-  // console.log('componentRef.value', componentRef.value)
+  console.info('onSave event setting component and calling render', c)
+  component.value = c
   componentRef.value.renderComponent(c)
 }
 
@@ -123,7 +128,7 @@ onMounted(() => {
 <template>
   <div class="flex h-full">
     <div id="editor" class="w-full">
-      <editor-tabs v-model="currentTab" :tabs="tabs" @play="onPlay" />
+      <editor-tabs v-model="currentTab" :tabs="tabs" @play="onPlay" @save="onSave" />
       <monaco-editor ref="editorRef" v-model="code" :active-tab="currentTab" class="h-full" />
     </div>
     <div id="component" class="w-full h-full">

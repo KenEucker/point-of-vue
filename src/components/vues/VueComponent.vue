@@ -101,7 +101,6 @@ const renderComponent = () => {
 
     try {
       if (AppRef.app) {
-        console.info('attempting unmount before re-render', AppRef.app)
         AppRef.app.unmount(componentRef.value)
       }
       AppRef.app = createApp(
@@ -111,7 +110,7 @@ const renderComponent = () => {
           } catch (error) {
             console.error('load module error', error)
             logs.errors.push('compilation error')
-            logs.errors.push(e.message)
+            logs.errors.push(error.message)
 
             return Promise.resolve()
           }

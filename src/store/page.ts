@@ -102,8 +102,8 @@ export const usePageState = defineStore('usePageState', {
   },
   actions: {
     init() {
-      window.console.info = (m, d) => this.debug(m, undefined, d)
-      window.console.error = (m, d) => this.debug(undefined, m, d)
+      window.console.info = (m, ...d) => this.debug(m, undefined, d)
+      window.console.error = (m, ...d) => this.debug(undefined, m, d)
     },
     debug: function (
       info: string[] | string | undefined,
