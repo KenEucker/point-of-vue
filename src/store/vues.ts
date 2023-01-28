@@ -14,12 +14,14 @@ import { useCreatorState } from './creator'
 
 export const getInitialVuesState = (): {
   code: any
+  componentFromCodeState: any
   credentials: { creatorToken?: string; githubToken?: string }
   vuesFetched: boolean
   vues: Array<VueComponent>
   vueComponents: Array<PovComponent>
 } => ({
   code: {},
+  componentFromCodeState: null,
   credentials: {},
   vues: [],
   vueComponents: [],
@@ -33,31 +35,31 @@ export const useVuesState = defineStore({
     vuesHaveBeenFetched: (s) => s.vuesFetched,
     getVues: (s) => s.vues,
     getCodeState: (s) => s.code,
+    getComponentFromCodeState: (s) => s.componentFromCodeState,
     getVueComponents: (s) => s.vueComponents,
   },
   actions: {
     setCodeState(newState: any) {
       console.info('setting new code state', newState)
       this.code = newState
+      this.setComponentFromCodeState(this.code)
     },
 
-    getComponentFromCodeState() {
-      const updatedComponentValues = this.code.json?.length ? JSON.parse(this.code.json) : {}
-      const component = {
+    setComponentFromCodeState(code: any) {
+      const updatedComponentValues = code.json?.length ? JSON.parse(code.json) : {}
+      this.componentFromCodeState = {
         name: updatedComponentValues.name,
         background: updatedComponentValues.background,
         icon: updatedComponentValues.icon,
         status: 'good', /// TODO: calculate this,
         category: updatedComponentValues.category,
         description: updatedComponentValues.description,
-        vue: this.code.json ?? '',
-        template: this.code.html ?? '',
-        script: this.code.javascript ?? '',
-        query: this.code.graphql ?? '',
+        vue: code.json ?? '',
+        template: code.html ?? '',
+        script: code.javascript ?? '',
+        query: code.graphql ?? '',
       }
-      console.info('parsing code into component', this.code, component)
-
-      return component
+      console.info('parsing code into component', code, this.componentFromCodeState)
     },
 
     getVueComponent(oid: string): PovComponent | undefined {

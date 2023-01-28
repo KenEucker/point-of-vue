@@ -49,7 +49,7 @@ if (component.value.oid) {
 }
 
 watch(refProps.component, (c: any) => {
-  console.info('component reactive updated, setting component', c)
+  console.info('view editor component changed', c)
   component.value = c
   if (component.value.oid) {
     vuesState.setCodeState({
@@ -80,14 +80,14 @@ const onChange = (payload: any) => {
 }
 
 const onPlay = () => {
-  const c = vuesState.getComponentFromCodeState()
+  const c = vuesState.getComponentFromCodeState
   console.info('onPlay event setting component and calling render', c)
   component.value = c
-  componentRef.value.renderComponent()
+  componentRef.value.renderComponent(c)
 }
 
 const onSave = async () => {
-  const c = vuesState.getComponentFromCodeState()
+  const c = vuesState.getComponentFromCodeState
   console.info('onSave event setting component and calling render', c)
   component.value = c
   componentRef.value.renderComponent(c)

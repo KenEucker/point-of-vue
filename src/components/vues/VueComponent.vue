@@ -60,24 +60,24 @@ const getOptions = (component: PovComponent) => {
   }
 }
 
-const renderComponent = () => {
+const renderComponent = (component?: any) => {
+  component = component ?? props.component
   if (componentRef.value && props.variant === 'display') {
-    console.info('rendering', { component: props.component })
     /// Clear the logs
     logs.errors = []
     logs.info = []
     const options = {
       moduleCache: { vue: Vue },
       getFile: async () => {
-        if (!(props.component?.json || props.component?.script || props.component?.template)) {
-          console.error('whyy?', props.component)
+        if (!(component?.json || component?.script || component?.template)) {
+          console.error('whyy?', component)
           logs.errors.push('no files to load')
           return ''
         } else {
           // console.info('success', component)
         }
 
-        const compiled = await vuesState.compileComponent(props.component)
+        const compiled = await vuesState.compileComponent(component)
         if (compiled.logs) {
           if (compiled.logs.info?.length) {
             logs.info = compiled.logs.info
@@ -107,7 +107,7 @@ const renderComponent = () => {
         defineAsyncComponent(async () => {
           try {
             return await loadModule('file.vue', options)
-          } catch (error) {
+          } catch (error: any) {
             console.error('load module error', error)
             logs.errors.push('compilation error')
             logs.errors.push(error.message)

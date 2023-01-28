@@ -55,7 +55,6 @@ let editor: monaco.editor.IStandaloneCodeEditor
 
 const isDark = useDarkGlobal()
 const refProps = toRefs(props)
-const { activeTab } = refProps
 
 const editorState = useStorage<Record<string, any>>(StorageName.EDITOR_STATE, {})
 const editorValue = useStorage<Record<string, any>>(StorageName.EDITOR_VALUE, {})
@@ -66,8 +65,8 @@ const updateEditorValue = (
   prevTab?: string | undefined
 ) => {
   const tab = currentTab ?? refProps.activeTab.value
-  // monaco.editor.setModelLanguage(editor.getModel()!, tab)
 
+  console.info('updating editor value', { tab, prevTab, currentTab, newValue })
   /// store previous state
   if (prevTab && !newValue) {
     editorState.value[prevTab] = editor.saveViewState()
@@ -102,27 +101,28 @@ const updateEditorValue = (
 
 onMounted(() => {
   editor = monaco.editor.create(outputContainer.value!, {
-    language: activeTab.value,
+    language: refProps.activeTab.value,
     theme: isDark.value ? 'vs-dark' : 'vs',
     fontSize: 20,
   })
 
   editor.onDidChangeModelContent(
     useDebounceFn(() => {
-      if (editorValue.value[activeTab.value] !== editor.getValue()!) {
-        const newValue = editor.getValue()!
-        editorValue.value[activeTab.value] = newValue
+      if (editorValue.value[refProps.activeTab.value] !== editor.getValue()) {
+        /// THE ERROR IS HERE SOMEWHERE
+        const newValue = editor.getValue()
+        editorValue.value[refProps.activeTab.value] = newValue
+        console.info('code updated, setting editor value', editorValue, newValue)
         emit('update:modelValue', editorValue.value)
-        console.info('code updated, setting editor value', newValue)
       }
     }, 500)
   )
 
   // Set values from storage on load
   /// TODO: add check for the same creator-id
-  if (props.loadFromStorage && editorValue.value[activeTab.value]) {
-    editor.setValue(editorValue.value[activeTab.value])
-    editor.restoreViewState(editorState.value[activeTab.value])
+  if (props.loadFromStorage && editorValue.value[refProps.activeTab.value]) {
+    editor.setValue(editorValue.value[refProps.activeTab.value])
+    editor.restoreViewState(editorState.value[refProps.activeTab.value])
     console.info('mounting and loaded editor value from existing state', editorValue.value)
     emit('update:modelValue', editorValue.value)
   } else {
@@ -131,7 +131,7 @@ onMounted(() => {
   }
 })
 
-watch(activeTab, (currentTab, prevTab) => {
+watch(refProps.activeTab, (currentTab, prevTab) => {
   updateEditorValue(undefined, currentTab, prevTab)
 })
 
