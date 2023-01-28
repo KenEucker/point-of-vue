@@ -200,6 +200,7 @@ export const useVuesState = defineStore({
         <script setup>
           /// Auto Import
           import { onMounted, ref, computed } from 'vue'
+          import { useMotion } from '@vueuse/motion'
 
           /// Hydration
           const query = ${stringifiedData}

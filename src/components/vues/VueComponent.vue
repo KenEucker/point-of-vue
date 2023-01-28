@@ -13,6 +13,8 @@ import type { PovComponent } from '../../utilities'
 import { loadModule } from 'vue3-sfc-loader'
 import { useVuesState } from '../../store/state'
 import * as Vue from 'vue'
+import * as vueuseMotion from '@vueuse/motion'
+import * as vueuse from '@vueuse/core'
 
 const AppRef = reactive<any>({ app: null })
 const vuesState = useVuesState()
@@ -67,7 +69,7 @@ const renderComponent = (component?: any) => {
     logs.errors = []
     logs.info = []
     const options = {
-      moduleCache: { vue: Vue },
+      moduleCache: { vue: Vue, '@vueuse/core': vueuse, '@vueuse/motion': vueuseMotion },
       getFile: async () => {
         if (!(component?.json || component?.script || component?.template)) {
           console.error('whyy?', component)
@@ -116,6 +118,7 @@ const renderComponent = (component?: any) => {
           }
         })
       )
+      AppRef.app.use(vueuseMotion.MotionPlugin)
       AppRef.app.mount(componentRef.value)
     } catch (e: any) {
       console.error('compilation error', e)
