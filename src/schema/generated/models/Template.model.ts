@@ -1,5 +1,5 @@
 import { IsInt, IsDefined, IsString, IsBoolean, IsDate } from "class-validator";
-import { Creator, TagsOnTemplates, ActiveTemplate } from "./";
+import { Creator, ActiveTemplate, TagsOnTemplates } from "./";
 
 export class Template {
     @IsDefined()
@@ -10,10 +10,10 @@ export class Template {
     creator!: Creator;
 
     @IsDefined()
-    tags!: TagsOnTemplates[];
+    activations!: ActiveTemplate[];
 
     @IsDefined()
-    activations!: ActiveTemplate[];
+    tags!: TagsOnTemplates[];
 
     @IsDefined()
     @IsString()

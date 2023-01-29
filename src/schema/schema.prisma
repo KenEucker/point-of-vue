@@ -10,6 +10,12 @@ generator class_validator {
   provider = "prisma-class-validator-generator"
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+  output = "../../public/img/pov_erd_ed.svg"
+  theme = "forest"
+}
+
 datasource db {
   provider = "postgres"
   url      = env("DATABASE_URL")
@@ -70,8 +76,8 @@ model Interaction {
   repost Boolean @default(false)
   share  Boolean @default(false)
 
-  postId    Int
   creatorId Int
+  postId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -102,8 +108,8 @@ model Template {
   id Int @id @default(autoincrement())
 
   creator     Creator           @relation(fields: [creatorId], references: [id])
-  tags        TagsOnTemplates[]
   activations ActiveTemplate[]
+  tags        TagsOnTemplates[]
 
   title     String
   published Boolean  @default(false)
@@ -123,8 +129,8 @@ model Vue {
   id Int @id @default(autoincrement())
 
   creator     Creator      @relation(fields: [creatorId], references: [id])
-  tags        TagsOnVues[]
   activations ActiveVue[]
+  tags        TagsOnVues[]
 
   title     String
   published Boolean @default(false)
@@ -166,8 +172,8 @@ model Tag {
   text String @unique
 
   posts     TagsOnPosts     @relation(fields: [tagsOnPostsPostId], references: [postId])
-  templates TagsOnTemplates @relation(fields: [tagsOnTemplatesTemplateId], references: [templateId])
   vues      TagsOnVues      @relation(fields: [tagsOnVuesVueId], references: [vueId])
+  templates TagsOnTemplates @relation(fields: [tagsOnTemplatesTemplateId], references: [templateId])
 
   tagsOnPostsPostId         Int
   tagsOnTemplatesTemplateId Int
@@ -178,7 +184,7 @@ model Tag {
 
 model TagsOnPosts {
   post Post  @relation(fields: [postId], references: [id])
-  Tag  Tag[]
+  tag  Tag[]
 
   postId     Int
   assignedAt DateTime @default(now())

@@ -1,5 +1,5 @@
 import { IsInt, IsDefined, IsString, IsBoolean, IsDate } from "class-validator";
-import { Creator, TagsOnVues, ActiveVue } from "./";
+import { Creator, ActiveVue, TagsOnVues } from "./";
 
 export class Vue {
     @IsDefined()
@@ -10,10 +10,10 @@ export class Vue {
     creator!: Creator;
 
     @IsDefined()
-    tags!: TagsOnVues[];
+    activations!: ActiveVue[];
 
     @IsDefined()
-    activations!: ActiveVue[];
+    tags!: TagsOnVues[];
 
     @IsDefined()
     @IsString()

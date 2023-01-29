@@ -1,5 +1,5 @@
 import { IsInt, IsDefined, IsString, IsDate } from "class-validator";
-import { TagsOnPosts, TagsOnTemplates, TagsOnVues } from "./";
+import { TagsOnPosts, TagsOnVues, TagsOnTemplates } from "./";
 
 export class Tag {
     @IsDefined()
@@ -14,10 +14,10 @@ export class Tag {
     posts!: TagsOnPosts;
 
     @IsDefined()
-    templates!: TagsOnTemplates;
+    vues!: TagsOnVues;
 
     @IsDefined()
-    vues!: TagsOnVues;
+    templates!: TagsOnTemplates;
 
     @IsDefined()
     @IsInt()

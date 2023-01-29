@@ -6,7 +6,7 @@ export class TagsOnPosts {
     post!: Post;
 
     @IsDefined()
-    Tag!: Tag[];
+    tag!: Tag[];
 
     @IsDefined()
     @IsInt()

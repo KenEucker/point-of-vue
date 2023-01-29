@@ -34,11 +34,11 @@ export class Interaction {
 
     @IsDefined()
     @IsInt()
-    postId!: number;
+    creatorId!: number;
 
     @IsDefined()
     @IsInt()
-    creatorId!: number;
+    postId!: number;
 
     @IsDefined()
     @IsDate()
