@@ -1,18 +1,26 @@
-import { IsDefined, IsInt, IsString } from "class-validator";
-import { Template, Creator } from "./";
+import { IsDefined, IsString, IsInt } from "class-validator";
+import { Creator, Template } from "./";
 
 export class ActiveTemplate {
+    @IsDefined()
+    creator!: Creator;
+
     @IsDefined()
     template!: Template;
 
     @IsDefined()
-    @IsInt()
-    templateId!: number;
+    @IsString()
+    palette!: string;
 
     @IsDefined()
     @IsString()
     media!: string;
 
     @IsDefined()
-    Creator!: Creator[];
+    @IsInt()
+    creatorId!: number;
+
+    @IsDefined()
+    @IsInt()
+    templateId!: number;
 }

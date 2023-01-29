@@ -1,5 +1,5 @@
-import { IsInt, IsDefined, IsString, IsDate, IsOptional } from "class-validator";
-import { TagsOnPosts, TagsOnTemplates } from "./";
+import { IsInt, IsDefined, IsString, IsDate } from "class-validator";
+import { TagsOnPosts, TagsOnTemplates, TagsOnVues } from "./";
 
 export class Tag {
     @IsDefined()
@@ -14,8 +14,22 @@ export class Tag {
     posts!: TagsOnPosts;
 
     @IsDefined()
+    templates!: TagsOnTemplates;
+
+    @IsDefined()
+    vues!: TagsOnVues;
+
+    @IsDefined()
     @IsInt()
     tagsOnPostsPostId!: number;
+
+    @IsDefined()
+    @IsInt()
+    tagsOnTemplatesTemplateId!: number;
+
+    @IsDefined()
+    @IsInt()
+    tagsOnVuesVueId!: number;
 
     @IsDefined()
     @IsDate()
@@ -24,11 +38,4 @@ export class Tag {
     @IsDefined()
     @IsDate()
     updatedAt!: Date;
-
-    @IsOptional()
-    TagsOnTemplates?: TagsOnTemplates;
-
-    @IsOptional()
-    @IsInt()
-    tagsOnTemplatesTemplateId?: number;
 }

@@ -1,5 +1,5 @@
-import { IsInt, IsDefined, IsString, IsBoolean, IsIn, IsDate, IsOptional } from "class-validator";
-import { Post, Interaction, Template, ActiveTemplate } from "./";
+import { IsInt, IsDefined, IsString, IsIn, IsOptional, IsBoolean, IsDate } from "class-validator";
+import { Post, Interaction, Template, Vue, ActiveVue, ActiveTemplate } from "./";
 import { getEnumValues } from "../helpers";
 import { Permissions } from "../enums";
 
@@ -17,14 +17,6 @@ export class Creator {
     email!: string;
 
     @IsDefined()
-    @IsBoolean()
-    verified!: boolean;
-
-    @IsDefined()
-    @IsString()
-    subs!: string;
-
-    @IsDefined()
     posts!: Post[];
 
     @IsDefined()
@@ -35,7 +27,16 @@ export class Creator {
     interactions!: Interaction[];
 
     @IsDefined()
-    Templates!: Template[];
+    templates!: Template[];
+
+    @IsDefined()
+    vues!: Vue[];
+
+    @IsDefined()
+    vue!: ActiveVue[];
+
+    @IsOptional()
+    template?: ActiveTemplate;
 
     @IsDefined()
     @IsString()
@@ -47,15 +48,19 @@ export class Creator {
 
     @IsDefined()
     @IsString()
+    bio!: string;
+
+    @IsDefined()
+    @IsBoolean()
+    verified!: boolean;
+
+    @IsDefined()
+    @IsString()
     banner!: string;
 
     @IsDefined()
     @IsString()
     status!: string;
-
-    @IsDefined()
-    @IsString()
-    bio!: string;
 
     @IsDefined()
     @IsString()
@@ -70,17 +75,14 @@ export class Creator {
     chosenday!: string;
 
     @IsDefined()
+    @IsString()
+    subs!: string;
+
+    @IsDefined()
     @IsDate()
     createdAt!: Date;
 
     @IsDefined()
     @IsDate()
     updatedAt!: Date;
-
-    @IsOptional()
-    ActiveTemplate?: ActiveTemplate;
-
-    @IsOptional()
-    @IsInt()
-    activeTemplateId?: number;
 }

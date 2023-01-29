@@ -6,13 +6,13 @@ export class TagsOnTemplates {
     template!: Template;
 
     @IsDefined()
+    tags!: Tag[];
+
+    @IsDefined()
     @IsInt()
     templateId!: number;
 
     @IsDefined()
     @IsDate()
     assignedAt!: Date;
-
-    @IsDefined()
-    Tag!: Tag[];
 }

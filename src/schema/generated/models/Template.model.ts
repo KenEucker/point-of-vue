@@ -1,5 +1,5 @@
-import { IsInt, IsDefined, IsString, IsBoolean, IsDate, IsOptional } from "class-validator";
-import { Creator, Interaction, TagsOnTemplates, ActiveTemplate } from "./";
+import { IsInt, IsDefined, IsString, IsBoolean, IsDate } from "class-validator";
+import { Creator, TagsOnTemplates, ActiveTemplate } from "./";
 
 export class Template {
     @IsDefined()
@@ -10,18 +10,14 @@ export class Template {
     creator!: Creator;
 
     @IsDefined()
-    @IsInt()
-    creatorId!: number;
+    tags!: TagsOnTemplates[];
+
+    @IsDefined()
+    activations!: ActiveTemplate[];
 
     @IsDefined()
     @IsString()
     title!: string;
-
-    @IsDefined()
-    interactions!: Interaction[];
-
-    @IsDefined()
-    TagsOnTemplates!: TagsOnTemplates[];
 
     @IsDefined()
     @IsBoolean()
@@ -44,13 +40,14 @@ export class Template {
     media!: string;
 
     @IsDefined()
+    @IsInt()
+    creatorId!: number;
+
+    @IsDefined()
     @IsDate()
     createdAt!: Date;
 
     @IsDefined()
     @IsDate()
     updatedAt!: Date;
-
-    @IsOptional()
-    ActiveTemplate?: ActiveTemplate;
 }

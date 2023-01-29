@@ -1,16 +1,16 @@
 import { IsDefined, IsInt, IsDate } from "class-validator";
-import { Post, Tag } from "./";
+import { Vue, Tag } from "./";
 
-export class TagsOnPosts {
+export class TagsOnVues {
     @IsDefined()
-    post!: Post;
+    vue!: Vue;
 
     @IsDefined()
-    Tag!: Tag[];
+    tags!: Tag[];
 
     @IsDefined()
     @IsInt()
-    postId!: number;
+    vueId!: number;
 
     @IsDefined()
     @IsDate()

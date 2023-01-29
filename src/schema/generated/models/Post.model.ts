@@ -13,8 +13,7 @@ export class Post {
     interactions!: Interaction[];
 
     @IsDefined()
-    @IsInt()
-    creatorId!: number;
+    tags!: TagsOnPosts[];
 
     @IsDefined()
     @IsString()
@@ -37,7 +36,8 @@ export class Post {
     media!: string;
 
     @IsDefined()
-    TagsOnPosts!: TagsOnPosts[];
+    @IsInt()
+    creatorId!: number;
 
     @IsDefined()
     @IsDate()

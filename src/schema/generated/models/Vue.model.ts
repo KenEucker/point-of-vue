@@ -1,7 +1,7 @@
 import { IsInt, IsDefined, IsString, IsBoolean, IsDate } from "class-validator";
-import { Creator, Post } from "./";
+import { Creator, TagsOnVues, ActiveVue } from "./";
 
-export class Interaction {
+export class Vue {
     @IsDefined()
     @IsInt()
     id!: number;
@@ -10,31 +10,26 @@ export class Interaction {
     creator!: Creator;
 
     @IsDefined()
-    post!: Post;
+    tags!: TagsOnVues[];
+
+    @IsDefined()
+    activations!: ActiveVue[];
 
     @IsDefined()
     @IsString()
-    text!: string;
+    title!: string;
 
     @IsDefined()
     @IsBoolean()
-    like!: boolean;
+    published!: boolean;
 
     @IsDefined()
-    @IsBoolean()
-    love!: boolean;
+    @IsString()
+    code!: string;
 
     @IsDefined()
-    @IsBoolean()
-    repost!: boolean;
-
-    @IsDefined()
-    @IsBoolean()
-    share!: boolean;
-
-    @IsDefined()
-    @IsInt()
-    postId!: number;
+    @IsString()
+    status!: string;
 
     @IsDefined()
     @IsInt()
