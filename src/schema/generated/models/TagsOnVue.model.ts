@@ -1,16 +1,12 @@
 import { IsDefined, IsInt, IsDate } from 'class-validator'
-import { Creator, Vue } from './'
+import { Vue, Tag } from './'
 
-export class ActiveVue {
-  @IsDefined()
-  creator!: Creator
-
+export class TagsOnVue {
   @IsDefined()
   vue!: Vue
 
   @IsDefined()
-  @IsInt()
-  creatorId!: number
+  tags!: Tag[]
 
   @IsDefined()
   @IsInt()

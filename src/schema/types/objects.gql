@@ -101,62 +101,140 @@ type Creator {
   id: Int!
   handle: String!
   email: String!
-  subs: [String]
-  verified: Boolean
-  posts: [Post!]
-  template: Template!
+  
+  tags: [Tag!]
   permissions: [Permissions!]
+  posts: [Post!]
+  groups: [Group!]
   interactions: [Interaction!]
   templates: [Template]
+  template: ActiveTemplate
+  vues: [Vue]
+  vue: [ActiveVue]
+
   name: String!
   avatar: String!
-  activeTemplate: Template
+  bio: String
+  verified: Boolean
   banner: String
   status: String
-  bio: String
   website: String
   location: String
   chosenday: String
-  joined: String
+  subs: [String]
+
+  createdAt: Date
+  updatedAt: Date
+}
+
+type Group {
+  id: Int!
+
+  creators: [Creator]
+  tags: [Tag]
+
+  title: String!
+
   createdAt: Date
   updatedAt: Date
 }
 
 type Interaction {
   id: Int!
+
   creator: Creator!
   post: Post!
+  
   text: String
   like: Boolean
   love: Boolean
   repost: Boolean
   share: Boolean
+  
   createdAt: Date
   updatedAt: Date
 }
 
 type Post {
   id: Int!
+  
   creator: Creator!
-  published: Boolean
   interactions: [Interaction!]
+  tags: [Tag!]
+  
   title: String!
+  published: Boolean
   text: String
   status: String
   media: [String]
-  tags: [String]
+  
   createdAt: Date
   updatedAt: Date
 }
 
 type Template {
   id: Int!
-  publisher: Creator!
-  published: Boolean
-  interactions: [Interaction!]
+  
+  creator: Creator!
+  activations: [ActiveTemplate]
+  tags: [Tag]
+
   title: String!
+  published: Boolean
   code: String!
-  tags: [String]
+  status: String
+  palette: [String]
+  media: [String]
+  
+  createdAt: Date
+  updatedAt: Date
+}
+
+type Vue {
+  id: Int!
+  
+  creator: Creator!
+  activations: [ActiveVue]
+  tags: [Tag]
+
+  title: String!
+  published: Boolean
+  code: String!
+  status: String
+  
+  createdAt: Date
+  updatedAt: Date
+}
+
+type ActiveTemplate {
+  id: Int!
+  
+  creator: Creator!
+  template: Template!
+  palette: [String]
+  media: [String]
+
+  assignedAt: Date
+}
+
+type ActiveVue {
+  id: Int!
+  
+  creator: Creator!
+  vue: Vue
+
+  assignedAt: Date
+}
+
+type Tag {
+  id: Int!
+  text: String!
+  
+  creators: [Creator]
+  post: [Post]
+  templates: [Template]
+  vues: [Vue]
+  
   createdAt: Date
   updatedAt: Date
 }

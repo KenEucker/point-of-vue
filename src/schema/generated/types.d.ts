@@ -16,6 +16,24 @@ export type Scalars = {
   Date: any;
 };
 
+export type ActiveTemplate = {
+  readonly __typename?: 'ActiveTemplate';
+  readonly assignedAt?: Maybe<Scalars['Date']>;
+  readonly creator: Creator;
+  readonly id: Scalars['Int'];
+  readonly media?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly palette?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly template: Template;
+};
+
+export type ActiveVue = {
+  readonly __typename?: 'ActiveVue';
+  readonly assignedAt?: Maybe<Scalars['Date']>;
+  readonly creator: Creator;
+  readonly id: Scalars['Int'];
+  readonly vue?: Maybe<Vue>;
+};
+
 export type CreateCreatorInput = {
   readonly avatar?: InputMaybe<Scalars['String']>;
   readonly banner?: InputMaybe<Scalars['String']>;
@@ -46,27 +64,29 @@ export type CreatePostInput = {
 
 export type Creator = {
   readonly __typename?: 'Creator';
-  readonly activeTemplate?: Maybe<Template>;
   readonly avatar: Scalars['String'];
   readonly banner?: Maybe<Scalars['String']>;
   readonly bio?: Maybe<Scalars['String']>;
   readonly chosenday?: Maybe<Scalars['String']>;
   readonly createdAt?: Maybe<Scalars['Date']>;
   readonly email: Scalars['String'];
+  readonly groups?: Maybe<ReadonlyArray<Group>>;
   readonly handle: Scalars['String'];
   readonly id: Scalars['Int'];
   readonly interactions?: Maybe<ReadonlyArray<Interaction>>;
-  readonly joined?: Maybe<Scalars['String']>;
   readonly location?: Maybe<Scalars['String']>;
   readonly name: Scalars['String'];
   readonly permissions?: Maybe<ReadonlyArray<Permissions>>;
   readonly posts?: Maybe<ReadonlyArray<Post>>;
   readonly status?: Maybe<Scalars['String']>;
   readonly subs?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
-  readonly template: Template;
+  readonly tags?: Maybe<ReadonlyArray<Tag>>;
+  readonly template?: Maybe<ActiveTemplate>;
   readonly templates?: Maybe<ReadonlyArray<Maybe<Template>>>;
   readonly updatedAt?: Maybe<Scalars['Date']>;
   readonly verified?: Maybe<Scalars['Boolean']>;
+  readonly vue?: Maybe<ReadonlyArray<Maybe<ActiveVue>>>;
+  readonly vues?: Maybe<ReadonlyArray<Maybe<Vue>>>;
   readonly website?: Maybe<Scalars['String']>;
 };
 
@@ -144,6 +164,16 @@ export type GoogleAccount = {
   readonly id: Scalars['String'];
   readonly name?: Maybe<Scalars['String']>;
   readonly timezone?: Maybe<Scalars['String']>;
+};
+
+export type Group = {
+  readonly __typename?: 'Group';
+  readonly createdAt?: Maybe<Scalars['Date']>;
+  readonly creators?: Maybe<ReadonlyArray<Maybe<Creator>>>;
+  readonly id: Scalars['Int'];
+  readonly tags?: Maybe<ReadonlyArray<Maybe<Tag>>>;
+  readonly title: Scalars['String'];
+  readonly updatedAt?: Maybe<Scalars['Date']>;
 };
 
 export type ImageAlbumsWhereInput = {
@@ -358,7 +388,7 @@ export type Post = {
   readonly media?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
   readonly published?: Maybe<Scalars['Boolean']>;
   readonly status?: Maybe<Scalars['String']>;
-  readonly tags?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly tags?: Maybe<ReadonlyArray<Tag>>;
   readonly text?: Maybe<Scalars['String']>;
   readonly title: Scalars['String'];
   readonly updatedAt?: Maybe<Scalars['Date']>;
@@ -568,15 +598,30 @@ export type SubscriptionPostArgs = {
   where?: InputMaybe<PostByInput>;
 };
 
+export type Tag = {
+  readonly __typename?: 'Tag';
+  readonly createdAt?: Maybe<Scalars['Date']>;
+  readonly creators?: Maybe<ReadonlyArray<Maybe<Creator>>>;
+  readonly id: Scalars['Int'];
+  readonly post?: Maybe<ReadonlyArray<Maybe<Post>>>;
+  readonly templates?: Maybe<ReadonlyArray<Maybe<Template>>>;
+  readonly text: Scalars['String'];
+  readonly updatedAt?: Maybe<Scalars['Date']>;
+  readonly vues?: Maybe<ReadonlyArray<Maybe<Vue>>>;
+};
+
 export type Template = {
   readonly __typename?: 'Template';
+  readonly activations?: Maybe<ReadonlyArray<Maybe<ActiveTemplate>>>;
   readonly code: Scalars['String'];
   readonly createdAt?: Maybe<Scalars['Date']>;
+  readonly creator: Creator;
   readonly id: Scalars['Int'];
-  readonly interactions?: Maybe<ReadonlyArray<Interaction>>;
+  readonly media?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly palette?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
   readonly published?: Maybe<Scalars['Boolean']>;
-  readonly publisher: Creator;
-  readonly tags?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly status?: Maybe<Scalars['String']>;
+  readonly tags?: Maybe<ReadonlyArray<Maybe<Tag>>>;
   readonly title: Scalars['String'];
   readonly updatedAt?: Maybe<Scalars['Date']>;
 };
@@ -618,6 +663,20 @@ export type UpdatePostInput = {
   readonly status?: InputMaybe<Scalars['String']>;
   readonly text?: InputMaybe<Scalars['String']>;
   readonly title?: InputMaybe<Scalars['String']>;
+};
+
+export type Vue = {
+  readonly __typename?: 'Vue';
+  readonly activations?: Maybe<ReadonlyArray<Maybe<ActiveVue>>>;
+  readonly code: Scalars['String'];
+  readonly createdAt?: Maybe<Scalars['Date']>;
+  readonly creator: Creator;
+  readonly id: Scalars['Int'];
+  readonly published?: Maybe<Scalars['Boolean']>;
+  readonly status?: Maybe<Scalars['String']>;
+  readonly tags?: Maybe<ReadonlyArray<Maybe<Tag>>>;
+  readonly title: Scalars['String'];
+  readonly updatedAt?: Maybe<Scalars['Date']>;
 };
 
 export type VueComponent = {
@@ -703,6 +762,8 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  ActiveTemplate: ResolverTypeWrapper<ActiveTemplate>;
+  ActiveVue: ResolverTypeWrapper<ActiveVue>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CreateCreatorInput: CreateCreatorInput;
   CreateInteractionInput: CreateInteractionInput;
@@ -718,6 +779,7 @@ export type ResolversTypes = {
   GetPostInteractionsPayload: ResolverTypeWrapper<GetPostInteractionsPayload>;
   GitHubAccount: ResolverTypeWrapper<GitHubAccount>;
   GoogleAccount: ResolverTypeWrapper<GoogleAccount>;
+  Group: ResolverTypeWrapper<Group>;
   ImageAlbumsWhereInput: ImageAlbumsWhereInput;
   ImagesWhereInput: ImagesWhereInput;
   ImgurAccount: ResolverTypeWrapper<ImgurAccount>;
@@ -745,17 +807,21 @@ export type ResolversTypes = {
   SearchPostsPayload: ResolverTypeWrapper<SearchPostsPayload>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
+  Tag: ResolverTypeWrapper<Tag>;
   Template: ResolverTypeWrapper<Template>;
   Tokens: ResolverTypeWrapper<Tokens>;
   UpdateCreatorInput: UpdateCreatorInput;
   UpdateInteractionInput: UpdateInteractionInput;
   UpdatePostInput: UpdatePostInput;
+  Vue: ResolverTypeWrapper<Vue>;
   VueComponent: ResolverTypeWrapper<VueComponent>;
   VuesWhereInput: VuesWhereInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  ActiveTemplate: ActiveTemplate;
+  ActiveVue: ActiveVue;
   Boolean: Scalars['Boolean'];
   CreateCreatorInput: CreateCreatorInput;
   CreateInteractionInput: CreateInteractionInput;
@@ -771,6 +837,7 @@ export type ResolversParentTypes = {
   GetPostInteractionsPayload: GetPostInteractionsPayload;
   GitHubAccount: GitHubAccount;
   GoogleAccount: GoogleAccount;
+  Group: Group;
   ImageAlbumsWhereInput: ImageAlbumsWhereInput;
   ImagesWhereInput: ImagesWhereInput;
   ImgurAccount: ImgurAccount;
@@ -795,37 +862,59 @@ export type ResolversParentTypes = {
   SearchPostsPayload: SearchPostsPayload;
   String: Scalars['String'];
   Subscription: {};
+  Tag: Tag;
   Template: Template;
   Tokens: Tokens;
   UpdateCreatorInput: UpdateCreatorInput;
   UpdateInteractionInput: UpdateInteractionInput;
   UpdatePostInput: UpdatePostInput;
+  Vue: Vue;
   VueComponent: VueComponent;
   VuesWhereInput: VuesWhereInput;
 };
 
+export type ActiveTemplateResolvers<ContextType = any, ParentType extends ResolversParentTypes['ActiveTemplate'] = ResolversParentTypes['ActiveTemplate']> = {
+  assignedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['Creator'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  media?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  palette?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  template?: Resolver<ResolversTypes['Template'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ActiveVueResolvers<ContextType = any, ParentType extends ResolversParentTypes['ActiveVue'] = ResolversParentTypes['ActiveVue']> = {
+  assignedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['Creator'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  vue?: Resolver<Maybe<ResolversTypes['Vue']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type CreatorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Creator'] = ResolversParentTypes['Creator']> = {
-  activeTemplate?: Resolver<Maybe<ResolversTypes['Template']>, ParentType, ContextType>;
   avatar?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   banner?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   chosenday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  groups?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Group']>>, ParentType, ContextType>;
   handle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   interactions?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Interaction']>>, ParentType, ContextType>;
-  joined?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   permissions?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Permissions']>>, ParentType, ContextType>;
   posts?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Post']>>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   subs?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
-  template?: Resolver<ResolversTypes['Template'], ParentType, ContextType>;
+  tags?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Tag']>>, ParentType, ContextType>;
+  template?: Resolver<Maybe<ResolversTypes['ActiveTemplate']>, ParentType, ContextType>;
   templates?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Template']>>>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   verified?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  vue?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['ActiveVue']>>>, ParentType, ContextType>;
+  vues?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Vue']>>>, ParentType, ContextType>;
   website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -886,6 +975,16 @@ export type GoogleAccountResolvers<ContextType = any, ParentType extends Resolve
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   timezone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GroupResolvers<ContextType = any, ParentType extends ResolversParentTypes['Group'] = ResolversParentTypes['Group']> = {
+  createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  creators?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Creator']>>>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  tags?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Tag']>>>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -987,7 +1086,7 @@ export type PostResolvers<ContextType = any, ParentType extends ResolversParentT
   media?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   published?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  tags?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  tags?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Tag']>>, ParentType, ContextType>;
   text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
@@ -1045,14 +1144,29 @@ export type SubscriptionResolvers<ContextType = any, ParentType extends Resolver
   post?: SubscriptionResolver<Maybe<ResolversTypes['PostSubscriptionPayload']>, "post", ParentType, ContextType, Partial<SubscriptionPostArgs>>;
 };
 
+export type TagResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag']> = {
+  createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  creators?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Creator']>>>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  post?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Post']>>>, ParentType, ContextType>;
+  templates?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Template']>>>, ParentType, ContextType>;
+  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  vues?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Vue']>>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type TemplateResolvers<ContextType = any, ParentType extends ResolversParentTypes['Template'] = ResolversParentTypes['Template']> = {
+  activations?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['ActiveTemplate']>>>, ParentType, ContextType>;
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['Creator'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  interactions?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Interaction']>>, ParentType, ContextType>;
+  media?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  palette?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   published?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  publisher?: Resolver<ResolversTypes['Creator'], ParentType, ContextType>;
-  tags?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tags?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Tag']>>>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1063,6 +1177,20 @@ export type TokensResolvers<ContextType = any, ParentType extends ResolversParen
   github?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   google?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   imgur?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type VueResolvers<ContextType = any, ParentType extends ResolversParentTypes['Vue'] = ResolversParentTypes['Vue']> = {
+  activations?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['ActiveVue']>>>, ParentType, ContextType>;
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['Creator'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  published?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tags?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Tag']>>>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1077,6 +1205,8 @@ export type VueComponentResolvers<ContextType = any, ParentType extends Resolver
 };
 
 export type Resolvers<ContextType = any> = {
+  ActiveTemplate?: ActiveTemplateResolvers<ContextType>;
+  ActiveVue?: ActiveVueResolvers<ContextType>;
   Creator?: CreatorResolvers<ContextType>;
   CreatorAccount?: CreatorAccountResolvers<ContextType>;
   CreatorSubscriptionPayload?: CreatorSubscriptionPayloadResolvers<ContextType>;
@@ -1085,6 +1215,7 @@ export type Resolvers<ContextType = any> = {
   GetPostInteractionsPayload?: GetPostInteractionsPayloadResolvers<ContextType>;
   GitHubAccount?: GitHubAccountResolvers<ContextType>;
   GoogleAccount?: GoogleAccountResolvers<ContextType>;
+  Group?: GroupResolvers<ContextType>;
   ImgurAccount?: ImgurAccountResolvers<ContextType>;
   ImgurAlbum?: ImgurAlbumResolvers<ContextType>;
   ImgurImage?: ImgurImageResolvers<ContextType>;
@@ -1099,8 +1230,10 @@ export type Resolvers<ContextType = any> = {
   RequestorMirror?: RequestorMirrorResolvers<ContextType>;
   SearchPostsPayload?: SearchPostsPayloadResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
+  Tag?: TagResolvers<ContextType>;
   Template?: TemplateResolvers<ContextType>;
   Tokens?: TokensResolvers<ContextType>;
+  Vue?: VueResolvers<ContextType>;
   VueComponent?: VueComponentResolvers<ContextType>;
 };
 

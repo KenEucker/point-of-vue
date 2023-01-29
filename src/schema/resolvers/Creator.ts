@@ -32,7 +32,19 @@ const Creator = {
     return prisma.post.findMany({
       where: {
         creator: {
-          // id: parent.id,
+          handle: parent.handle,
+        },
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    })
+  },
+  // @ts-ignore
+  groups: (parent, args, { prisma }, info) => {
+    return prisma.group.findMany({
+      where: {
+        creator: {
           handle: parent.handle,
         },
       },

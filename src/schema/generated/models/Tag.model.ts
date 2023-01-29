@@ -1,41 +1,55 @@
-import { IsInt, IsDefined, IsString, IsDate } from "class-validator";
-import { TagsOnPosts, TagsOnVues, TagsOnTemplates } from "./";
+import { IsInt, IsDefined, IsString, IsDate, IsOptional } from 'class-validator'
+import { TagsOnCreator, TagsOnPost, TagsOnTemplate, TagsOnVue, TagsOnGroup } from './'
 
 export class Tag {
-    @IsDefined()
-    @IsInt()
-    id!: number;
+  @IsDefined()
+  @IsInt()
+  id!: number
 
-    @IsDefined()
-    @IsString()
-    text!: string;
+  @IsDefined()
+  @IsString()
+  text!: string
 
-    @IsDefined()
-    posts!: TagsOnPosts;
+  @IsDefined()
+  creators!: TagsOnCreator
 
-    @IsDefined()
-    vues!: TagsOnVues;
+  @IsDefined()
+  posts!: TagsOnPost
 
-    @IsDefined()
-    templates!: TagsOnTemplates;
+  @IsDefined()
+  templates!: TagsOnTemplate
 
-    @IsDefined()
-    @IsInt()
-    tagsOnPostsPostId!: number;
+  @IsDefined()
+  vues!: TagsOnVue
 
-    @IsDefined()
-    @IsInt()
-    tagsOnTemplatesTemplateId!: number;
+  @IsDefined()
+  @IsInt()
+  tagsOnCreatorsCreatorId!: number
 
-    @IsDefined()
-    @IsInt()
-    tagsOnVuesVueId!: number;
+  @IsDefined()
+  @IsInt()
+  tagsOnPostsPostId!: number
 
-    @IsDefined()
-    @IsDate()
-    createdAt!: Date;
+  @IsDefined()
+  @IsInt()
+  tagsOnTemplatesTemplateId!: number
 
-    @IsDefined()
-    @IsDate()
-    updatedAt!: Date;
+  @IsDefined()
+  @IsInt()
+  tagsOnVuesVueId!: number
+
+  @IsDefined()
+  @IsDate()
+  createdAt!: Date
+
+  @IsDefined()
+  @IsDate()
+  updatedAt!: Date
+
+  @IsOptional()
+  TagsOnGroup?: TagsOnGroup
+
+  @IsOptional()
+  @IsInt()
+  tagsOnGroupGroupId?: number
 }

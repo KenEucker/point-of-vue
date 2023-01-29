@@ -1,20 +1,16 @@
 import { IsDefined, IsInt, IsDate } from 'class-validator'
-import { Creator, Vue } from './'
+import { Post, Tag } from './'
 
-export class ActiveVue {
+export class TagsOnPost {
   @IsDefined()
-  creator!: Creator
-
-  @IsDefined()
-  vue!: Vue
+  post!: Post
 
   @IsDefined()
-  @IsInt()
-  creatorId!: number
+  tags!: Tag[]
 
   @IsDefined()
   @IsInt()
-  vueId!: number
+  postId!: number
 
   @IsDefined()
   @IsDate()

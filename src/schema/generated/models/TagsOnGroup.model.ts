@@ -1,22 +1,21 @@
 import { IsDefined, IsInt, IsDate } from 'class-validator'
-import { Creator, Vue } from './'
+import { Template, Tag, Group } from './'
 
-export class ActiveVue {
+export class TagsOnGroup {
   @IsDefined()
-  creator!: Creator
-
-  @IsDefined()
-  vue!: Vue
+  template!: Template
 
   @IsDefined()
-  @IsInt()
-  creatorId!: number
+  tags!: Tag[]
 
   @IsDefined()
   @IsInt()
-  vueId!: number
+  groupId!: number
 
   @IsDefined()
   @IsDate()
   assignedAt!: Date
+
+  @IsDefined()
+  Group!: Group[]
 }
