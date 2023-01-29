@@ -104,16 +104,19 @@ type Creator {
   subs: [String]
   verified: Boolean
   posts: [Post!]
+  template: Template!
   permissions: [Permissions!]
   interactions: [Interaction!]
+  templates: [Template]
   name: String!
   avatar: String!
+  activeTemplate: Template
   banner: String
   status: String
   bio: String
   website: String
   location: String
-  birthday: String
+  chosenday: String
   joined: String
   createdAt: Date
   updatedAt: Date
@@ -141,6 +144,18 @@ type Post {
   text: String
   status: String
   media: [String]
+  tags: [String]
+  createdAt: Date
+  updatedAt: Date
+}
+
+type Template {
+  id: Int!
+  publisher: Creator!
+  published: Boolean
+  interactions: [Interaction!]
+  title: String!
+  code: String!
   tags: [String]
   createdAt: Date
   updatedAt: Date

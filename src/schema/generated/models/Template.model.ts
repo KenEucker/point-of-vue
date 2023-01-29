@@ -1,7 +1,7 @@
 import { IsInt, IsDefined, IsString, IsBoolean, IsDate, IsOptional } from "class-validator";
-import { Creator, Post, Template } from "./";
+import { Creator, Interaction, TagsOnTemplates, ActiveTemplate } from "./";
 
-export class Interaction {
+export class Template {
     @IsDefined()
     @IsInt()
     id!: number;
@@ -14,31 +14,34 @@ export class Interaction {
     creatorId!: number;
 
     @IsDefined()
-    @IsInt()
-    postId!: number;
+    @IsString()
+    title!: string;
 
     @IsDefined()
-    post!: Post;
+    interactions!: Interaction[];
+
+    @IsDefined()
+    TagsOnTemplates!: TagsOnTemplates[];
+
+    @IsDefined()
+    @IsBoolean()
+    published!: boolean;
 
     @IsDefined()
     @IsString()
-    text!: string;
+    code!: string;
 
     @IsDefined()
-    @IsBoolean()
-    like!: boolean;
+    @IsString()
+    status!: string;
 
     @IsDefined()
-    @IsBoolean()
-    love!: boolean;
+    @IsString()
+    palette!: string;
 
     @IsDefined()
-    @IsBoolean()
-    repost!: boolean;
-
-    @IsDefined()
-    @IsBoolean()
-    share!: boolean;
+    @IsString()
+    media!: string;
 
     @IsDefined()
     @IsDate()
@@ -49,9 +52,5 @@ export class Interaction {
     updatedAt!: Date;
 
     @IsOptional()
-    Template?: Template;
-
-    @IsOptional()
-    @IsInt()
-    templateId?: number;
+    ActiveTemplate?: ActiveTemplate;
 }

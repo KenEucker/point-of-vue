@@ -69,7 +69,7 @@ export const useCreatorState = defineStore({
             avatar
             location
             bio
-            birthday
+            chosenday
             banner
             website
             posts {
@@ -160,7 +160,7 @@ export const useCreatorState = defineStore({
             location
             banner
             bio
-            birthday
+            chosenday
             website
             posts {
               id
@@ -249,7 +249,7 @@ export const useCreatorState = defineStore({
               location
               banner
               bio
-              birthday
+              chosenday
               website
               posts {
                 id
@@ -311,7 +311,7 @@ export const useCreatorState = defineStore({
             location
             banner
             bio
-            birthday
+            chosenday
             website
           }
         }
@@ -334,7 +334,7 @@ export const useCreatorState = defineStore({
           website: creator.website,
           email: creator.email,
           bio: creator.bio,
-          birthday: creator.birthday,
+          chosenday: creator.chosenday,
         }
 
         return data.data.updateCreator

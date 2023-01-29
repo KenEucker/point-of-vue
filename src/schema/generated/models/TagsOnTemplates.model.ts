@@ -1,13 +1,13 @@
 import { IsDefined, IsInt, IsDate } from "class-validator";
-import { Post, Tag } from "./";
+import { Template, Tag } from "./";
 
-export class TagsOnPosts {
+export class TagsOnTemplates {
     @IsDefined()
-    post!: Post;
+    template!: Template;
 
     @IsDefined()
     @IsInt()
-    postId!: number;
+    templateId!: number;
 
     @IsDefined()
     @IsDate()

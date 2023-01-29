@@ -46,10 +46,11 @@ export type CreatePostInput = {
 
 export type Creator = {
   readonly __typename?: 'Creator';
+  readonly activeTemplate?: Maybe<Template>;
   readonly avatar: Scalars['String'];
   readonly banner?: Maybe<Scalars['String']>;
   readonly bio?: Maybe<Scalars['String']>;
-  readonly birthday?: Maybe<Scalars['String']>;
+  readonly chosenday?: Maybe<Scalars['String']>;
   readonly createdAt?: Maybe<Scalars['Date']>;
   readonly email: Scalars['String'];
   readonly handle: Scalars['String'];
@@ -62,6 +63,8 @@ export type Creator = {
   readonly posts?: Maybe<ReadonlyArray<Post>>;
   readonly status?: Maybe<Scalars['String']>;
   readonly subs?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly template: Template;
+  readonly templates?: Maybe<ReadonlyArray<Maybe<Template>>>;
   readonly updatedAt?: Maybe<Scalars['Date']>;
   readonly verified?: Maybe<Scalars['Boolean']>;
   readonly website?: Maybe<Scalars['String']>;
@@ -565,6 +568,19 @@ export type SubscriptionPostArgs = {
   where?: InputMaybe<PostByInput>;
 };
 
+export type Template = {
+  readonly __typename?: 'Template';
+  readonly code: Scalars['String'];
+  readonly createdAt?: Maybe<Scalars['Date']>;
+  readonly id: Scalars['Int'];
+  readonly interactions?: Maybe<ReadonlyArray<Interaction>>;
+  readonly published?: Maybe<Scalars['Boolean']>;
+  readonly publisher: Creator;
+  readonly tags?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly title: Scalars['String'];
+  readonly updatedAt?: Maybe<Scalars['Date']>;
+};
+
 export type Tokens = {
   readonly __typename?: 'Tokens';
   readonly auth0?: Maybe<Scalars['String']>;
@@ -577,7 +593,7 @@ export type UpdateCreatorInput = {
   readonly avatar?: InputMaybe<Scalars['String']>;
   readonly banner?: InputMaybe<Scalars['String']>;
   readonly bio?: InputMaybe<Scalars['String']>;
-  readonly birthday?: InputMaybe<Scalars['String']>;
+  readonly chosenday?: InputMaybe<Scalars['String']>;
   readonly email?: InputMaybe<Scalars['String']>;
   readonly location?: InputMaybe<Scalars['String']>;
   readonly name?: InputMaybe<Scalars['String']>;
@@ -729,6 +745,7 @@ export type ResolversTypes = {
   SearchPostsPayload: ResolverTypeWrapper<SearchPostsPayload>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
+  Template: ResolverTypeWrapper<Template>;
   Tokens: ResolverTypeWrapper<Tokens>;
   UpdateCreatorInput: UpdateCreatorInput;
   UpdateInteractionInput: UpdateInteractionInput;
@@ -778,6 +795,7 @@ export type ResolversParentTypes = {
   SearchPostsPayload: SearchPostsPayload;
   String: Scalars['String'];
   Subscription: {};
+  Template: Template;
   Tokens: Tokens;
   UpdateCreatorInput: UpdateCreatorInput;
   UpdateInteractionInput: UpdateInteractionInput;
@@ -787,10 +805,11 @@ export type ResolversParentTypes = {
 };
 
 export type CreatorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Creator'] = ResolversParentTypes['Creator']> = {
+  activeTemplate?: Resolver<Maybe<ResolversTypes['Template']>, ParentType, ContextType>;
   avatar?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   banner?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  birthday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  chosenday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   handle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -803,6 +822,8 @@ export type CreatorResolvers<ContextType = any, ParentType extends ResolversPare
   posts?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Post']>>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   subs?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  template?: Resolver<ResolversTypes['Template'], ParentType, ContextType>;
+  templates?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Template']>>>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   verified?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1024,6 +1045,19 @@ export type SubscriptionResolvers<ContextType = any, ParentType extends Resolver
   post?: SubscriptionResolver<Maybe<ResolversTypes['PostSubscriptionPayload']>, "post", ParentType, ContextType, Partial<SubscriptionPostArgs>>;
 };
 
+export type TemplateResolvers<ContextType = any, ParentType extends ResolversParentTypes['Template'] = ResolversParentTypes['Template']> = {
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  interactions?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Interaction']>>, ParentType, ContextType>;
+  published?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  publisher?: Resolver<ResolversTypes['Creator'], ParentType, ContextType>;
+  tags?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type TokensResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tokens'] = ResolversParentTypes['Tokens']> = {
   auth0?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   github?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1065,6 +1099,7 @@ export type Resolvers<ContextType = any> = {
   RequestorMirror?: RequestorMirrorResolvers<ContextType>;
   SearchPostsPayload?: SearchPostsPayloadResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
+  Template?: TemplateResolvers<ContextType>;
   Tokens?: TokensResolvers<ContextType>;
   VueComponent?: VueComponentResolvers<ContextType>;
 };

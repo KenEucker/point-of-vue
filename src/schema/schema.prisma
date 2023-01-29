@@ -31,39 +31,44 @@ enum MutationType {
 }
 
 model Creator {
-  id           Int           @id @default(autoincrement())
-  handle       String        @unique
-  email        String        @unique
-  verified     Boolean       @default(false)
-  subs         String[]      @default([])
-  posts        Post[]
-  permissions  Permissions[]
-  interactions Interaction[]
-  name         String        @default("")
-  avatar       String        @default("")
-  banner       String        @default("")
-  status       String        @default("")
-  bio          String        @default("")
-  website      String        @default("")
-  location     String        @default("")
-  birthday     String        @default("")
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id               Int             @id @default(autoincrement())
+  handle           String          @unique
+  email            String          @unique
+  verified         Boolean         @default(false)
+  subs             String[]        @default([])
+  posts            Post[]
+  permissions      Permissions[]
+  interactions     Interaction[]
+  Templates        Template[]
+  name             String          @default("")
+  avatar           String          @default("")
+  banner           String          @default("")
+  status           String          @default("")
+  bio              String          @default("")
+  website          String          @default("")
+  location         String          @default("")
+  chosenday        String          @default("")
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  ActiveTemplate   ActiveTemplate? @relation(fields: [activeTemplateId], references: [templateId])
+  activeTemplateId Int?            @default(0)
 }
 
 model Interaction {
-  id        Int      @id @default(autoincrement())
-  creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  creatorId Int
-  postId    Int
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  text      String   @default("")
-  like      Boolean  @default(false)
-  love      Boolean  @default(false)
-  repost    Boolean  @default(false)
-  share     Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int       @id @default(autoincrement())
+  creator    Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId  Int
+  postId     Int
+  post       Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  text       String    @default("")
+  like       Boolean   @default(false)
+  love       Boolean   @default(false)
+  repost     Boolean   @default(false)
+  share      Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Template   Template? @relation(fields: [templateId], references: [id])
+  templateId Int?
 
   @@unique([creatorId, postId])
 }
@@ -86,12 +91,14 @@ model Post {
 }
 
 model Tag {
-  id                Int         @id @default(autoincrement())
-  text              String      @unique
-  posts             TagsOnPosts @relation(fields: [tagsOnPostsPostId], references: [postId])
-  tagsOnPostsPostId Int
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  id                        Int              @id @default(autoincrement())
+  text                      String           @unique
+  posts                     TagsOnPosts      @relation(fields: [tagsOnPostsPostId], references: [postId])
+  tagsOnPostsPostId         Int
+  createdAt                 DateTime         @default(now())
+  updatedAt                 DateTime         @updatedAt
+  TagsOnTemplates           TagsOnTemplates? @relation(fields: [tagsOnTemplatesTemplateId], references: [templateId])
+  tagsOnTemplatesTemplateId Int?
 }
 
 model TagsOnPosts {
@@ -101,4 +108,41 @@ model TagsOnPosts {
   Tag        Tag[]
 
   @@id([postId])
+}
+
+model ActiveTemplate {
+  template   Template  @relation(fields: [templateId], references: [id])
+  templateId Int
+  media      String[]  @default([])
+  Creator    Creator[]
+
+  @@unique([templateId])
+}
+
+model Template {
+  id              Int               @id @default(autoincrement())
+  creator         Creator           @relation(fields: [creatorId], references: [id])
+  creatorId       Int
+  title           String
+  interactions    Interaction[]
+  TagsOnTemplates TagsOnTemplates[]
+  published       Boolean           @default(false)
+  code            String            @default("")
+  status          String            @default("")
+  palette         String[]          @default([])
+  media           String[]          @default([])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  ActiveTemplate  ActiveTemplate?
+
+  @@unique([creatorId, title])
+}
+
+model TagsOnTemplates {
+  template   Template @relation(fields: [templateId], references: [id])
+  templateId Int
+  assignedAt DateTime @default(now())
+  Tag        Tag[]
+
+  @@id([templateId])
 }

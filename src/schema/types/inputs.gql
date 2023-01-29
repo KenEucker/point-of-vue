@@ -95,7 +95,7 @@ input UpdateCreatorInput {
   bio: String
   website: String
   location: String
-  birthday: String
+  chosenday: String
 }
 
 input UpdateInteractionInput {
