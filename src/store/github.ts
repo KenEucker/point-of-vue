@@ -1,4 +1,4 @@
-import { VueComponent } from './../schema/generated/types.d'
+import { VueComponent } from '../schema/generated/types'
 import { apolloClient } from '.'
 import { defineStore } from 'pinia'
 import { gql } from '@apollo/client/core'
@@ -28,8 +28,8 @@ export const getInitialVuesState = (): {
   vuesFetched: false,
 })
 
-export const useVuesState = defineStore({
-  id: 'useVuesState',
+export const useGithubState = defineStore({
+  id: 'useGithubState',
   state: getInitialVuesState,
   getters: {
     vuesHaveBeenFetched: (s) => s.vuesFetched,
@@ -283,8 +283,8 @@ export const useVuesState = defineStore({
       }
 
       const fetchVuesForCreatorQuery = gql`
-        query StoreFetchVues($token: String!, $oid: String) {
-          vues(from: { token: $token }, where: { oid: $oid }) {
+        query StoreFetchGithub_Vues($token: String!, $oid: String) {
+          github_vues(from: { token: $token }, where: { oid: $oid }) {
             oid
             name
             query
@@ -298,9 +298,9 @@ export const useVuesState = defineStore({
         query: fetchVuesForCreatorQuery,
         variables: { token: this.credentials.githubToken, oid },
       })
-      if (data?.vues?.length && !queryError) {
+      if (data?.github_vues?.length && !queryError) {
         this.vuesFetched = true
-        this.vues = data.vues
+        this.vues = data.github_vues
         this.vueComponents = this.vues.map((v) => {
           const vueComponentJson = JSON.parse(v.vue ?? '{}')
           return {
@@ -311,7 +311,7 @@ export const useVuesState = defineStore({
             template: v.template,
             status: 'good', /// TODO: calculate this
             query: v.query,
-          }
+          } as PovComponent
         })
       } else if (queryError) {
         console.error(queryError)

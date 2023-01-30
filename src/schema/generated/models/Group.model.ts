@@ -1,5 +1,5 @@
 import { IsInt, IsDefined, IsOptional, IsString, IsDate } from 'class-validator'
-import { Creator, TagsOnGroup } from './'
+import { Creator, Post, TagsOnGroup } from './'
 
 export class Group {
   @IsDefined()
@@ -8,6 +8,9 @@ export class Group {
 
   @IsDefined()
   creators!: Creator[]
+
+  @IsDefined()
+  posts!: Post[]
 
   @IsOptional()
   tags?: TagsOnGroup

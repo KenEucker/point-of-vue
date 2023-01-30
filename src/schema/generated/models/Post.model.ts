@@ -1,5 +1,5 @@
 import { IsInt, IsDefined, IsOptional, IsString, IsBoolean, IsDate } from 'class-validator'
-import { Creator, Interaction, TagsOnPost } from './'
+import { Creator, Interaction, Group, TagsOnPost } from './'
 
 export class Post {
   @IsDefined()
@@ -11,6 +11,9 @@ export class Post {
 
   @IsDefined()
   interactions!: Interaction[]
+
+  @IsOptional()
+  group?: Group
 
   @IsOptional()
   tags?: TagsOnPost
@@ -38,6 +41,10 @@ export class Post {
   @IsDefined()
   @IsInt()
   creatorId!: number
+
+  @IsOptional()
+  @IsInt()
+  groupId?: number
 
   @IsDefined()
   @IsDate()

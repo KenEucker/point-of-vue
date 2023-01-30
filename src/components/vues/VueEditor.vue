@@ -8,7 +8,7 @@ import MonacoEditor from './MonacoEditor.vue'
 import EditorTabs from './EditorTabs.vue'
 import { useMagicKeys } from '@vueuse/core'
 import VueComponent from './VueComponent.vue'
-import { usePageState, useVuesState } from '../../store/state'
+import { usePageState, useGithubState } from '../../store/state'
 // import Sass from 'sass.js/dist/sass.sync.js'
 
 const tabs = {
@@ -30,7 +30,7 @@ const props = defineProps({
   },
 })
 
-const vuesState = useVuesState()
+const githubState = useGithubState()
 const pageState = usePageState()
 /// TODO: clear the storage on log out
 const currentTab = useStorage(StorageName.ACTIVE_TAB, 'vue')
@@ -40,7 +40,7 @@ const refProps: any = toRefs(props)
 const component = ref({ ...props.component })
 
 if (component.value.oid) {
-  vuesState.setCodeState({
+  githubState.setCodeState({
     json: component.value.vue,
     html: component.value.template,
     javascript: component.value.script,
@@ -52,15 +52,15 @@ watch(refProps.component, (c: any) => {
   console.info('view editor component changed', c)
   component.value = c
   if (component.value.oid) {
-    vuesState.setCodeState({
+    githubState.setCodeState({
       json: component.value.vue ?? '',
       html: component.value.template ?? '',
       javascript: component.value.script ?? '',
       graphql: component.value.query ?? '',
     })
 
-    console.info('code state set by loaded component', vuesState.getCodeState)
-    editorRef.value.updateEditorValue(vuesState.getCodeState)
+    console.info('code state set by loaded component', githubState.getCodeState)
+    editorRef.value.updateEditorValue(githubState.getCodeState)
   }
 })
 
@@ -80,14 +80,14 @@ const onChange = (payload: any) => {
 }
 
 const onPlay = () => {
-  const c = vuesState.getComponentFromCodeState
+  const c = githubState.getComponentFromCodeState
   console.info('onPlay event setting component and calling render', c)
   component.value = c
   componentRef.value.renderComponent(c)
 }
 
 const onSave = async () => {
-  const c = vuesState.getComponentFromCodeState
+  const c = githubState.getComponentFromCodeState
   console.info('onSave event setting component and calling render', c)
   component.value = c
   componentRef.value.renderComponent(c)
@@ -102,8 +102,8 @@ onMounted(() => {
 })
 
 const code = computed({
-  get: () => vuesState.getCodeState,
-  set: (v) => vuesState.setCodeState(v),
+  get: () => githubState.getCodeState,
+  set: (v) => githubState.setCodeState(v),
 })
 </script>
 

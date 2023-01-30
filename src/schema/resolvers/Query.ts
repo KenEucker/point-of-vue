@@ -23,6 +23,7 @@ const Query = {
 
     return !!creator
   },
+
   creator: async (parent: never, args: any, { prisma, auth0 }: any, info: any) => {
     const where = {
       ...args.where,
@@ -34,10 +35,11 @@ const Query = {
     const idWhereIsZeroedOut = idWhereIsSet && where.id === -1
     const authedRequest = (idWhereIsSet || idWhereIsZeroedOut || emailWhereIsSet) && auth0Configured
     const noSearchParams = Object.keys(args?.where ?? {}).length == 0
+    const authHeadersInvalid = !auth0 && auth0Configured
 
     if (noSearchParams && !idWhereIsSet) {
       throw new GraphQLError('You must specify which creator to query.')
-    } else if (authedRequest && !auth0 && auth0Configured) {
+    } else if (authedRequest && authHeadersInvalid) {
       throw new GraphQLError("You can't do that (E: 0008)")
     } else if (idWhereIsSet && !emailWhereIsSet) {
       throw new GraphQLError("You aren't allowed to search by ID only")
@@ -55,7 +57,7 @@ const Query = {
 
     /// Check and throw error or pear down the creator response based on permissions here
     /// Maybe check for mutual "following"?
-    if (!authedRequest && creator && auth0Configured) {
+    if (!authedRequest && creator && auth0Configured && authHeadersInvalid) {
       creator.id = 0
       creator.email = ''
     }
@@ -82,9 +84,6 @@ const Query = {
 
     return prisma.post.findUnique({
       where,
-      orderBy: {
-        id: 'desc',
-      },
     })
   },
 
@@ -104,6 +103,51 @@ const Query = {
     }
 
     return prisma.interaction.findUnique({
+      where,
+    })
+  },
+
+  group: (parent: never, args: { where: { id: any }; id: any }, { prisma }: any, info: any) => {
+    const where = {
+      ...args.where,
+      id: args?.id ?? args?.where?.id,
+    }
+
+    if (!where.id && Object.keys(args?.where ?? {}).length == 0) {
+      throw new GraphQLError('You must specify which post to query.')
+    }
+
+    return prisma.group.findUnique({
+      where,
+    })
+  },
+
+  template: (parent: never, args: { where: { id: any }; id: any }, { prisma }: any, info: any) => {
+    const where = {
+      ...args.where,
+      id: args?.id ?? args?.where?.id,
+    }
+
+    if (!where.id && Object.keys(args?.where ?? {}).length == 0) {
+      throw new GraphQLError('You must specify which template to query.')
+    }
+
+    return prisma.template.findUnique({
+      where,
+    })
+  },
+
+  vue: (parent: never, args: { where: { id: any }; id: any }, { prisma }: any, info: any) => {
+    const where = {
+      ...args.where,
+      id: args?.id ?? args?.where?.id,
+    }
+
+    if (!where.id && Object.keys(args?.where ?? {}).length == 0) {
+      throw new GraphQLError('You must specify which vue to query.')
+    }
+
+    return prisma.vue.findUnique({
       where,
     })
   },
@@ -174,6 +218,54 @@ const Query = {
     }
 
     return prisma.interaction.findMany(getDefaultQueryOptions(by))
+  },
+
+  groups: (parent: never, { where, by }: any, { prisma }: any, info: any) => {
+    if (where?.id || where?.title) {
+      return prisma.group.findMany({
+        where: {
+          id: where.id,
+          title: {
+            search: where.title,
+          },
+        },
+        ...getDefaultQueryOptions(by),
+      })
+    }
+
+    return prisma.group.findMany(getDefaultQueryOptions(by))
+  },
+
+  templates: (parent: never, { where, by }: any, { prisma }: any, info: any) => {
+    if (where?.id || where?.title) {
+      return prisma.template.findMany({
+        where: {
+          id: where.id,
+          title: {
+            search: where.title,
+          },
+        },
+        ...getDefaultQueryOptions(by),
+      })
+    }
+
+    return prisma.group.findMany(getDefaultQueryOptions(by))
+  },
+
+  vues: (parent: never, { where, by }: any, { prisma }: any, info: any) => {
+    if (where?.id || where?.title) {
+      return prisma.vue.findMany({
+        where: {
+          id: where.id,
+          title: {
+            search: where.title,
+          },
+        },
+        ...getDefaultQueryOptions(by),
+      })
+    }
+
+    return prisma.group.findMany(getDefaultQueryOptions(by))
   },
 
   getPostInteractions: async (parent: never, { id }: any, { prisma }: any, info: any) => {

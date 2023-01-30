@@ -70,6 +70,7 @@ model Group {
   id Int @id @default(autoincrement())
 
   creators Creator[]
+  posts    Post[]
   tags     TagsOnGroup? @relation(fields: [tagsOnGroupGroupId], references: [groupId])
 
   title String
@@ -106,6 +107,7 @@ model Post {
 
   creator      Creator       @relation(fields: [creatorId], references: [id])
   interactions Interaction[]
+  group        Group?   @relation(fields: [groupId], references: [id])
   tags         TagsOnPost?
 
   title     String
@@ -115,6 +117,7 @@ model Post {
   media     String[] @default([])
 
   creatorId Int
+  groupId   Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -173,6 +176,7 @@ model ActiveTemplate {
   templateId Int
 
   assignedAt DateTime @default(now())
+
   @@id([creatorId])
 }
 
@@ -183,7 +187,10 @@ model ActiveVue {
   creatorId Int
   vueId     Int
 
+  title String
+
   assignedAt DateTime @default(now())
+
   @@id([creatorId])
 }
 

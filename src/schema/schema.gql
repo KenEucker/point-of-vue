@@ -12,7 +12,7 @@ type Query {
   imgur(from: Requestor): CreatorAccount
   
   # Github repository connection for POV vues
-  vues(from: Requestor, where: VuesWhereInput): [VueComponent!]
+  github_vues(from: Requestor, where: VuesWhereInput): [VueComponent!]
   # Imgur images request for POV sharing
   images(from: Requestor, where: ImagesWhereInput): [ImgurImage!]
   # Imgur albums request for POV sharing and organizing
@@ -27,6 +27,12 @@ type Query {
   interactions(where: InteractionByInput, by: ForOptionsInput): [Interaction]
   post(where: PostByInput, id: Int): Post
   posts(where: PostByInput, by: ForOptionsInput): [Post]
+  group(where: GroupByInput, id: Int): Group
+  groups(where: GroupByInput, by: ForOptionsInput): [Group]
+  template(where: TemplateByInput, id: Int): Template
+  templates(where: TemplateByInput, by: ForOptionsInput): [Template]
+  vue(where: VueByInput, id: Int): Vue
+  vues(where: VueByInput, by: ForOptionsInput): [Vue]
 
   getPostInteractions(id: Int!): GetPostInteractionsPayload
   searchPosts(search: SearchPostsInput!, by: ForOptionsInput): SearchPostsPayload

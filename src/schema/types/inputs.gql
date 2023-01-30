@@ -40,6 +40,29 @@ input PostByInput {
   skip: Int
 }
 
+input GroupByInput {
+  id: Int
+  title: String
+  first: Int
+  skip: Int
+}
+
+input TemplateByInput {
+  id: Int
+  creator: CreatorInput
+  title: String
+  first: Int
+  skip: Int
+}
+
+input VueByInput {
+  id: Int
+  creator: CreatorInput
+  title: String
+  first: Int
+  skip: Int
+}
+
 input CreatorInput {
   id: Int
   handle: String

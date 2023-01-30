@@ -1,26 +1,26 @@
 <script setup lang="ts">
 import VueEditor from '../components/vues/VueEditor.vue'
 import VuesProfileCard from '../components/vues/VuesProfileCard.vue'
-import { useCreatorState, useVuesState } from '../store/state'
+import { useCreatorState, useGithubState } from '../store/state'
 import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 const creatorState = useCreatorState()
-const vuesState = useVuesState()
+const githubState = useGithubState()
 
 const componentToEdit = ref<any>({})
 
 onMounted(() => {
-  if (!vuesState.hasCredentials()) {
+  if (!githubState.hasCredentials()) {
     const router = useRouter()
     console.info('no way josé', { creatorCredentialsInvalid: true, path: '/vues' })
     router.push({ path: '/', replace: true })
   }
 
-  vuesState.fetchVues()
+  githubState.fetchVues()
 })
 
 const onLaunchEditVue = (vueId: string) => {
-  componentToEdit.value = vuesState.getVueComponent(vueId)
+  componentToEdit.value = githubState.getVueComponent(vueId)
   console.info('edit selected component', vueId)
 }
 const onViewLogs = (vueId: string) => {
@@ -41,7 +41,7 @@ const onViewVue = (vueId: string) => {
   <main class="border-t border-gray-200 dark:border-gray-700">
     <vues-profile-card
       :creator="creatorState.getCreator"
-      :components="vuesState.vueComponents"
+      :components="githubState.vueComponents"
       @edit="onLaunchEditVue"
       @logs="onViewLogs"
       @archive="onArchiveVue"

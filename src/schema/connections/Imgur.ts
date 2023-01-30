@@ -1,3 +1,4 @@
+import { Subscription } from './../generated/types.d'
 import {
   ImageAlbumsWhereInput,
   ImagesWhereInput,
@@ -42,7 +43,7 @@ const ImgurAlbumMap = (d: any) => ({
   datetime: new Date(d.datetime * 1000),
 })
 
-const Imgur = {
+export const Query = {
   // Imgur
   images: async (
     _parent: never,
@@ -97,5 +98,3 @@ const Imgur = {
     return response.success ? response.data?.map(ImgurAlbumMap) : []
   },
 }
-
-export default Imgur

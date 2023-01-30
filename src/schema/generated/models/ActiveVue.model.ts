@@ -1,4 +1,4 @@
-import { IsDefined, IsInt, IsDate } from 'class-validator'
+import { IsDefined, IsInt, IsString, IsDate } from 'class-validator'
 import { Creator, Vue } from './'
 
 export class ActiveVue {
@@ -15,6 +15,10 @@ export class ActiveVue {
   @IsDefined()
   @IsInt()
   vueId!: number
+
+  @IsDefined()
+  @IsString()
+  title!: string
 
   @IsDefined()
   @IsDate()

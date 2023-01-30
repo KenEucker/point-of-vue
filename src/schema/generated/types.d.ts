@@ -24,6 +24,7 @@ export type ActiveTemplate = {
   readonly media?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
   readonly palette?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
   readonly template: Template;
+  readonly title: Scalars['String'];
 };
 
 export type ActiveVue = {
@@ -31,6 +32,7 @@ export type ActiveVue = {
   readonly assignedAt?: Maybe<Scalars['Date']>;
   readonly creator: Creator;
   readonly id: Scalars['Int'];
+  readonly title: Scalars['String'];
   readonly vue?: Maybe<Vue>;
 };
 
@@ -174,6 +176,13 @@ export type Group = {
   readonly tags?: Maybe<ReadonlyArray<Maybe<Tag>>>;
   readonly title: Scalars['String'];
   readonly updatedAt?: Maybe<Scalars['Date']>;
+};
+
+export type GroupByInput = {
+  readonly first?: InputMaybe<Scalars['Int']>;
+  readonly id?: InputMaybe<Scalars['Int']>;
+  readonly skip?: InputMaybe<Scalars['Int']>;
+  readonly title?: InputMaybe<Scalars['String']>;
 };
 
 export type ImageAlbumsWhereInput = {
@@ -423,7 +432,10 @@ export type Query = {
   readonly docs?: Maybe<ReadonlyArray<Docule>>;
   readonly getPostInteractions?: Maybe<GetPostInteractionsPayload>;
   readonly github?: Maybe<CreatorAccount>;
+  readonly github_vues?: Maybe<ReadonlyArray<VueComponent>>;
   readonly google?: Maybe<CreatorAccount>;
+  readonly group?: Maybe<Group>;
+  readonly groups?: Maybe<ReadonlyArray<Maybe<Group>>>;
   readonly images?: Maybe<ReadonlyArray<ImgurImage>>;
   readonly imgur?: Maybe<CreatorAccount>;
   readonly interaction?: Maybe<Interaction>;
@@ -432,8 +444,11 @@ export type Query = {
   readonly posts?: Maybe<ReadonlyArray<Maybe<Post>>>;
   readonly searchPosts?: Maybe<SearchPostsPayload>;
   readonly self?: Maybe<CreatorAccount>;
+  readonly template?: Maybe<Template>;
+  readonly templates?: Maybe<ReadonlyArray<Maybe<Template>>>;
   readonly viewer?: Maybe<RequestorMirror>;
-  readonly vues?: Maybe<ReadonlyArray<VueComponent>>;
+  readonly vue?: Maybe<Vue>;
+  readonly vues?: Maybe<ReadonlyArray<Maybe<Vue>>>;
 };
 
 
@@ -475,8 +490,26 @@ export type QueryGithubArgs = {
 };
 
 
+export type QueryGithub_VuesArgs = {
+  from?: InputMaybe<Requestor>;
+  where?: InputMaybe<VuesWhereInput>;
+};
+
+
 export type QueryGoogleArgs = {
   from?: InputMaybe<Requestor>;
+};
+
+
+export type QueryGroupArgs = {
+  id?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<GroupByInput>;
+};
+
+
+export type QueryGroupsArgs = {
+  by?: InputMaybe<ForOptionsInput>;
+  where?: InputMaybe<GroupByInput>;
 };
 
 
@@ -526,14 +559,32 @@ export type QuerySelfArgs = {
 };
 
 
+export type QueryTemplateArgs = {
+  id?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<TemplateByInput>;
+};
+
+
+export type QueryTemplatesArgs = {
+  by?: InputMaybe<ForOptionsInput>;
+  where?: InputMaybe<TemplateByInput>;
+};
+
+
 export type QueryViewerArgs = {
   from?: InputMaybe<Requestor>;
 };
 
 
+export type QueryVueArgs = {
+  id?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<VueByInput>;
+};
+
+
 export type QueryVuesArgs = {
-  from?: InputMaybe<Requestor>;
-  where?: InputMaybe<VuesWhereInput>;
+  by?: InputMaybe<ForOptionsInput>;
+  where?: InputMaybe<VueByInput>;
 };
 
 export type Requestor = {
@@ -626,6 +677,14 @@ export type Template = {
   readonly updatedAt?: Maybe<Scalars['Date']>;
 };
 
+export type TemplateByInput = {
+  readonly creator?: InputMaybe<CreatorInput>;
+  readonly first?: InputMaybe<Scalars['Int']>;
+  readonly id?: InputMaybe<Scalars['Int']>;
+  readonly skip?: InputMaybe<Scalars['Int']>;
+  readonly title?: InputMaybe<Scalars['String']>;
+};
+
 export type Tokens = {
   readonly __typename?: 'Tokens';
   readonly auth0?: Maybe<Scalars['String']>;
@@ -677,6 +736,14 @@ export type Vue = {
   readonly tags?: Maybe<ReadonlyArray<Maybe<Tag>>>;
   readonly title: Scalars['String'];
   readonly updatedAt?: Maybe<Scalars['Date']>;
+};
+
+export type VueByInput = {
+  readonly creator?: InputMaybe<CreatorInput>;
+  readonly first?: InputMaybe<Scalars['Int']>;
+  readonly id?: InputMaybe<Scalars['Int']>;
+  readonly skip?: InputMaybe<Scalars['Int']>;
+  readonly title?: InputMaybe<Scalars['String']>;
 };
 
 export type VueComponent = {
@@ -780,6 +847,7 @@ export type ResolversTypes = {
   GitHubAccount: ResolverTypeWrapper<GitHubAccount>;
   GoogleAccount: ResolverTypeWrapper<GoogleAccount>;
   Group: ResolverTypeWrapper<Group>;
+  GroupByInput: GroupByInput;
   ImageAlbumsWhereInput: ImageAlbumsWhereInput;
   ImagesWhereInput: ImagesWhereInput;
   ImgurAccount: ResolverTypeWrapper<ImgurAccount>;
@@ -809,11 +877,13 @@ export type ResolversTypes = {
   Subscription: ResolverTypeWrapper<{}>;
   Tag: ResolverTypeWrapper<Tag>;
   Template: ResolverTypeWrapper<Template>;
+  TemplateByInput: TemplateByInput;
   Tokens: ResolverTypeWrapper<Tokens>;
   UpdateCreatorInput: UpdateCreatorInput;
   UpdateInteractionInput: UpdateInteractionInput;
   UpdatePostInput: UpdatePostInput;
   Vue: ResolverTypeWrapper<Vue>;
+  VueByInput: VueByInput;
   VueComponent: ResolverTypeWrapper<VueComponent>;
   VuesWhereInput: VuesWhereInput;
 };
@@ -838,6 +908,7 @@ export type ResolversParentTypes = {
   GitHubAccount: GitHubAccount;
   GoogleAccount: GoogleAccount;
   Group: Group;
+  GroupByInput: GroupByInput;
   ImageAlbumsWhereInput: ImageAlbumsWhereInput;
   ImagesWhereInput: ImagesWhereInput;
   ImgurAccount: ImgurAccount;
@@ -864,11 +935,13 @@ export type ResolversParentTypes = {
   Subscription: {};
   Tag: Tag;
   Template: Template;
+  TemplateByInput: TemplateByInput;
   Tokens: Tokens;
   UpdateCreatorInput: UpdateCreatorInput;
   UpdateInteractionInput: UpdateInteractionInput;
   UpdatePostInput: UpdatePostInput;
   Vue: Vue;
+  VueByInput: VueByInput;
   VueComponent: VueComponent;
   VuesWhereInput: VuesWhereInput;
 };
@@ -880,6 +953,7 @@ export type ActiveTemplateResolvers<ContextType = any, ParentType extends Resolv
   media?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   palette?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   template?: Resolver<ResolversTypes['Template'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -887,6 +961,7 @@ export type ActiveVueResolvers<ContextType = any, ParentType extends ResolversPa
   assignedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['Creator'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   vue?: Resolver<Maybe<ResolversTypes['Vue']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1107,7 +1182,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   docs?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Docule']>>, ParentType, ContextType, Partial<QueryDocsArgs>>;
   getPostInteractions?: Resolver<Maybe<ResolversTypes['GetPostInteractionsPayload']>, ParentType, ContextType, RequireFields<QueryGetPostInteractionsArgs, 'id'>>;
   github?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QueryGithubArgs>>;
+  github_vues?: Resolver<Maybe<ReadonlyArray<ResolversTypes['VueComponent']>>, ParentType, ContextType, Partial<QueryGithub_VuesArgs>>;
   google?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QueryGoogleArgs>>;
+  group?: Resolver<Maybe<ResolversTypes['Group']>, ParentType, ContextType, Partial<QueryGroupArgs>>;
+  groups?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Group']>>>, ParentType, ContextType, Partial<QueryGroupsArgs>>;
   images?: Resolver<Maybe<ReadonlyArray<ResolversTypes['ImgurImage']>>, ParentType, ContextType, Partial<QueryImagesArgs>>;
   imgur?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QueryImgurArgs>>;
   interaction?: Resolver<Maybe<ResolversTypes['Interaction']>, ParentType, ContextType, Partial<QueryInteractionArgs>>;
@@ -1116,8 +1194,11 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   posts?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Post']>>>, ParentType, ContextType, Partial<QueryPostsArgs>>;
   searchPosts?: Resolver<Maybe<ResolversTypes['SearchPostsPayload']>, ParentType, ContextType, RequireFields<QuerySearchPostsArgs, 'search'>>;
   self?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QuerySelfArgs>>;
+  template?: Resolver<Maybe<ResolversTypes['Template']>, ParentType, ContextType, Partial<QueryTemplateArgs>>;
+  templates?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Template']>>>, ParentType, ContextType, Partial<QueryTemplatesArgs>>;
   viewer?: Resolver<Maybe<ResolversTypes['RequestorMirror']>, ParentType, ContextType, Partial<QueryViewerArgs>>;
-  vues?: Resolver<Maybe<ReadonlyArray<ResolversTypes['VueComponent']>>, ParentType, ContextType, Partial<QueryVuesArgs>>;
+  vue?: Resolver<Maybe<ResolversTypes['Vue']>, ParentType, ContextType, Partial<QueryVueArgs>>;
+  vues?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Vue']>>>, ParentType, ContextType, Partial<QueryVuesArgs>>;
 };
 
 export type RequestorMirrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['RequestorMirror'] = ResolversParentTypes['RequestorMirror']> = {

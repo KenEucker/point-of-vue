@@ -46,7 +46,7 @@ const vetGithubRequest = async (from: any, auth0: any, prisma: any) => {
   return { identity, requestor, githubClient }
 }
 
-const Github = {
+export const Query = {
   github: async (
     _parent: never,
     args: { from: { token: string; id: string | number; email: string } },
@@ -91,7 +91,7 @@ const Github = {
       creator,
     }
   },
-  vues: async (
+  github_vues: async (
     _parent: never,
     args: { from: any; where: { oid: string } },
     { auth0, prisma }: any,
@@ -158,5 +158,3 @@ const Github = {
     return globbedVues
   },
 }
-
-export default Github

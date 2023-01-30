@@ -211,6 +211,8 @@ type ActiveTemplate {
   
   creator: Creator!
   template: Template!
+  
+  title: String!
   palette: [String]
   media: [String]
 
@@ -222,6 +224,8 @@ type ActiveVue {
   
   creator: Creator!
   vue: Vue
+
+  title: String!
 
   assignedAt: Date
 }

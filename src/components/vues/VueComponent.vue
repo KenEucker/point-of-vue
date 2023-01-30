@@ -11,13 +11,13 @@ import PullIcon from 'vue-ionicons/dist/md-git-pull-request.vue'
 import { onClickOutside } from '@vueuse/core'
 import type { PovComponent } from '../../utilities'
 import { loadModule } from 'vue3-sfc-loader'
-import { useVuesState } from '../../store/state'
+import { useGithubState } from '../../store/state'
 import * as Vue from 'vue'
 import * as vueuseMotion from '@vueuse/motion'
 import * as vueuse from '@vueuse/core'
 
 const AppRef = reactive<any>({ app: null })
-const vuesState = useVuesState()
+const githubState = useGithubState()
 const props = defineProps({
   component: {
     type: Object,
@@ -79,7 +79,7 @@ const renderComponent = (component?: any) => {
           // console.info('success', component)
         }
 
-        const compiled = await vuesState.compileComponent(component)
+        const compiled = await githubState.compileComponent(component)
         if (compiled.logs) {
           if (compiled.logs.info?.length) {
             logs.info = compiled.logs.info
