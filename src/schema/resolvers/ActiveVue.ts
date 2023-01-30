@@ -12,6 +12,15 @@ const ActiveVue = {
       },
     })
   },
+  // @ts-ignore
+  vue: (parent, args, { prisma }, info) => {
+    console.log({ vue: parent })
+    return prisma.vue.findUnique({
+      where: {
+        id: parent.vueId,
+      },
+    })
+  },
 }
 
 export default ActiveVue

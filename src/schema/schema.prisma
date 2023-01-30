@@ -107,7 +107,7 @@ model Post {
 
   creator      Creator       @relation(fields: [creatorId], references: [id])
   interactions Interaction[]
-  group        Group?   @relation(fields: [groupId], references: [id])
+  group        Group?        @relation(fields: [groupId], references: [id])
   tags         TagsOnPost?
 
   title     String
@@ -181,8 +181,8 @@ model ActiveTemplate {
 }
 
 model ActiveVue {
-  creator Creator @relation(fields: [creatorId], references: [id])
-  vue     Vue     @relation(fields: [vueId], references: [id])
+  creator   Creator @relation(fields: [creatorId], references: [id])
+  component Vue     @relation(fields: [vueId], references: [id])
 
   creatorId Int
   vueId     Int

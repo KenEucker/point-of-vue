@@ -58,6 +58,27 @@ const creatorPostsByHandleQuery = gql`
   }
 `
 
+const creatorVueByHandleQuery = gql`
+  query CreatorByHandle($handle: String!) {
+    creator(where: { handle: $handle }) {
+      vue {
+        id
+        title
+        media
+        createdAt
+        creator {
+          id
+          handle
+          name
+          avatar
+          status
+          verified
+        }
+      }
+    }
+  }
+`
+
 const creator = ref<any>({})
 const creatorPosts = ref<any>([])
 const {

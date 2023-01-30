@@ -30,6 +30,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/VuesPage.vue'),
     meta: {
       dependsOn: ['github'],
+      showBottmMenu: true,
       protected: true,
       povMenu: true,
     },

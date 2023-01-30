@@ -6,7 +6,7 @@ export class ActiveVue {
   creator!: Creator
 
   @IsDefined()
-  vue!: Vue
+  component!: Vue
 
   @IsDefined()
   @IsInt()

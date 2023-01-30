@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import VueEditor from '../components/vues/VueEditor.vue'
 import VuesProfileCard from '../components/vues/VuesProfileCard.vue'
-import { useCreatorState, useGithubState } from '../store/state'
+import SlideMenuBottom from '../components/page/SlideMenuBottom.vue'
+import VueEditor from '../components/vues/VueEditor.vue'
+
+import { useCreatorState, useGithubState, usePageState } from '../store/state'
 import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
+
 const creatorState = useCreatorState()
 const githubState = useGithubState()
+const pageState = usePageState()
 
 githubState.fetchAccount()
 
@@ -23,7 +27,7 @@ onMounted(() => {
 
 const onLaunchEditVue = (vueId: string) => {
   componentToEdit.value = githubState.getVueComponent(vueId)
-  console.info('edit selected component', vueId)
+  pageState.openBottomMenu()
 }
 const onViewLogs = (vueId: string) => {
   console.log('ViewLogs', vueId)
@@ -50,6 +54,8 @@ const onViewVue = (vueId: string) => {
       @delete="onDeleteVue"
       @view="onViewVue"
     />
-    <vue-editor class="h-1/2" :component="componentToEdit" />
+    <slide-menu-bottom>
+      <vue-editor class="h-full" :component="componentToEdit" />
+    </slide-menu-bottom>
   </main>
 </template>
