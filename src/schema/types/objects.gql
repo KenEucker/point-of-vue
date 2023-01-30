@@ -28,16 +28,37 @@ type GoogleAccount {
 
 type GitHubAccount {
   id: String!
+  databaseId: Int
   email: String
-  email_verified: Boolean
   name: String
   avatar: String
+  website: String
   bio: String
   city: String
   country: String
   timezone: String
-  hireable: String
   profile: String
+  company: String
+  location: String
+  url: String
+  status: String
+  sponsorsListing: String
+  isBountyHunter: Boolean
+  isCampusExpert: Boolean
+  isDeveloperProgramMember: Boolean
+  isEmployee: Boolean
+  isFollowingViewer: Boolean
+  isHireable: Boolean
+  isGitHubStar: Boolean
+  isSiteAdmin: Boolean
+  followers: Int
+  following: Int
+  packages: Int
+  repositories: Int
+  repositoriesContributedTo: Int
+  sponsors: Int
+  sponsoring: Int
+  starredRepositories: Int
 }
 
 type RequestorMirror {

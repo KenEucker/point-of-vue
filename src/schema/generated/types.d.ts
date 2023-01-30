@@ -146,14 +146,35 @@ export type GitHubAccount = {
   readonly avatar?: Maybe<Scalars['String']>;
   readonly bio?: Maybe<Scalars['String']>;
   readonly city?: Maybe<Scalars['String']>;
+  readonly company?: Maybe<Scalars['String']>;
   readonly country?: Maybe<Scalars['String']>;
+  readonly databaseId?: Maybe<Scalars['Int']>;
   readonly email?: Maybe<Scalars['String']>;
-  readonly email_verified?: Maybe<Scalars['Boolean']>;
-  readonly hireable?: Maybe<Scalars['String']>;
+  readonly followers?: Maybe<Scalars['Int']>;
+  readonly following?: Maybe<Scalars['Int']>;
   readonly id: Scalars['String'];
+  readonly isBountyHunter?: Maybe<Scalars['Boolean']>;
+  readonly isCampusExpert?: Maybe<Scalars['Boolean']>;
+  readonly isDeveloperProgramMember?: Maybe<Scalars['Boolean']>;
+  readonly isEmployee?: Maybe<Scalars['Boolean']>;
+  readonly isFollowingViewer?: Maybe<Scalars['Boolean']>;
+  readonly isGitHubStar?: Maybe<Scalars['Boolean']>;
+  readonly isHireable?: Maybe<Scalars['Boolean']>;
+  readonly isSiteAdmin?: Maybe<Scalars['Boolean']>;
+  readonly location?: Maybe<Scalars['String']>;
   readonly name?: Maybe<Scalars['String']>;
+  readonly packages?: Maybe<Scalars['Int']>;
   readonly profile?: Maybe<Scalars['String']>;
+  readonly repositories?: Maybe<Scalars['Int']>;
+  readonly repositoriesContributedTo?: Maybe<Scalars['Int']>;
+  readonly sponsoring?: Maybe<Scalars['Int']>;
+  readonly sponsors?: Maybe<Scalars['Int']>;
+  readonly sponsorsListing?: Maybe<Scalars['String']>;
+  readonly starredRepositories?: Maybe<Scalars['Int']>;
+  readonly status?: Maybe<Scalars['String']>;
   readonly timezone?: Maybe<Scalars['String']>;
+  readonly url?: Maybe<Scalars['String']>;
+  readonly website?: Maybe<Scalars['String']>;
 };
 
 export type GoogleAccount = {
@@ -432,6 +453,7 @@ export type Query = {
   readonly docs?: Maybe<ReadonlyArray<Docule>>;
   readonly getPostInteractions?: Maybe<GetPostInteractionsPayload>;
   readonly github?: Maybe<CreatorAccount>;
+  readonly github_account: GitHubAccount;
   readonly github_vues?: Maybe<ReadonlyArray<VueComponent>>;
   readonly google?: Maybe<CreatorAccount>;
   readonly group?: Maybe<Group>;
@@ -486,6 +508,11 @@ export type QueryGetPostInteractionsArgs = {
 
 
 export type QueryGithubArgs = {
+  from?: InputMaybe<Requestor>;
+};
+
+
+export type QueryGithub_AccountArgs = {
   from?: InputMaybe<Requestor>;
 };
 
@@ -1030,14 +1057,35 @@ export type GitHubAccountResolvers<ContextType = any, ParentType extends Resolve
   avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  company?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  databaseId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  email_verified?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  hireable?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  followers?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  following?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  isBountyHunter?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isCampusExpert?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isDeveloperProgramMember?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isEmployee?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isFollowingViewer?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isGitHubStar?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isHireable?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isSiteAdmin?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  packages?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   profile?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  repositories?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  repositoriesContributedTo?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  sponsoring?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  sponsors?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  sponsorsListing?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  starredRepositories?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   timezone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1182,6 +1230,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   docs?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Docule']>>, ParentType, ContextType, Partial<QueryDocsArgs>>;
   getPostInteractions?: Resolver<Maybe<ResolversTypes['GetPostInteractionsPayload']>, ParentType, ContextType, RequireFields<QueryGetPostInteractionsArgs, 'id'>>;
   github?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QueryGithubArgs>>;
+  github_account?: Resolver<ResolversTypes['GitHubAccount'], ParentType, ContextType, Partial<QueryGithub_AccountArgs>>;
   github_vues?: Resolver<Maybe<ReadonlyArray<ResolversTypes['VueComponent']>>, ParentType, ContextType, Partial<QueryGithub_VuesArgs>>;
   google?: Resolver<Maybe<ResolversTypes['CreatorAccount']>, ParentType, ContextType, Partial<QueryGoogleArgs>>;
   group?: Resolver<Maybe<ResolversTypes['Group']>, ParentType, ContextType, Partial<QueryGroupArgs>>;

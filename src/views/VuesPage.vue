@@ -7,6 +7,8 @@ import { onMounted, ref } from 'vue'
 const creatorState = useCreatorState()
 const githubState = useGithubState()
 
+githubState.fetchAccount()
+
 const componentToEdit = ref<any>({})
 
 onMounted(() => {

@@ -12,7 +12,9 @@ type Query {
   imgur(from: Requestor): CreatorAccount
   
   # Github repository connection for POV vues
+  github_account(from: Requestor): GitHubAccount!
   github_vues(from: Requestor, where: VuesWhereInput): [VueComponent!]
+
   # Imgur images request for POV sharing
   images(from: Requestor, where: ImagesWhereInput): [ImgurImage!]
   # Imgur albums request for POV sharing and organizing

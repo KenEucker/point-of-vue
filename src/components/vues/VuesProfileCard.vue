@@ -2,9 +2,10 @@
 import PovCreator from '../creator/PovCreator.vue'
 import { PovComponent } from '../../utilities'
 import PovVueCard from './PovVueCard.vue'
-import { usePageState } from '../../store/state'
+import { usePageState, useGithubState } from '../../store/state'
 
 const pageState = usePageState()
+const githubState = useGithubState()
 
 const props = defineProps({
   creator: {
@@ -65,36 +66,35 @@ const developerStats = [
           class="relative flex-shrink-0 inline-block w-1/6 mr-0 break-words md:mr-0 md:w-full"
           style="z-index: 4"
         >
-          <pov-creator
-            :creator="creator"
-            :size="props.size"
-            :image-only="true"
-            class="order-1"
-            :class="pageState.width < 600 ? 'flex-row' : 'flex-infinite'"
+          <img
+            :src="githubState.getAccount?.avatar"
+            alt="github account avatar"
+            width="150"
+            height="150"
+            class="rounded-xl"
           />
         </div>
 
         <div class="py-4 break-words" data-original-top="0px" style="position: sticky">
           <h1 class="m-0 text-3xl font-semibold leading-none">
             <span class="block overflow-hidden text-2xl leading-tight" itemprop="name">
-              Ken Eucker
+              {{ githubState.getAccount?.name }}
             </span>
             <span
               class="block text-xl not-italic font-light leading-6 text-slate-500"
               itemprop="additionalName"
             >
-              KenEucker
+              {{ githubState.getAccount?.name }}
             </span>
           </h1>
         </div>
         <div class="flex flex-col leading-5 break-words md:block text-slate-400">
           <div
             class="mb-4 overflow-hidden text-sm leading-6 md:text-base"
-            data-bio-text="Full Stack Engineer with a decade+ of experience in NodeJs, collaborating on multiple open-source projects. Author/Maintainer of imgur and biketag-api on npm."
+            :data-bio-text="githubState.getAccount?.bio"
           >
             <div class="text-base text-slate-400">
-              Full Stack Engineer with a decade+ of experience in NodeJs, collaborating on multiple
-              open-source projects. Author/Maintainer of imgur and biketag-api on npm.
+              {{ githubState.getAccount?.bio }}
             </div>
           </div>
 
@@ -102,7 +102,7 @@ const developerStats = [
             <div class="mb-4 text-slate-400">
               <a
                 class="bg-transparent cursor-pointer whitespace-nowrap text-slate-500"
-                href="https://github.com/KenEucker?tab=followers"
+                :href="`https://github.com/${githubState.getAccount?.name}?tab=followers`"
                 style="text-decoration: none"
               >
                 <svg
@@ -122,7 +122,9 @@ const developerStats = [
                     class=""
                   ></path>
                 </svg>
-                <span class="text-bold color-fg-default">52</span>
+                <span class="text-bold color-fg-default">{{
+                  githubState.getAccount?.followers
+                }}</span>
                 followers
               </a>
               ·
@@ -131,90 +133,11 @@ const developerStats = [
                 href="https://github.com/KenEucker?tab=following"
                 style="text-decoration: none"
               >
-                <span class="text-bold color-fg-default">131</span>
+                <span class="text-bold color-fg-default">{{
+                  githubState.getAccount?.following
+                }}</span>
                 following
               </a>
-            </div>
-            <div
-              class="table clear-both pt-4 mt-4 leading-5 break-words border-t border-solid border-zinc-700 text-slate-400 sm:hidden"
-              style="content: ''"
-            >
-              <h2
-                class="flex items-start mt-0 mb-2 text-base font-semibold leading-6 text-slate-400"
-              >
-                Sponsors
-              </h2>
-
-              <div class="flex flex-wrap break-words">
-                <div class="flex mb-1 mr-1 text-slate-400">
-                  <a
-                    class="inline-block text-blue-400 bg-transparent cursor-pointer"
-                    data-hovercard-type="user"
-                    data-hovercard-url="/users/brainkim/hovercard"
-                    data-octo-click="hovercard-link-click"
-                    data-octo-dimensions="link_type:self"
-                    href="/brainkim"
-                    style="text-decoration: none"
-                    ><img
-                      class="inline-block overflow-hidden flex-shrink-0 leading-none align-middle bg-gray-50 border-none bg-opacity-[0.1]"
-                      src="https://avatars.githubusercontent.com/u/2996754?s=70&amp;v=4"
-                      width="35"
-                      height="35"
-                      alt="@brainkim"
-                      style="border-radius: 50%; box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
-                  /></a>
-                </div>
-              </div>
-            </div>
-            <div
-              class="table clear-both pt-4 mt-4 leading-5 break-words border-t border-solid border-zinc-700 text-slate-400 sm:hidden"
-              style="content: ''"
-            >
-              <div class="flex items-center justify-between break-words">
-                <h2 class="flex items-start mt-0 mb-2 text-base font-semibold leading-6">
-                  Sponsoring
-                </h2>
-              </div>
-
-              <div class="flex flex-wrap break-words">
-                <div class="flex mb-1 mr-1 text-slate-400">
-                  <a
-                    class="inline-block text-blue-400 bg-transparent cursor-pointer"
-                    data-hovercard-type="organization"
-                    data-hovercard-url="/orgs/directus/hovercard"
-                    data-octo-click="hovercard-link-click"
-                    data-octo-dimensions="link_type:self"
-                    href="/directus"
-                    style="text-decoration: none"
-                    ><img
-                      class="inline-block overflow-hidden flex-shrink-0 leading-none align-middle bg-gray-50 rounded-md border-none bg-opacity-[0.1]"
-                      src="https://avatars.githubusercontent.com/u/15967950?s=70&amp;v=4"
-                      width="35"
-                      height="35"
-                      alt="@directus"
-                      style="box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
-                  /></a>
-                </div>
-
-                <div class="flex mb-1 mr-1 text-slate-400">
-                  <a
-                    class="inline-block text-blue-400 bg-transparent cursor-pointer"
-                    data-hovercard-type="user"
-                    data-hovercard-url="/users/johnsoncodehk/hovercard"
-                    data-octo-click="hovercard-link-click"
-                    data-octo-dimensions="link_type:self"
-                    href="/johnsoncodehk"
-                    style="text-decoration: none"
-                    ><img
-                      class="inline-block overflow-hidden flex-shrink-0 leading-none align-middle bg-gray-50 border-none bg-opacity-[0.1]"
-                      src="https://avatars.githubusercontent.com/u/16279759?s=70&amp;v=4"
-                      width="35"
-                      height="35"
-                      alt="@johnsoncodehk"
-                      style="border-radius: 50%; box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
-                  /></a>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -242,14 +165,14 @@ const developerStats = [
                   style="list-style: outside none none"
                 ></path>
               </svg>
-              <span class="text-slate-400" style="list-style: outside none none"
-                >Gerlach, Nevada, USA</span
-              >
+              <span class="text-slate-400" style="list-style: outside none none">{{
+                githubState.getAccount?.email
+              }}</span>
             </li>
 
             <li
               itemprop="email"
-              aria-label="Email: keneucker@gmail.com"
+              :aria-label="`Email: ${githubState.getAccount?.email}`"
               class="pt-1 pl-6 text-sm text-left"
               style="list-style: outside none none"
             >
@@ -271,9 +194,9 @@ const developerStats = [
               </svg>
               <a
                 class="bg-transparent cursor-pointer"
-                href="mailto:keneucker@gmail.com"
+                :href="`mailto:${githubState.getAccount?.email}`"
                 style="text-decoration: none; list-style: outside none none"
-                >keneucker@gmail.com</a
+                >{{ githubState.getAccount?.email }}</a
               >
             </li>
             <li
@@ -302,260 +225,14 @@ const developerStats = [
               <a
                 rel="nofollow me"
                 class="bg-transparent cursor-pointer"
-                href="https://www.keneucker.com"
+                :href="githubState.getAccount?.website"
                 style="text-decoration: none; list-style: outside none none"
-                >https://www.keneucker.com</a
+                >{{ githubState.getAccount?.website }}</a
               >
             </li>
           </ul>
-        </div>
-        <div
-          class="hidden pt-4 mt-4 leading-5 break-words border-t border-solid md:block border-zinc-700 text-slate-400"
-        >
-          <h2 class="mt-0 mb-2 text-base font-semibold leading-6 text-slate-400">
-            <a
-              href="/KenEucker?tab=achievements"
-              class="mb-2 break-words bg-transparent cursor-pointer"
-              style="text-decoration: none"
-              >Achievements</a
-            >
-          </h2>
-          <div class="flex flex-wrap break-words">
-            <a
-              href="/KenEucker?achievement=yolo&amp;tab=achievements"
-              class="relative text-blue-400 bg-transparent cursor-pointer"
-              style="text-decoration: none"
-              ><img
-                src="https://github.githubassets.com/images/modules/profile/achievements/yolo-default.png"
-                data-hovercard-type="achievement"
-                data-hovercard-url="/users/KenEucker/achievements/yolo/detail?hovercard=1"
-                width="64"
-                alt="Achievement: YOLO"
-                data-view-component="true"
-                class="border-none"
-                style="filter: drop-shadow(rgb(28 33 40) 0 8px 24px)" /></a
-            ><a
-              href="/KenEucker?achievement=quickdraw&amp;tab=achievements"
-              class="relative text-blue-400 bg-transparent cursor-pointer"
-              style="text-decoration: none"
-              ><img
-                src="https://github.githubassets.com/images/modules/profile/achievements/quickdraw-default.png"
-                data-hovercard-type="achievement"
-                data-hovercard-url="/users/KenEucker/achievements/quickdraw/detail?hovercard=1"
-                width="64"
-                alt="Achievement: Quickdraw"
-                data-view-component="true"
-                class="border-none"
-                style="filter: drop-shadow(rgb(28 33 40) 0 8px 24px)" /></a
-            ><a
-              href="/KenEucker?achievement=public-sponsor&amp;tab=achievements"
-              class="relative text-blue-400 bg-transparent cursor-pointer"
-              style="text-decoration: none"
-              ><img
-                src="https://github.githubassets.com/images/modules/profile/achievements/public-sponsor-default.png"
-                data-hovercard-type="achievement"
-                data-hovercard-url="/users/KenEucker/achievements/public-sponsor/detail?hovercard=1"
-                width="64"
-                alt="Achievement: Public Sponsor"
-                data-view-component="true"
-                class="border-none"
-                style="filter: drop-shadow(rgb(28 33 40) 0 8px 24px)" /></a
-            ><a
-              href="/KenEucker?achievement=pull-shark&amp;tab=achievements"
-              class="relative text-blue-400 bg-transparent cursor-pointer"
-              style="text-decoration: none"
-              ><img
-                src="https://github.githubassets.com/images/modules/profile/achievements/pull-shark-default.png"
-                data-hovercard-type="achievement"
-                data-hovercard-url="/users/KenEucker/achievements/pull-shark/detail?hovercard=1"
-                width="64"
-                alt="Achievement: Pull Shark"
-                data-view-component="true"
-                class="border-none"
-                style="filter: drop-shadow(rgb(28 33 40) 0 8px 24px)"
-              /><span
-                data-view-component="true"
-                class="absolute bottom-0 right-0 inline-block px-2 py-0 mb-1 text-xs font-semibold leading-4 border border-solid whitespace-nowrap border-zinc-200 bg-zinc-200 text-zinc-800"
-                style="box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px; border-radius: 32px"
-                >x3</span
-              ></a
-            ><a
-              href="/KenEucker?achievement=starstruck&amp;tab=achievements"
-              class="relative text-blue-400 bg-transparent cursor-pointer"
-              style="text-decoration: none"
-              ><img
-                src="https://github.githubassets.com/images/modules/profile/achievements/starstruck-default.png"
-                data-hovercard-type="achievement"
-                data-hovercard-url="/users/KenEucker/achievements/starstruck/detail?hovercard=1"
-                width="64"
-                alt="Achievement: Starstruck"
-                data-view-component="true"
-                class="border-none"
-                style="filter: drop-shadow(rgb(28 33 40) 0 8px 24px)" /></a
-            ><a
-              href="/KenEucker?achievement=arctic-code-vault-contributor&amp;tab=achievements"
-              class="relative text-blue-400 bg-transparent cursor-pointer"
-              style="text-decoration: none"
-              ><img
-                src="https://github.githubassets.com/images/modules/profile/achievements/arctic-code-vault-contributor-default.png"
-                data-hovercard-type="achievement"
-                data-hovercard-url="/users/KenEucker/achievements/arctic-code-vault-contributor/detail?hovercard=1"
-                width="64"
-                alt="Achievement: Arctic Code Vault Contributor"
-                data-view-component="true"
-                class="border-none"
-                style="filter: drop-shadow(rgb(28 33 40) 0 8px 24px)"
-            /></a>
-          </div>
-        </div>
-        <div
-          class="hidden pt-4 mt-4 leading-5 break-words border-t border-solid md:block border-zinc-700 text-slate-400"
-        >
-          <h2 class="mt-0 mb-2 text-base font-semibold leading-6 text-slate-400">Highlights</h2>
-          <ul class="pl-0 my-0 break-words" style="list-style: none">
-            <li class="mt-2 text-left" style="list-style: outside none none">
-              <svg
-                aria-hidden="true"
-                height="16"
-                viewBox="0 0 16 16"
-                version="1.1"
-                width="16"
-                data-view-component="true"
-                class="inline-block overflow-visible align-text-bottom text-slate-500"
-                style="fill: currentcolor; list-style: outside none none"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"
-                  class=""
-                  style="list-style: outside none none"
-                ></path>
-              </svg>
-              <span
-                title="Label: Pro"
-                data-view-component="true"
-                class="inline-block px-2 py-0 text-xs font-medium leading-4 uppercase border border-solid text-violet-500 whitespace-nowrap border-violet-500"
-                style="border-radius: 32px; list-style: outside none none"
-              >
-                Pro
-              </span>
-            </li>
-          </ul>
-        </div>
-        <div
-          class="table clear-both pt-4 mt-4 leading-5 break-words border-t border-solid border-zinc-700 text-slate-400 sm:hidden"
-          style="content: ''"
-        >
-          <h2 class="mt-0 mb-2 text-base font-semibold leading-6 text-slate-400">Organizations</h2>
-
-          <a
-            aria-label="unhosted"
-            itemprop="follows"
-            class="inline-block mb-1 text-blue-400 bg-transparent cursor-pointer"
-            data-hovercard-type="organization"
-            data-hovercard-url="/orgs/unhosted/hovercard"
-            data-octo-click="hovercard-link-click"
-            data-octo-dimensions="link_type:self"
-            data-hydro-click='{"event_type":"user_profile.click","payload":{"profile_user_id":1720267,"target":"MEMBER_ORGANIZATION_AVATAR","user_id":1720267,"originating_url":"https://github.com/KenEucker"}}'
-            data-hydro-click-hmac="e32644915a02099b2a63691ce97104e9e8cd208dfdf98f1cefc270c3e534b7b7"
-            href="/unhosted"
-            style="text-decoration: none"
-          >
-            <img
-              src="https://avatars.githubusercontent.com/u/472210?s=64&amp;v=4"
-              alt="@unhosted"
-              size="32"
-              height="32"
-              width="32"
-              data-view-component="true"
-              class="inline-block overflow-hidden flex-shrink-0 leading-none align-middle bg-gray-50 rounded-md border-none bg-opacity-[0.1]"
-              style="box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
-            />
-          </a>
-          <a
-            aria-label="remotestorage"
-            itemprop="follows"
-            class="inline-block mb-1 text-blue-400 bg-transparent cursor-pointer"
-            data-hovercard-type="organization"
-            data-hovercard-url="/orgs/remotestorage/hovercard"
-            data-octo-click="hovercard-link-click"
-            data-octo-dimensions="link_type:self"
-            data-hydro-click='{"event_type":"user_profile.click","payload":{"profile_user_id":1720267,"target":"MEMBER_ORGANIZATION_AVATAR","user_id":1720267,"originating_url":"https://github.com/KenEucker"}}'
-            data-hydro-click-hmac="e32644915a02099b2a63691ce97104e9e8cd208dfdf98f1cefc270c3e534b7b7"
-            href="/remotestorage"
-            style="text-decoration: none"
-          >
-            <img
-              src="https://avatars.githubusercontent.com/u/2323242?s=64&amp;v=4"
-              alt="@remotestorage"
-              size="32"
-              height="32"
-              width="32"
-              data-view-component="true"
-              class="inline-block overflow-hidden flex-shrink-0 leading-none align-middle bg-gray-50 rounded-md border-none bg-opacity-[0.1]"
-              style="box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
-            />
-          </a>
-          <a
-            aria-label="ey-ctp"
-            itemprop="follows"
-            class="inline-block mb-1 text-blue-400 bg-transparent cursor-pointer"
-            data-hovercard-type="organization"
-            data-hovercard-url="/orgs/ey-ctp/hovercard"
-            data-octo-click="hovercard-link-click"
-            data-octo-dimensions="link_type:self"
-            data-hydro-click='{"event_type":"user_profile.click","payload":{"profile_user_id":1720267,"target":"MEMBER_ORGANIZATION_AVATAR","user_id":1720267,"originating_url":"https://github.com/KenEucker"}}'
-            data-hydro-click-hmac="e32644915a02099b2a63691ce97104e9e8cd208dfdf98f1cefc270c3e534b7b7"
-            href="/ey-ctp"
-            style="text-decoration: none"
-          >
-            <img
-              src="https://avatars.githubusercontent.com/u/61974647?s=64&amp;v=4"
-              alt="@ey-ctp"
-              size="32"
-              height="32"
-              width="32"
-              data-view-component="true"
-              class="inline-block overflow-hidden flex-shrink-0 leading-none align-middle bg-gray-50 rounded-md border-none bg-opacity-[0.1]"
-              style="box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
-            />
-          </a>
-          <a
-            aria-label="biketagorg"
-            itemprop="follows"
-            class="inline-block mb-1 text-blue-400 bg-transparent cursor-pointer"
-            data-hovercard-type="organization"
-            data-hovercard-url="/orgs/biketagorg/hovercard"
-            data-octo-click="hovercard-link-click"
-            data-octo-dimensions="link_type:self"
-            data-hydro-click='{"event_type":"user_profile.click","payload":{"profile_user_id":1720267,"target":"MEMBER_ORGANIZATION_AVATAR","user_id":1720267,"originating_url":"https://github.com/KenEucker"}}'
-            data-hydro-click-hmac="e32644915a02099b2a63691ce97104e9e8cd208dfdf98f1cefc270c3e534b7b7"
-            href="/biketagorg"
-            style="text-decoration: none"
-          >
-            <img
-              src="https://avatars.githubusercontent.com/u/75806140?s=64&amp;v=4"
-              alt="@biketagorg"
-              size="32"
-              height="32"
-              width="32"
-              data-view-component="true"
-              class="inline-block overflow-hidden flex-shrink-0 leading-none align-middle bg-gray-50 rounded-md border-none bg-opacity-[0.1]"
-              style="box-shadow: rgb(0 0 0 / 5%) 0 0 0 1px"
-            />
-          </a>
         </div>
       </div>
-
-      <!-- <div class="flex flex-col items-end justify-start flex-grow md:w-100">
-        <div class="flex flex-row space-x-3">
-          <button
-            class="flex px-1 py-2 text-white transition-all duration-150 ease-in-out bg-gray-100 rounded-md hover:bg-gray-200"
-          >
-            <more-icon w="24" h="24" class="text-gray-500" />
-          </button>
-        </div>
-      </div> -->
     </div>
     <div class="flex items-start mb-8 overflow-x-scroll scrolling-touch flex-nowrap">
       <pov-vue-card

@@ -11,15 +11,18 @@ import {
 } from '../utilities'
 // import Sass from 'sass.js/dist/sass.sync.js'
 import { useCreatorState } from './creator'
+import { watch } from 'vue'
 
-export const getInitialVuesState = (): {
+export const getInitialGithubState = (): {
   code: any
   componentFromCodeState: any
   credentials: { creatorToken?: string; githubToken?: string }
   vuesFetched: boolean
   vues: Array<VueComponent>
   vueComponents: Array<PovComponent>
+  account: any
 } => ({
+  account: null,
   code: {},
   componentFromCodeState: null,
   credentials: {},
@@ -30,9 +33,10 @@ export const getInitialVuesState = (): {
 
 export const useGithubState = defineStore({
   id: 'useGithubState',
-  state: getInitialVuesState,
+  state: getInitialGithubState,
   getters: {
     vuesHaveBeenFetched: (s) => s.vuesFetched,
+    getAccount: (s) => s.account,
     getVues: (s) => s.vues,
     getCodeState: (s) => s.code,
     getComponentFromCodeState: (s) => s.componentFromCodeState,
@@ -313,6 +317,68 @@ export const useGithubState = defineStore({
             query: v.query,
           } as PovComponent
         })
+      } else if (queryError) {
+        console.error(queryError)
+      }
+    },
+
+    async fetchAccount() {
+      if (this.account) {
+        return Promise.resolve(this.account)
+      } else if (!this.hasCredentials()) {
+        const creatorState = useCreatorState()
+        watch(creatorState, (c) => {
+          console.log({ c })
+          if (c.isLoggedIn) {
+            this.fetchAccount()
+          }
+        })
+      }
+
+      const fetchGithubAccountForCreatorQuery = gql`
+        query StoreFetchGithubAccount($token: String!) {
+          github_account(from: { token: $token }) {
+            id
+            databaseId
+            email
+            name
+            avatar
+            website
+            bio
+            city
+            country
+            timezone
+            profile
+            company
+            location
+            url
+            status
+            sponsorsListing
+            isBountyHunter
+            isCampusExpert
+            isDeveloperProgramMember
+            isEmployee
+            isFollowingViewer
+            isHireable
+            isGitHubStar
+            isSiteAdmin
+            followers
+            following
+            packages
+            repositories
+            repositoriesContributedTo
+            sponsors
+            sponsoring
+            starredRepositories
+          }
+        }
+      `
+      const { data, error: queryError } = await apolloClient.query({
+        query: fetchGithubAccountForCreatorQuery,
+        variables: { token: this.credentials.githubToken },
+      })
+      if (data?.github_account && !queryError) {
+        this.account = data.github_account
       } else if (queryError) {
         console.error(queryError)
       }
