@@ -251,7 +251,7 @@ const Mutation = {
     creatorToUpdate.avatar = data.avatar ?? creatorToUpdate.avatar
     creatorToUpdate.website = data.website ?? creatorToUpdate.website
     creatorToUpdate.location = data.location ?? creatorToUpdate.location
-    creatorToUpdate.birthday = data.birthday ?? creatorToUpdate.birthday
+    creatorToUpdate.chosenday = data.chosenday ?? creatorToUpdate.chosenday
     creatorToUpdate.bio = data.bio ?? creatorToUpdate.bio
     creatorToUpdate.status = data.status ?? creatorToUpdate.status
 

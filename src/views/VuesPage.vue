@@ -1,28 +1,61 @@
 <script setup lang="ts">
-import VueEditor from '../components/vues/VueEditor.vue'
 import VuesProfileCard from '../components/vues/VuesProfileCard.vue'
-import { useCreatorState, useVuesState } from '../store/state'
+import SlideMenuBottom from '../components/page/SlideMenuBottom.vue'
+import VueEditor from '../components/vues/VueEditor.vue'
+
+import { useCreatorState, useGithubState, usePageState } from '../store/state'
 import { useRouter } from 'vue-router'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+
 const creatorState = useCreatorState()
-const vuesState = useVuesState()
-console.log('wtf')
+const githubState = useGithubState()
+const pageState = usePageState()
+
+githubState.fetchAccount()
+
+const componentToEdit = ref<any>({})
 
 onMounted(() => {
-  console.log('atleast')
-  if (!vuesState.hasCredentials()) {
+  if (!githubState.hasCredentials()) {
     const router = useRouter()
     console.info('no way josé', { creatorCredentialsInvalid: true, path: '/vues' })
     router.push({ path: '/', replace: true })
   }
 
-  vuesState.fetchVues()
+  githubState.fetchVues()
 })
+
+const onLaunchEditVue = (vueId: string) => {
+  componentToEdit.value = githubState.getVueComponent(vueId)
+  pageState.openBottomMenu()
+}
+const onViewLogs = (vueId: string) => {
+  console.log('ViewLogs', vueId)
+}
+const onArchiveVue = (vueId: string) => {
+  console.log('ArchiveVue', vueId)
+}
+const onDeleteVue = (vueId: string) => {
+  console.log('DeleteVue', vueId)
+}
+const onViewVue = (vueId: string) => {
+  console.log('ViewVue', vueId)
+}
 </script>
 
 <template>
   <main class="border-t border-gray-200 dark:border-gray-700">
-    <vues-profile-card :creator="creatorState.getCreator" :components="vuesState.vueComponents" />
-    <vue-editor class="h-1/2" :initial-code="{}" />
+    <vues-profile-card
+      :creator="creatorState.getCreator"
+      :components="githubState.vueComponents"
+      @edit="onLaunchEditVue"
+      @logs="onViewLogs"
+      @archive="onArchiveVue"
+      @delete="onDeleteVue"
+      @view="onViewVue"
+    />
+    <slide-menu-bottom>
+      <vue-editor class="h-full" :component="componentToEdit" />
+    </slide-menu-bottom>
   </main>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, watch, onUnmounted, defineAsyncComponent, createApp } from 'vue'
 import PlanetIcon from 'vue-ionicons/dist/md-planet.vue'
 import BaseballIcon from 'vue-ionicons/dist/md-baseball.vue'
 import BasketIcon from 'vue-ionicons/dist/md-basket.vue'
@@ -11,14 +11,21 @@ import PullIcon from 'vue-ionicons/dist/md-git-pull-request.vue'
 import { onClickOutside } from '@vueuse/core'
 import type { PovComponent } from '../../utilities'
 import { loadModule } from 'vue3-sfc-loader'
-import { useVuesState } from '../../store/state'
+import { useGithubState } from '../../store/state'
 import * as Vue from 'vue'
+import * as vueuseMotion from '@vueuse/motion'
+import * as vueuse from '@vueuse/core'
 
-const vuesState = useVuesState()
+const AppRef = reactive<any>({ app: null })
+const githubState = useGithubState()
 const props = defineProps({
   component: {
     type: Object,
     default: () => ({}),
+  },
+  vue: {
+    type: Object,
+    default: () => null,
   },
   showStatus: {
     type: Boolean,
@@ -28,15 +35,23 @@ const props = defineProps({
     type: String,
     default: 'display',
   },
+  lazy: {
+    type: Boolean,
+    default: false,
+  },
+  skipFirstRender: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const showStatus = ref(false)
-const emit = defineEmits(['edit'])
+const emit = defineEmits(['edit', 'view', 'archive', 'delete', 'logs'])
 const containerRef = ref()
 const componentRef = ref()
-const logs = reactive<{ error: string | null; info: string | null }>({
-  error: null,
-  info: null,
+const logs = reactive<{ errors: string[]; info: string[] }>({
+  errors: [],
+  info: [],
 })
 onClickOutside(containerRef, () => (showStatus.value = false))
 
@@ -45,34 +60,44 @@ const getOptions = (component: PovComponent) => {
     case 'good':
       return ['edit', 'archive']
     case 'error':
-      return ['edit', 'view logs']
+      return ['edit', 'logs']
     default:
       return ['view']
   }
 }
 
-const renderComponent = (component: any = undefined) => {
-  component = component ?? props.component
-  if (componentRef.value && props.variant === 'display') {
-    logs.error = ''
-    logs.info = ''
-    const options = {
-      moduleCache: { vue: Vue },
+const renderComponent = (component?: any) => {
+  let options: any
+  if (props.vue) {
+    options = {
+      moduleCache: { vue: Vue, '@vueuse/core': vueuse, '@vueuse/motion': vueuseMotion },
+      getFile: async () => props.vue.code,
+      addStyle: async (textContent: any) => {
+        // console.log({ textContent })
+      },
+    }
+  } else if (componentRef.value && props.variant === 'display') {
+    component = component ?? props.component
+    console.info('rendering component', component)
+    options = {
+      moduleCache: { vue: Vue, '@vueuse/core': vueuse, '@vueuse/motion': vueuseMotion },
       getFile: async () => {
         if (!(component?.json || component?.script || component?.template)) {
           console.error('whyy?', component)
-          logs.error = 'no files to load'
+          logs.errors.push('no files to load')
           return ''
         } else {
-          console.info('success', component)
+          // console.info('success', component)
         }
-        const compiled = await vuesState.compileComponent(component)
+
+        const compiled = await githubState.compileComponent(component)
         if (compiled.logs) {
-          if (compiled.logs.info) {
+          if (compiled.logs.info?.length) {
             logs.info = compiled.logs.info
           }
-          if (compiled.logs.error) {
-            logs.error = compiled.logs.error
+          if (compiled.logs.errors?.length) {
+            logs.errors = compiled.logs.errors
+            return ''
           }
         }
 
@@ -86,28 +111,93 @@ const renderComponent = (component: any = undefined) => {
         // document.head.insertBefore(style, ref)
       },
     }
+  }
 
-    Vue.createApp(Vue.defineAsyncComponent(() => loadModule('file.vue', options))).mount(
-      componentRef.value
-    )
+  if (options) {
+    try {
+      /// First do nothing, Mark
+      unmountComponentApp()
+      AppRef.app = createApp(
+        defineAsyncComponent(async () => {
+          try {
+            return await loadModule('file.vue', options)
+          } catch (error: any) {
+            console.error('load module error', error)
+            logs.errors.push('compilation error')
+            logs.errors.push(error.message)
+
+            return Promise.resolve()
+          }
+        })
+      )
+      AppRef.app.use(vueuseMotion.MotionPlugin)
+      AppRef.app.mount(componentRef.value)
+    } catch (e: any) {
+      console.error('compilation error', e)
+      logs.errors.push('compilation error')
+      logs.errors.push(e.message)
+    }
     // refreshTailwindCss()
   }
 }
 
-onMounted(renderComponent)
+if (!props.lazy && !props.skipFirstRender) {
+  onMounted(renderComponent)
+}
 
-defineExpose({ renderComponent })
+const unmountComponentApp = () => {
+  /// Clear the logs
+  logs.errors = []
+  logs.info = []
+
+  if (AppRef.app) {
+    AppRef.app.unmount(componentRef.value)
+  }
+}
+
+onUnmounted(unmountComponentApp)
+
+if (!props.lazy && !props.vue) {
+  watch(props.component, renderComponent)
+}
+
+const onStatusButtonClick = (option: string) => {
+  /// It's a hack eat hack world out there
+  switch (option) {
+    case 'edit':
+      emit('edit', props.component.oid)
+      break
+
+    case 'view':
+      emit('view', props.component.oid)
+      break
+
+    case 'archive':
+      emit('archive', props.component.oid)
+      break
+
+    case 'delete':
+      emit('delete', props.component.oid)
+      break
+
+    case 'logs':
+      emit('logs', props.component.oid)
+      break
+  }
+}
+
+defineExpose({ renderComponent, unmountComponentApp })
 </script>
 <template>
   <div
     ref="containerRef"
-    class="component-outer w-auto m-8 text-gray-800 divide-y divide-gray-300 rounded-lg shadow-md sm:m-4"
+    class="w-auto m-8 text-gray-800 divide-y divide-gray-300 rounded-lg shadow-md component-outer sm:m-4"
     :class="`bg-${component.background ? component.background : 'white'}`"
   >
-    <div v-if="logs.error?.length || logs.info?.length" class="h-full">
+    <div v-if="logs.errors?.length || logs.info?.length" class="h-full">
       <div
-        v-if="logs.error"
-        class="px-2 text-pink-900 bg-pink-100 border-4 border-pink-500 rounded-xl shadow-md"
+        v-if="logs.errors?.length"
+        class="px-2 text-pink-900 bg-pink-100 border-4 border-pink-500 shadow-md rounded-xl"
         role="alert"
       >
         <div class="flex">
@@ -123,14 +213,16 @@ defineExpose({ renderComponent })
             </svg>
           </div>
           <div>
-            <p class="font-bold">{{ logs.error }}</p>
+            <pre class="flex flex-wrap text-sm font-bold">
+              <div v-for="(error, i) in logs.errors" :key="`error-${i}`" class="">{{ error }}</div>
+            </pre>
             <p class="text-sm">This prevented the component from rendering</p>
           </div>
         </div>
       </div>
       <div
-        v-if="logs.info"
-        class="px-2 text-teal-900 bg-teal-100 border-t-4 border-teal-500 rounded-b shadow-md"
+        v-if="logs.info?.length"
+        class="px-2 text-teal-900 bg-teal-100 border-4 border-teal-500 shadow-md rounded-xl"
         role="info"
       >
         <div class="flex">
@@ -146,14 +238,17 @@ defineExpose({ renderComponent })
             </svg>
           </div>
           <div>
-            <p class="font-bold">{{ logs.info }}</p>
+            <pre class="flex flex-wrap text-sm font-bold">
+              <div
+v-for="(log, i) in logs.info" :key="`log-${i}`" class="">{{ log }}</div>
+            </pre>
             <p class="text-sm">This did not prevent the component from rendering</p>
           </div>
         </div>
       </div>
     </div>
     <div class="flex items-start px-4 py-5">
-      <div class="mr-3 my-auto">
+      <div class="my-auto mr-3">
         <planet-icon v-if="props.component.icon === 'planet'" h="40" w="40" />
         <baseball-icon v-if="props.component.icon === 'baseball'" h="40" w="40" />
         <basket-icon v-if="props.component.icon === 'basket'" h="40" w="40" />
@@ -209,8 +304,8 @@ defineExpose({ renderComponent })
           <button
             v-for="option in getOptions(props.component as PovComponent)"
             :key="`${props.component.name}-option-${option}`"
-            class="flex items-center px-3 py-1 w-full sm:px-2 hover:bg-gray-200"
-            @click="emit('edit')"
+            class="flex items-center w-full px-3 py-1 sm:px-2 hover:bg-gray-200"
+            @click="onStatusButtonClick(option)"
           >
             {{ option }}
           </button>

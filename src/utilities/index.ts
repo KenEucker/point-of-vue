@@ -37,6 +37,7 @@ export enum StorageName {
 }
 
 export interface PovComponent {
+  oid: string
   name: string
   category?: string
   vues?: number
@@ -47,7 +48,7 @@ export interface PovComponent {
   publishedAt?: Date
   archivedAt?: Date
   erroredAt?: Date
-  raw?: string
+  vue?: string
   query?: string
   script?: string
   template?: string
@@ -259,3 +260,30 @@ export const getImgurImageSized = (
 }
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+export const trimAndRemoveQueryWrap = (str: string): string => {
+  const match = str.match(/^\s*query\s*/i)
+  if (match) {
+    str = str.substring(str.indexOf('{') + 1)
+    str = str.substring(0, str.lastIndexOf('}'))
+  }
+  return str.trim()
+}
+
+export const getLastFunctionName = (error?: Error): string | null => {
+  error = error ?? new Error()
+  Error.captureStackTrace(error)
+  const stack = error.stack
+  const stackArray = stack?.split('\n')
+  if (stackArray && stackArray.length >= 4) {
+    const lastFunctionLine = stackArray[3]
+    const lastFunctionLineMatch = lastFunctionLine.match(/at (.*?)\s/)
+    const lastFunctionName =
+      lastFunctionLineMatch?.length && lastFunctionLineMatch?.length > 1
+        ? lastFunctionLineMatch[1]
+        : 'unknown'
+    return lastFunctionName
+  }
+
+  return null
+}

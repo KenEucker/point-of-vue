@@ -9,9 +9,8 @@ const GithubClient = Client.default
 export const constructGithubCreator = (profile: any) => ({
   id: Number(profile.user_id) ? profile.user_id : 0,
   email: profile.email,
-  verified: profile.email_verified,
   handle: profile.nickname ?? profile.login,
-  name: profile.name,
+  name: profile.name ?? profile.login ?? '',
   website: profile.blog ?? profile.websiteUrl,
   avatar: profile.picture ?? profile.avatarUrl,
   updatedAt: profile.updated_at ?? profile.updatedAt,
@@ -46,7 +45,7 @@ const vetGithubRequest = async (from: any, auth0: any, prisma: any) => {
   return { identity, requestor, githubClient }
 }
 
-const Github = {
+export const Query = {
   github: async (
     _parent: never,
     args: { from: { token: string; id: string | number; email: string } },
@@ -55,14 +54,17 @@ const Github = {
   ) => {
     const { requestor, identity, githubClient } = await vetGithubRequest(args.from, auth0, prisma)
 
-    if (identity && auth0) {
-      return { creator: constructGithubCreator(identity) }
+    if (!identity || !githubClient) {
+      return {
+        requestor,
+      }
     }
 
     let creator: any = {}
     const query = `
     query githubAccount {
         viewer {
+          id
           email
           name
           avatarUrl
@@ -91,7 +93,119 @@ const Github = {
       creator,
     }
   },
-  vues: async (
+
+  github_account: async (
+    _parent: never,
+    args: { from: { token: string; id: string | number; email: string } },
+    { prisma, auth0 }: any,
+    info: any
+  ) => {
+    const { requestor, identity, githubClient } = await vetGithubRequest(args.from, auth0, prisma)
+
+    if (!identity || !githubClient) {
+      return {
+        requestor,
+      }
+    }
+
+    const query = `
+    query githubAccount {
+        viewer {
+          login
+          databaseId
+          id
+          followers {
+            totalCount
+          }
+          following {
+            totalCount
+          }
+          email
+          company
+          bio
+          avatarUrl
+          isBountyHunter
+          isCampusExpert
+          isDeveloperProgramMember
+          isEmployee
+          isFollowingViewer
+          isHireable
+          isGitHubStar
+          isSiteAdmin
+          location
+          name
+          packages {
+            totalCount
+          }
+          repositories {
+            totalCount
+          }
+          repositoriesContributedTo {
+            totalCount
+          }
+          sponsors {
+            totalCount
+          }
+          sponsoring {
+            totalCount
+          }
+          sponsorsListing {
+            url
+            isPublic
+          }
+          status {
+            emoji
+            message
+          }
+          url
+          websiteUrl
+          starredRepositories {
+            totalCount
+          }
+        }
+      }
+  `
+    const getGithubAccount = getMethod(gql(query))
+
+    const { viewer } = (await getGithubAccount(githubClient)) as any
+
+    if (viewer) {
+      return {
+        databaseId: viewer.databaseId,
+        id: viewer.id,
+        name: viewer.name,
+        email: viewer.email,
+        company: viewer.company,
+        bio: viewer.bio,
+        avatar: viewer.avatarUrl,
+        location: viewer.location,
+        url: viewer.url,
+        website: viewer.websiteUrl,
+        status: `${viewer.sponsorsListing?.emoji} ${viewer.sponsorsListing?.message}`,
+        sponsorsListing: viewer.sponsorsListing?.isPublic ? viewer.sponsorsListing?.url : '',
+        isBountyHunter: viewer.isBountyHunter,
+        isCampusExpert: viewer.isCampusExpert,
+        isDeveloperProgramMember: viewer.isDeveloperProgramMember,
+        isEmployee: viewer.isEmployee,
+        isFollowingViewer: viewer.isFollowingViewer,
+        isHireable: viewer.isHireable,
+        isGitHubStar: viewer.isGitHubStar,
+        isSiteAdmin: viewer.isSiteAdmin,
+        followers: viewer.followers?.totalCount,
+        following: viewer.following?.totalCount,
+        packages: viewer.packages?.totalCount,
+        repositories: viewer.repositories?.totalCount,
+        repositoriesContributedTo: viewer.repositoriesContributedTo?.totalCount,
+        sponsors: viewer.sponsors?.totalCount,
+        sponsoring: viewer.sponsoring?.totalCount,
+        starredRepositories: viewer.starredRepositories?.totalCount,
+      }
+    }
+
+    return null
+  },
+
+  github_vues: async (
     _parent: never,
     args: { from: any; where: { oid: string } },
     { auth0, prisma }: any,
@@ -158,5 +272,3 @@ const Github = {
     return globbedVues
   },
 }
-
-export default Github

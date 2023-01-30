@@ -11,7 +11,7 @@ const pageState = usePageState()
 </script>
 <template>
   <div
-    class="flex flex-col w-full h-full px-2 py-2 max-w-min overflow-y-auto bg-ll-base dark:bg-ld-base"
+    class="flex flex-col w-full h-full px-2 py-2 max-w-min overflow-y-auto bg-ll-base dark:bg-ld-base ease-out transition-all"
   >
     <page-options />
     <about-this-page v-if="!pageState.disableAbout" />

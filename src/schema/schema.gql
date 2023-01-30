@@ -11,9 +11,15 @@ type Query {
   # Authenticated Imgur self
   imgur(from: Requestor): CreatorAccount
   
-  vues(from: Requestor, where: VuesWhereInput): [VueComponent!]
+  # Github repository connection for POV vues
+  github_account(from: Requestor): GitHubAccount!
+  github_vues(from: Requestor, where: VuesWhereInput): [VueComponent!]
+
+  # Imgur images request for POV sharing
   images(from: Requestor, where: ImagesWhereInput): [ImgurImage!]
+  # Imgur albums request for POV sharing and organizing
   albums(from: Requestor, where: ImageAlbumsWhereInput): [ImgurAlbum!]
+  # Google files for request for POV (storage? tools? pruning?)
   docs(from: Requestor): [Docule!]
 
   creatorExists(where: CreatorByInput): Boolean
@@ -23,6 +29,12 @@ type Query {
   interactions(where: InteractionByInput, by: ForOptionsInput): [Interaction]
   post(where: PostByInput, id: Int): Post
   posts(where: PostByInput, by: ForOptionsInput): [Post]
+  group(where: GroupByInput, id: Int): Group
+  groups(where: GroupByInput, by: ForOptionsInput): [Group]
+  template(where: TemplateByInput, id: Int): Template
+  templates(where: TemplateByInput, by: ForOptionsInput): [Template]
+  vue(where: VueByInput, id: Int): Vue
+  vues(where: VueByInput, by: ForOptionsInput): [Vue]
 
   getPostInteractions(id: Int!): GetPostInteractionsPayload
   searchPosts(search: SearchPostsInput!, by: ForOptionsInput): SearchPostsPayload

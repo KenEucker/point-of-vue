@@ -10,6 +10,12 @@ generator class_validator {
   provider = "prisma-class-validator-generator"
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "../../public/img/pov_erd_ed.svg"
+  theme    = "forest"
+}
+
 datasource db {
   provider = "postgres"
   url      = env("DATABASE_URL")
@@ -31,37 +37,65 @@ enum MutationType {
 }
 
 model Creator {
-  id           Int           @id @default(autoincrement())
-  handle       String        @unique
-  email        String        @unique
-  verified     Boolean       @default(false)
-  subs         String[]      @default([])
-  posts        Post[]
+  id     Int    @id @default(autoincrement())
+  handle String @unique
+  email  String @unique
+
+  tags         TagsOnCreator?
   permissions  Permissions[]
+  posts        Post[]
+  groups       Group[]
   interactions Interaction[]
-  name         String        @default("")
-  avatar       String        @default("")
-  banner       String        @default("")
-  status       String        @default("")
-  bio          String        @default("")
-  website      String        @default("")
-  location     String        @default("")
-  birthday     String        @default("")
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  templates    Template[]
+  template     ActiveTemplate?
+  vues         Vue[]
+  vue          ActiveVue[]
+
+  name      String   @default("")
+  avatar    String   @default("")
+  bio       String   @default("")
+  verified  Boolean  @default(false)
+  banner    String   @default("")
+  status    String   @default("")
+  website   String   @default("")
+  location  String   @default("")
+  chosenday String   @default("")
+  subs      String[] @default([])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Group {
+  id Int @id @default(autoincrement())
+
+  creators Creator[]
+  posts    Post[]
+  tags     TagsOnGroup? @relation(fields: [tagsOnGroupGroupId], references: [groupId])
+
+  title String
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  tagsOnGroupGroupId Int?
+
+  @@unique([title])
 }
 
 model Interaction {
-  id        Int      @id @default(autoincrement())
-  creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  id Int @id @default(autoincrement())
+
+  creator Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  post    Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  text   String  @default("")
+  like   Boolean @default(false)
+  love   Boolean @default(false)
+  repost Boolean @default(false)
+  share  Boolean @default(false)
+
   creatorId Int
   postId    Int
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  text      String   @default("")
-  like      Boolean  @default(false)
-  love      Boolean  @default(false)
-  repost    Boolean  @default(false)
-  share     Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -69,36 +103,162 @@ model Interaction {
 }
 
 model Post {
-  id           Int           @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
   creator      Creator       @relation(fields: [creatorId], references: [id])
   interactions Interaction[]
-  creatorId    Int
-  title        String
-  published    Boolean       @default(false)
-  text         String        @default("")
-  status       String        @default("")
-  media        String[]      @default([])
-  TagsOnPosts  TagsOnPosts[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  group        Group?        @relation(fields: [groupId], references: [id])
+  tags         TagsOnPost?
+
+  title     String
+  published Boolean  @default(false)
+  text      String   @default("")
+  status    String   @default("")
+  media     String[] @default([])
+
+  creatorId Int
+  groupId   Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([creatorId, title])
 }
 
-model Tag {
-  id                Int         @id @default(autoincrement())
-  text              String      @unique
-  posts             TagsOnPosts @relation(fields: [tagsOnPostsPostId], references: [postId])
-  tagsOnPostsPostId Int
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+model Template {
+  id Int @id @default(autoincrement())
+
+  creator     Creator          @relation(fields: [creatorId], references: [id])
+  activations ActiveTemplate[]
+  tags        TagsOnTemplate?
+
+  title     String
+  published Boolean  @default(false)
+  code      String   @default("")
+  status    String   @default("")
+  palette   String[] @default([])
+  media     String[] @default([])
+
+  creatorId   Int
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  TagsOnGroup TagsOnGroup[]
+
+  @@unique([creatorId, title])
 }
 
-model TagsOnPosts {
-  post       Post     @relation(fields: [postId], references: [id])
+model Vue {
+  id Int @id @default(autoincrement())
+
+  creator     Creator     @relation(fields: [creatorId], references: [id])
+  activations ActiveVue[]
+  tags        TagsOnVue?
+
+  title     String
+  code      String  @default("")
+  status    String  @default("")
+
+  creatorId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([creatorId, title])
+}
+
+model ActiveTemplate {
+  creator  Creator  @relation(fields: [creatorId], references: [id])
+  template Template @relation(fields: [templateId], references: [id])
+
+  palette String[] @default([])
+  media   String[] @default([])
+
+  creatorId  Int
+  templateId Int
+
+  assignedAt DateTime @default(now())
+
+  @@id([creatorId])
+}
+
+model ActiveVue {
+  creator   Creator @relation(fields: [creatorId], references: [id])
+  component Vue     @relation(fields: [vueId], references: [id])
+
+  creatorId Int
+  vueId     Int
+
+  title String
+
+  assignedAt DateTime @default(now())
+
+  @@id([creatorId])
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  text String @unique
+
+  creators  TagsOnCreator  @relation(fields: [tagsOnCreatorsCreatorId], references: [creatorId])
+  posts     TagsOnPost     @relation(fields: [tagsOnPostsPostId], references: [postId])
+  templates TagsOnTemplate @relation(fields: [tagsOnTemplatesTemplateId], references: [templateId])
+  vues      TagsOnVue      @relation(fields: [tagsOnVuesVueId], references: [vueId])
+
+  tagsOnCreatorsCreatorId   Int
+  tagsOnPostsPostId         Int
+  tagsOnTemplatesTemplateId Int
+  tagsOnVuesVueId           Int
+  createdAt                 DateTime     @default(now())
+  updatedAt                 DateTime     @updatedAt
+  TagsOnGroup               TagsOnGroup? @relation(fields: [tagsOnGroupGroupId], references: [groupId])
+  tagsOnGroupGroupId        Int?
+}
+
+model TagsOnCreator {
+  creator Creator @relation(fields: [creatorId], references: [id])
+  tags    Tag[]
+
+  creatorId  Int
+  assignedAt DateTime @default(now())
+
+  @@id([creatorId])
+}
+
+model TagsOnGroup {
+  template Template @relation(fields: [groupId], references: [id])
+  tags     Tag[]
+
+  groupId    Int
+  assignedAt DateTime @default(now())
+  Group      Group[]
+
+  @@id([groupId])
+}
+
+model TagsOnPost {
+  post Post  @relation(fields: [postId], references: [id])
+  tags Tag[]
+
   postId     Int
   assignedAt DateTime @default(now())
-  Tag        Tag[]
 
   @@id([postId])
+}
+
+model TagsOnTemplate {
+  template Template @relation(fields: [templateId], references: [id])
+  tags     Tag[]
+
+  templateId Int
+  assignedAt DateTime @default(now())
+
+  @@id([templateId])
+}
+
+model TagsOnVue {
+  vue  Vue   @relation(fields: [vueId], references: [id])
+  tags Tag[]
+
+  vueId      Int
+  assignedAt DateTime @default(now())
+
+  @@id([vueId])
 }

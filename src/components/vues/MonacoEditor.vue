@@ -8,14 +8,24 @@ import * as monaco from 'monaco-editor'
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 // import graphqlWorker from 'monaco-editor/esm/vs/basic-languages/graphql/graphql.worker?worker'
-import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
+// import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 
-const props = defineProps<{
-  modelValue: typeof editorValue.value
-  activeTab: string
-}>()
+const props = defineProps({
+  modelValue: {
+    type: Object,
+    default: () => ({}),
+  },
+  activeTab: {
+    type: String,
+    default: '',
+  },
+  loadFromStorage: {
+    type: Boolean,
+    default: false,
+  },
+})
 
 const emit = defineEmits<(e: 'update:modelValue', payload: typeof editorValue.value) => void>()
 
@@ -26,13 +36,7 @@ self.MonacoEnvironment = {
         return new jsonWorker()
       case 'graphql':
         return new editorWorker()
-      case 'css':
-      case 'scss':
-      case 'less':
-        return new cssWorker()
       case 'html':
-      case 'handlebars':
-      case 'razor':
         return new htmlWorker()
       case 'typescript':
       case 'javascript':
@@ -50,49 +54,85 @@ const logs = ref()
 let editor: monaco.editor.IStandaloneCodeEditor
 
 const isDark = useDarkGlobal()
-
-const { activeTab } = toRefs(props)
+const refProps = toRefs(props)
 
 const editorState = useStorage<Record<string, any>>(StorageName.EDITOR_STATE, {})
 const editorValue = useStorage<Record<string, any>>(StorageName.EDITOR_VALUE, {})
 
+const updateEditorValue = (
+  newValue?: any,
+  currentTab?: string | undefined,
+  prevTab?: string | undefined
+) => {
+  const tab = currentTab ?? refProps.activeTab.value
+
+  console.info('updating editor value', { tab, prevTab, currentTab, newValue })
+  /// store previous state
+  if (prevTab && !newValue) {
+    editorState.value[prevTab] = editor.saveViewState()
+  }
+
+  /// setting/resetting the state and/or value
+  if (newValue) {
+    editorState.value = {}
+    if (typeof newValue === 'boolean') {
+      editorValue.value = null
+    } else {
+      editorValue.value = newValue
+    }
+  }
+
+  /// set the editor value
+  if (editorValue.value[tab]) {
+    editor.setValue(editorValue.value[tab])
+
+    /// If the current tab is set coming in, restore the state if possible
+    if (currentTab) {
+      editor.restoreViewState(editorState.value[tab])
+      editor.focus()
+    }
+  } else {
+    /// or clear it
+    editor.setValue('')
+  }
+
+  monaco.editor.setModelLanguage(editor.getModel()!, tab)
+}
+
 onMounted(() => {
   editor = monaco.editor.create(outputContainer.value!, {
-    language: activeTab.value,
+    language: refProps.activeTab.value,
     theme: isDark.value ? 'vs-dark' : 'vs',
-    fontSize: 16,
+    fontSize: 20,
   })
-
-  emit('update:modelValue', editorValue.value)
 
   editor.onDidChangeModelContent(
     useDebounceFn(() => {
-      if (editorValue.value[activeTab.value] !== editor.getValue()!) {
-        editorValue.value[activeTab.value] = editor.getValue()!
+      if (editorValue.value[refProps.activeTab.value] !== editor.getValue()) {
+        /// THE ERROR IS HERE SOMEWHERE
+        const newValue = editor.getValue()
+        editorValue.value[refProps.activeTab.value] = newValue
+        console.info('code updated, setting editor value', editorValue, newValue)
         emit('update:modelValue', editorValue.value)
       }
     }, 500)
   )
 
   // Set values from storage on load
-  if (editorValue.value[activeTab.value]) {
-    editor.setValue(editorValue.value[activeTab.value])
-    editor.restoreViewState(editorState.value[activeTab.value])
+  /// TODO: add check for the same creator-id
+  if (props.loadFromStorage && editorValue.value[refProps.activeTab.value]) {
+    editor.setValue(editorValue.value[refProps.activeTab.value])
+    editor.restoreViewState(editorState.value[refProps.activeTab.value])
+    console.info('mounting and loaded editor value from existing state', editorValue.value)
+    emit('update:modelValue', editorValue.value)
+  } else {
+    editorValue.value = null
+    editorState.value = null
   }
 })
 
-watch(activeTab, (currentTab, prevTab) => {
-  monaco.editor.setModelLanguage(editor.getModel()!, currentTab)
-
-  editorState.value[prevTab] = editor.saveViewState()
-
-  if (editorValue.value[currentTab]) editor.setValue(editorValue.value[currentTab])
-  else editor.setValue('')
-
-  if (editorState.value[currentTab]) {
-    editor.restoreViewState(editorState.value[currentTab]!)
-    editor.focus()
-  }
+watch(refProps.activeTab, (currentTab, prevTab) => {
+  updateEditorValue(undefined, currentTab, prevTab)
 })
 
 watch(isDark, (value) => {
@@ -105,7 +145,14 @@ const editorObserver = useResizeObserver(outputContainer, () => {
   editor.layout()
 })
 
+defineExpose({ updateEditorValue })
+
 onUnmounted(() => {
+  /// Clear the editor on unmount
+  /// TODO: make this configurable by prop
+  console.info('unmounting and resetting editor state and value')
+  editorState.value = null
+  editorValue.value = null
   editor?.dispose()
   editorObserver.stop()
 })

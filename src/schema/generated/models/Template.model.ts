@@ -1,7 +1,7 @@
 import { IsInt, IsDefined, IsOptional, IsString, IsBoolean, IsDate } from "class-validator";
-import { Creator, Interaction, Group, TagsOnPost } from "./";
+import { Creator, ActiveTemplate, TagsOnTemplate, TagsOnGroup } from "./";
 
-export class Post {
+export class Template {
     @IsDefined()
     @IsInt()
     id!: number;
@@ -10,13 +10,10 @@ export class Post {
     creator!: Creator;
 
     @IsDefined()
-    interactions!: Interaction[];
+    activations!: ActiveTemplate[];
 
     @IsOptional()
-    group?: Group;
-
-    @IsOptional()
-    tags?: TagsOnPost;
+    tags?: TagsOnTemplate;
 
     @IsDefined()
     @IsString()
@@ -28,11 +25,15 @@ export class Post {
 
     @IsDefined()
     @IsString()
-    text!: string;
+    code!: string;
 
     @IsDefined()
     @IsString()
     status!: string;
+
+    @IsDefined()
+    @IsString()
+    palette!: string;
 
     @IsDefined()
     @IsString()
@@ -42,10 +43,6 @@ export class Post {
     @IsInt()
     creatorId!: number;
 
-    @IsOptional()
-    @IsInt()
-    groupId?: number;
-
     @IsDefined()
     @IsDate()
     createdAt!: Date;
@@ -53,4 +50,7 @@ export class Post {
     @IsDefined()
     @IsDate()
     updatedAt!: Date;
+
+    @IsDefined()
+    TagsOnGroup!: TagsOnGroup[];
 }

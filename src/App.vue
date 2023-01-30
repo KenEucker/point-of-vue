@@ -3,7 +3,6 @@ import AppLayout from './components/layout/AppLayout.vue'
 import HeaderBar from './components/page/HeaderBar.vue'
 import SlideMenuLeft from './components/page/SlideMenuLeft.vue'
 import SlideMenuRight from './components/page/SlideMenuRight.vue'
-import SlideMenuBottom from './components/page/SlideMenuBottom.vue'
 import { useRouter } from 'vue-router'
 import { usePageState, usePovState } from './store/state'
 
@@ -17,7 +16,7 @@ povState.init()
   <app-layout
     :left-menu-open="pageState.leftMenuOpen"
     :right-menu-open="pageState.rightMenuOpen"
-    class="w-full h-screen"
+    class="w-full h-screen relative"
   >
     <template #header>
       <header-bar
@@ -37,9 +36,6 @@ povState.init()
     </template>
     <template #body>
       <router-view :key="$route.fullPath"></router-view>
-    </template>
-    <template v-if="currentRoute.meta.showBottmMenu" #bottomMenu>
-      <slide-menu-bottom> </slide-menu-bottom>
     </template>
   </app-layout>
 </template>

@@ -11,7 +11,7 @@ export const constructGoogleCreator = (profile: any): GoogleAccount => ({
   timezone: profile.user_metadata.timezone,
 })
 
-const Google = {
+export const Query = {
   google: async (
     _parent: never,
     args: { from: { token: string; id: string | number; email: string } },
@@ -21,5 +21,3 @@ const Google = {
     console.log('')
   },
 }
-
-export default Google

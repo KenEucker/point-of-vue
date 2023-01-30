@@ -14,7 +14,7 @@ const emailRef = ref()
 const handleRef = ref()
 const nameRef = ref()
 const websiteRef = ref()
-const birthdayRef = ref()
+const chosendayRef = ref()
 const locationRef = ref()
 const bioRef = ref()
 const avatarRef = ref()
@@ -63,12 +63,12 @@ const fields = computed(() => [
     ref: locationRef,
   },
   {
-    name: 'birthday',
+    name: 'chosenday',
     type: 'date',
-    label: 'Birthday',
-    value: creatorState.getCreator.birthday,
-    placeholder: 'birthday',
-    ref: birthdayRef,
+    label: 'chosenday',
+    value: creatorState.getCreator.chosenday,
+    placeholder: 'chosenday',
+    ref: chosendayRef,
   },
   {
     name: 'avatar',
@@ -121,7 +121,7 @@ async function saveFields(e: Event) {
     banner: setValueIfChanged(bannerRef, creatorState.getCreator.banner),
     name: setValueIfChanged(nameRef, creatorState.getCreator.name),
     website: setValueIfChanged(websiteRef, creatorState.getCreator.website),
-    birthday: setValueIfChanged(birthdayRef, creatorState.getCreator.birthday),
+    chosenday: setValueIfChanged(chosendayRef, creatorState.getCreator.chosenday),
     location: setValueIfChanged(locationRef, creatorState.getCreator.location),
     bio: setValueIfChanged(bioRef, creatorState.getCreator.bio),
     email: setValueIfChanged(emailRef, creatorState.getCreator.email),
@@ -133,7 +133,7 @@ async function saveFields(e: Event) {
     bannerRef.value.value = updateResult.banner
     nameRef.value.value = updateResult.name
     websiteRef.value.value = updateResult.website
-    birthdayRef.value.value = updateResult.birthday
+    chosendayRef.value.value = updateResult.chosenday
     locationRef.value.value = updateResult.location
     bioRef.value.value = updateResult.bio
     emailRef.value.value = updateResult.email

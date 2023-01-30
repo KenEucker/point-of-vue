@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { useStorage } from '@vueuse/core'
 import { useWindowSize } from '@vueuse/core'
 import { useCreatorState } from './creator'
+import { getLastFunctionName } from '../utilities'
 
 const leftMenuOpen = useStorage('leftMenuOpen', false)
 const rightMenuOpen = useStorage('rightMenuOpen', false)
@@ -101,8 +102,8 @@ export const usePageState = defineStore('usePageState', {
   },
   actions: {
     init() {
-      window.console.info = (m, d) => this.debug(m, undefined, d)
-      window.console.error = (m, d) => this.debug(undefined, m, d)
+      window.console.info = (m, ...d) => this.debug(m, undefined, d)
+      window.console.error = (m, ...d) => this.debug(undefined, m, d)
     },
     debug: function (
       info: string[] | string | undefined,
@@ -113,6 +114,19 @@ export const usePageState = defineStore('usePageState', {
         if (info) ogInfo(info, data)
         if (error) ogError(error, data)
         return
+      }
+
+      const infoIsObject = typeof info === 'object'
+      const errorIsObject = typeof error === 'object'
+
+      if (infoIsObject && data === undefined) {
+        data = info
+        info = getLastFunctionName() ?? 'unknown'
+      }
+
+      if (errorIsObject && data === undefined) {
+        data = info
+        error = getLastFunctionName() ?? 'unknown'
       }
 
       info = typeof info === 'string' ? [info] : info ?? []

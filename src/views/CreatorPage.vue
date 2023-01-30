@@ -4,6 +4,7 @@ import PovPost from '../components/post/PovPost.vue'
 import SpinnerWithError from '../components/atomic/SpinnerWithError.vue'
 import PovCreator from '../components/creator/PovCreator.vue'
 import FollowCreator from '../components/creator/FollowCreator.vue'
+import VueComponent from '../components/vues/VueComponent.vue'
 import { reactive, watch, ref } from 'vue'
 import { useQuery, useLazyQuery } from '@vue/apollo-composable'
 import { gql } from '@apollo/client/core'
@@ -39,6 +40,7 @@ const creatorByHandleQuery = gql`
 const creatorPostsByHandleQuery = gql`
   query CreatorByHandle($handle: String!) {
     creator(where: { handle: $handle }) {
+      id
       posts {
         id
         title
@@ -58,8 +60,28 @@ const creatorPostsByHandleQuery = gql`
   }
 `
 
+const creatorVueByHandleQuery = gql`
+  query CreatorByHandle($handle: String!) {
+    creator(where: { handle: $handle }) {
+      id
+      vue {
+        id
+        title
+        code
+        creator {
+          id
+          handle
+          name
+          avatar
+        }
+      }
+    }
+  }
+`
+
 const creator = ref<any>({})
 const creatorPosts = ref<any>([])
+const creatorVue = ref<any>([])
 const {
   result: creatorResult,
   loading: creatorLoading,
@@ -68,8 +90,10 @@ const {
 watch(creatorResult, (r) => {
   if (r?.creator) {
     creator.value = r.creator
-    isOwnPage.value = creator.value.handle === handle
+    isOwnPage.value = creator.value.handle === creatorState.getCreator?.handle
+
     fetchPosts()
+    fetchVue()
   } else {
     router.push({ path: '/', replace: true })
   }
@@ -85,6 +109,19 @@ const {
 watch(postsResult, (r) => {
   if (r?.creator) {
     creatorPosts.value = r.creator.posts
+  }
+})
+
+const {
+  result: vueResult,
+  loading: vueLoading,
+  error: vueError,
+  load: fetchVue,
+} = useLazyQuery(creatorVueByHandleQuery, { handle })
+
+watch(vueResult, (r) => {
+  if (r?.creator) {
+    creatorVue.value = r.creator.vue
   }
 })
 
@@ -160,7 +197,9 @@ function selected(idx: number) {
           </button>
         </div>
       </div>
-      <div v-show="state.selected === 0" class="flex grid grid-cols-1"></div>
+      <div v-show="state.selected === 0" class="flex grid grid-cols-1">
+        <vue-component v-for="vue in creatorVue" :key="vue.id" :vue="vue" />
+      </div>
       <div v-show="state.selected === 1" class="flex grid grid-cols-1">
         <pov-post
           v-for="post in creatorPosts"

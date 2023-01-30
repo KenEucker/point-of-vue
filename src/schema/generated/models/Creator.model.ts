@@ -1,76 +1,94 @@
-import { IsInt, IsDefined, IsString, IsBoolean, IsIn, IsDate } from 'class-validator'
-import { Post, Interaction } from './'
-import { getEnumValues } from '../helpers'
-import { Permissions } from '../enums'
+import { IsInt, IsDefined, IsString, IsOptional, IsIn, IsBoolean, IsDate } from "class-validator";
+import { TagsOnCreator, Post, Group, Interaction, Template, ActiveTemplate, Vue, ActiveVue } from "./";
+import { getEnumValues } from "../helpers";
+import { Permissions } from "../enums";
 
 export class Creator {
-  @IsDefined()
-  @IsInt()
-  id!: number
+    @IsDefined()
+    @IsInt()
+    id!: number;
 
-  @IsDefined()
-  @IsString()
-  handle!: string
+    @IsDefined()
+    @IsString()
+    handle!: string;
 
-  @IsDefined()
-  @IsString()
-  email!: string
+    @IsDefined()
+    @IsString()
+    email!: string;
 
-  @IsDefined()
-  @IsBoolean()
-  verified!: boolean
+    @IsOptional()
+    tags?: TagsOnCreator;
 
-  @IsDefined()
-  @IsString()
-  subs!: string
+    @IsDefined()
+    @IsIn(getEnumValues(Permissions))
+    permissions!: Permissions[];
 
-  @IsDefined()
-  posts!: Post[]
+    @IsDefined()
+    posts!: Post[];
 
-  @IsDefined()
-  @IsIn(getEnumValues(Permissions))
-  permissions!: Permissions[]
+    @IsDefined()
+    groups!: Group[];
 
-  @IsDefined()
-  interactions!: Interaction[]
+    @IsDefined()
+    interactions!: Interaction[];
 
-  @IsDefined()
-  @IsString()
-  name!: string
+    @IsDefined()
+    templates!: Template[];
 
-  @IsDefined()
-  @IsString()
-  avatar!: string
+    @IsOptional()
+    template?: ActiveTemplate;
 
-  @IsDefined()
-  @IsString()
-  banner!: string
+    @IsDefined()
+    vues!: Vue[];
 
-  @IsDefined()
-  @IsString()
-  status!: string
+    @IsDefined()
+    vue!: ActiveVue[];
 
-  @IsDefined()
-  @IsString()
-  bio!: string
+    @IsDefined()
+    @IsString()
+    name!: string;
 
-  @IsDefined()
-  @IsString()
-  website!: string
+    @IsDefined()
+    @IsString()
+    avatar!: string;
 
-  @IsDefined()
-  @IsString()
-  location!: string
+    @IsDefined()
+    @IsString()
+    bio!: string;
 
-  @IsDefined()
-  @IsString()
-  birthday!: string
+    @IsDefined()
+    @IsBoolean()
+    verified!: boolean;
 
-  @IsDefined()
-  @IsDate()
-  createdAt!: Date
+    @IsDefined()
+    @IsString()
+    banner!: string;
 
-  @IsDefined()
-  @IsDate()
-  updatedAt!: Date
+    @IsDefined()
+    @IsString()
+    status!: string;
+
+    @IsDefined()
+    @IsString()
+    website!: string;
+
+    @IsDefined()
+    @IsString()
+    location!: string;
+
+    @IsDefined()
+    @IsString()
+    chosenday!: string;
+
+    @IsDefined()
+    @IsString()
+    subs!: string;
+
+    @IsDefined()
+    @IsDate()
+    createdAt!: Date;
+
+    @IsDefined()
+    @IsDate()
+    updatedAt!: Date;
 }

@@ -22,12 +22,12 @@ const routes = [
   ...lastRoutes,
 ]
 
-const index = createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
 })
 
-index.beforeEach((p) => {
+router.beforeEach((p) => {
   if (!NProgress.isStarted()) {
     NProgress.start()
   }
@@ -42,15 +42,15 @@ index.beforeEach((p) => {
     for (let i = 0; i < meta.dependsOn.length; ++i) {
       const dep = meta.dependsOn[i]
       if (!authentication[dep] && !authentication[dep]?.length) {
-        console.info('no way josé', { dependencyUmnet: dep, path: p.path })
-        return false
+        console.info('might not have what you need', { dependencyUmnet: dep, path: p.path })
+        // return false
       }
     }
   }
 })
 
-index.afterEach(() => {
+router.afterEach(() => {
   NProgress.done()
 })
 
-export default index
+export default router
