@@ -9,7 +9,6 @@ const GithubClient = Client.default
 export const constructGithubCreator = (profile: any) => ({
   id: Number(profile.user_id) ? profile.user_id : 0,
   email: profile.email,
-  verified: profile.email_verified,
   handle: profile.nickname ?? profile.login,
   name: profile.name ?? profile.login ?? '',
   website: profile.blog ?? profile.websiteUrl,
@@ -56,7 +55,6 @@ export const Query = {
     const { requestor, identity, githubClient } = await vetGithubRequest(args.from, auth0, prisma)
 
     if (!identity || !githubClient) {
-      console.log({ identity, githubClient })
       return {
         requestor,
       }
@@ -105,7 +103,6 @@ export const Query = {
     const { requestor, identity, githubClient } = await vetGithubRequest(args.from, auth0, prisma)
 
     if (!identity || !githubClient) {
-      console.log({ identity, githubClient })
       return {
         requestor,
       }

@@ -1,33 +1,33 @@
-import { IsInt, IsDefined, IsOptional, IsString, IsDate } from 'class-validator'
-import { Creator, Post, TagsOnGroup } from './'
+import { IsInt, IsDefined, IsOptional, IsString, IsDate } from "class-validator";
+import { Creator, Post, TagsOnGroup } from "./";
 
 export class Group {
-  @IsDefined()
-  @IsInt()
-  id!: number
+    @IsDefined()
+    @IsInt()
+    id!: number;
 
-  @IsDefined()
-  creators!: Creator[]
+    @IsDefined()
+    creators!: Creator[];
 
-  @IsDefined()
-  posts!: Post[]
+    @IsDefined()
+    posts!: Post[];
 
-  @IsOptional()
-  tags?: TagsOnGroup
+    @IsOptional()
+    tags?: TagsOnGroup;
 
-  @IsDefined()
-  @IsString()
-  title!: string
+    @IsDefined()
+    @IsString()
+    title!: string;
 
-  @IsDefined()
-  @IsDate()
-  createdAt!: Date
+    @IsDefined()
+    @IsDate()
+    createdAt!: Date;
 
-  @IsDefined()
-  @IsDate()
-  updatedAt!: Date
+    @IsDefined()
+    @IsDate()
+    updatedAt!: Date;
 
-  @IsOptional()
-  @IsInt()
-  tagsOnGroupGroupId?: number
+    @IsOptional()
+    @IsInt()
+    tagsOnGroupGroupId?: number;
 }

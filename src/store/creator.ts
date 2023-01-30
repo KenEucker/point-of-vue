@@ -1,3 +1,4 @@
+import { VueComponent } from './../schema/generated/types.d'
 import { creatorToken } from './../utilities/index'
 import { apolloClient } from './'
 import { defineStore } from 'pinia'
@@ -22,6 +23,7 @@ export const getInitialCreatorState = (): {
   auth0Configured: boolean
   creatorToken: string
   authentication: any
+  vues: VueComponent[]
 } => ({
   loggedIn: false,
   signedUp: false,
@@ -35,6 +37,7 @@ export const getInitialCreatorState = (): {
     handle: '',
     verified: false,
   },
+  vues: [],
   creatorToken: '',
   authentication: {},
 })
@@ -192,6 +195,35 @@ export const useCreatorState = defineStore({
 
       return error
     },
+    async fetchCreatorVues(creator?: Creator) {
+      creator = creator ?? ({ id: storedId.value, email: storedEmail.value } as Creator)
+      const getCreatorVues = gql`
+        query StoreFetchCreatorVues($id: Int!, $email: String!) {
+          creator(where: { id: $id, email: $email }) {
+            vues {
+              id
+              title
+              code
+            }
+          }
+        }
+      `
+      const { data, error: queryError } = await apolloClient.query({
+        query: getCreatorVues,
+        variables: { id: creator.id ?? 0, email: creator.email },
+      })
+      let error = null
+
+      if (data?.creator) {
+        this.vues = data?.creator.vues
+      } else if (queryError) {
+        error = queryError.message
+      } else {
+        error = 'no creator found with that id and email address'
+      }
+
+      return error
+    },
     async fetchSelf(creator?: Creator) {
       creator = creator ?? ({ id: storedId.value, email: storedEmail.value } as Creator)
       // console.log({ creator, token: storedToken.value })
@@ -205,14 +237,12 @@ export const useCreatorState = defineStore({
               email
               github {
                 email
-                email_verified
                 name
                 avatar
                 bio
                 city
                 country
                 timezone
-                hireable
                 profile
               }
               imgur {
@@ -266,6 +296,7 @@ export const useCreatorState = defineStore({
 
       if (data?.self) {
         this.creator = data.self.creator
+        console.log({ creator: this.creator })
         if (this.creator) {
           storedId.value = this.creator.id
           storedEmail.value = this.creator.email

@@ -51,6 +51,9 @@ if (component.value.oid) {
 watch(refProps.component, (c: any) => {
   console.info('view editor component changed', c)
   component.value = c
+  // unmount previously mounted component
+  componentRef.value.unmountComponentApp(c)
+
   if (component.value.oid) {
     githubState.setCodeState({
       json: component.value.vue ?? '',

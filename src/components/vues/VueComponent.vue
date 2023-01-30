@@ -23,6 +23,10 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  vue: {
+    type: Object,
+    default: () => null,
+  },
   showStatus: {
     type: Boolean,
     default: false,
@@ -63,12 +67,19 @@ const getOptions = (component: PovComponent) => {
 }
 
 const renderComponent = (component?: any) => {
-  component = component ?? props.component
-  if (componentRef.value && props.variant === 'display') {
-    /// Clear the logs
-    logs.errors = []
-    logs.info = []
-    const options = {
+  let options: any
+  if (props.vue) {
+    options = {
+      moduleCache: { vue: Vue, '@vueuse/core': vueuse, '@vueuse/motion': vueuseMotion },
+      getFile: async () => props.vue.code,
+      addStyle: async (textContent: any) => {
+        // console.log({ textContent })
+      },
+    }
+  } else if (componentRef.value && props.variant === 'display') {
+    component = component ?? props.component
+    console.info('rendering component', component)
+    options = {
       moduleCache: { vue: Vue, '@vueuse/core': vueuse, '@vueuse/motion': vueuseMotion },
       getFile: async () => {
         if (!(component?.json || component?.script || component?.template)) {
@@ -100,11 +111,12 @@ const renderComponent = (component?: any) => {
         // document.head.insertBefore(style, ref)
       },
     }
+  }
 
+  if (options) {
     try {
-      if (AppRef.app) {
-        AppRef.app.unmount(componentRef.value)
-      }
+      /// First do nothing, Mark
+      unmountComponentApp()
       AppRef.app = createApp(
         defineAsyncComponent(async () => {
           try {
@@ -133,13 +145,19 @@ if (!props.lazy && !props.skipFirstRender) {
   onMounted(renderComponent)
 }
 
-onUnmounted(() => {
+const unmountComponentApp = () => {
+  /// Clear the logs
+  logs.errors = []
+  logs.info = []
+
   if (AppRef.app) {
     AppRef.app.unmount(componentRef.value)
   }
-})
+}
 
-if (!props.lazy) {
+onUnmounted(unmountComponentApp)
+
+if (!props.lazy && !props.vue) {
   watch(props.component, renderComponent)
 }
 
@@ -168,7 +186,7 @@ const onStatusButtonClick = (option: string) => {
   }
 }
 
-defineExpose({ renderComponent })
+defineExpose({ renderComponent, unmountComponentApp })
 </script>
 <template>
   <div

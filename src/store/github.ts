@@ -188,7 +188,6 @@ export const useGithubState = defineStore({
 
       return {
         output: `
-        <!-- Cheap Hack -->
         <template>
           <div class="flex justify-center">
             <div class="block p-6 rounded-lg shadow-lg bg-white max-w-sm">
@@ -328,7 +327,6 @@ export const useGithubState = defineStore({
       } else if (!this.hasCredentials()) {
         const creatorState = useCreatorState()
         watch(creatorState, (c) => {
-          console.log({ c })
           if (c.isLoggedIn) {
             this.fetchAccount()
           }

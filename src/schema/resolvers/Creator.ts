@@ -133,8 +133,7 @@ const Creator = {
       },
     })
 
-    /// Glob the two together, effectively applying what is
-    /// set in the active template over the template defaults
+    /// return the vues themselves
     return vues
   },
   // @ts-ignore
@@ -144,7 +143,6 @@ const Creator = {
         creatorId: parent.id,
       },
     })
-    console.log({ parent })
     if (!activeTemplate) {
       return null
     }

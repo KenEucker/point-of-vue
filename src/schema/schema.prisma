@@ -154,7 +154,6 @@ model Vue {
   tags        TagsOnVue?
 
   title     String
-  published Boolean @default(false)
   code      String  @default("")
   status    String  @default("")
 

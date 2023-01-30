@@ -1,30 +1,30 @@
-import { IsDefined, IsString, IsInt, IsDate } from 'class-validator'
-import { Creator, Template } from './'
+import { IsDefined, IsString, IsInt, IsDate } from "class-validator";
+import { Creator, Template } from "./";
 
 export class ActiveTemplate {
-  @IsDefined()
-  creator!: Creator
+    @IsDefined()
+    creator!: Creator;
 
-  @IsDefined()
-  template!: Template
+    @IsDefined()
+    template!: Template;
 
-  @IsDefined()
-  @IsString()
-  palette!: string
+    @IsDefined()
+    @IsString()
+    palette!: string;
 
-  @IsDefined()
-  @IsString()
-  media!: string
+    @IsDefined()
+    @IsString()
+    media!: string;
 
-  @IsDefined()
-  @IsInt()
-  creatorId!: number
+    @IsDefined()
+    @IsInt()
+    creatorId!: number;
 
-  @IsDefined()
-  @IsInt()
-  templateId!: number
+    @IsDefined()
+    @IsInt()
+    templateId!: number;
 
-  @IsDefined()
-  @IsDate()
-  assignedAt!: Date
+    @IsDefined()
+    @IsDate()
+    assignedAt!: Date;
 }
