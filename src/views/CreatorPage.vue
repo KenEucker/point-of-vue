@@ -5,6 +5,8 @@ import SpinnerWithError from '../components/atomic/SpinnerWithError.vue'
 import PovCreator from '../components/creator/PovCreator.vue'
 import FollowCreator from '../components/creator/FollowCreator.vue'
 import VueComponent from '../components/vues/VueComponent.vue'
+import SlideMenuBottom from '../components/page/SlideMenuBottom.vue'
+import TemplateEditor from '../components/vues/TemplateEditor.vue'
 import { reactive, watch, ref } from 'vue'
 import { useQuery, useLazyQuery } from '@vue/apollo-composable'
 import { gql } from '@apollo/client/core'
@@ -126,7 +128,7 @@ watch(vueResult, (r) => {
 })
 
 const state = reactive({
-  sec: ['Vues', 'Posts', 'Favorites'],
+  sec: ['Vues', 'Posts', 'Groups'],
   selected: 0,
 })
 
@@ -208,10 +210,10 @@ function selected(idx: number) {
           :is-self-post="isOwnPage"
         />
       </div>
-      <div v-show="state.selected === 2" class="flex grid grid-cols-1">My vue components</div>
-      <div v-show="state.selected === 3" class="flex grid grid-cols-1">
-        My favorite points of view
-      </div>
+      <div v-show="state.selected === 2" class="flex grid grid-cols-1">My Groups</div>
     </div>
+    <slide-menu-bottom v-if="isOwnPage">
+      <template-editor class="h-full" />
+    </slide-menu-bottom>
   </div>
 </template>
