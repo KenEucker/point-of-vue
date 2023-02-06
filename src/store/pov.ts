@@ -63,13 +63,13 @@ export const usePovState = defineStore({
     async init() {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve) => {
-        this.fetchCreatorsToFollow()
         fetch(getGraphUrl('ready'))
           .then((r) => {
             this.ready = r.ok
             if (this.ready) {
               return fetch(getGraphUrl('health')).then((h) => {
                 this.healthy = h.ok
+                this.fetchCreatorsToFollow()
               })
             }
           })

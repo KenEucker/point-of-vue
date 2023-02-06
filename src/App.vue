@@ -4,12 +4,15 @@ import HeaderBar from './components/page/HeaderBar.vue'
 import SlideMenuLeft from './components/page/SlideMenuLeft.vue'
 import SlideMenuRight from './components/page/SlideMenuRight.vue'
 import { useRouter } from 'vue-router'
-import { usePageState, usePovState } from './store/state'
+import { usePageState, usePovState, useCreatorState } from './store/state'
 
 const { currentRoute } = useRouter()
 const pageState = usePageState()
 const povState = usePovState()
+const creatorState = useCreatorState()
+
 pageState.init()
+creatorState.init()
 povState.init()
 </script>
 <template>

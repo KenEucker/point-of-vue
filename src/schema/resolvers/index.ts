@@ -22,7 +22,7 @@ import Vue from './Vue'
 import Global from './Global'
 
 /// Connection query items
-import { Query as GithubQuery } from '../connections/Github'
+import { Query as GithubQuery, Mutation as GithubMutation } from '../connections/Github'
 import { Query as ImgurQuery } from '../connections/Imgur'
 import { Query as GoogleQuery } from '../connections/Google'
 
@@ -33,7 +33,7 @@ import { Query as GoogleQuery } from '../connections/Google'
 export const resolvers: Resolvers = {
   Date,
   Query: { ...Query, ...Global, ...GithubQuery, ...ImgurQuery, ...GoogleQuery },
-  Mutation,
+  Mutation: { ...Mutation, ...GithubMutation },
   Subscription,
   Creator,
   Group,

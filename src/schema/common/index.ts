@@ -2,6 +2,7 @@ import auth0Client from 'auth0'
 import { JwtVerifier, getTokenFromHeader } from '@serverless-jwt/jwt-verifier'
 
 export const auth0Configured = process.env.AUTH0_DOMAIN && process.env.AUTH0_CID
+export const povCreatorRepoName = 'point-of-vue--vues'
 
 let auth0ManagementToken: string | null = null
 const auth0UserCache = new Map()
@@ -105,10 +106,15 @@ export const getAuthManagementToken = (requestor?: any, auth0?: any) => {
   })
 }
 
-export const getIdentityProfile = (requestor: any, auth0?: any, prisma?: any) => {
+export const getIdentityProfile = (
+  requestor: any,
+  auth0?: any,
+  prisma?: any,
+  getFullProfile = false
+) => {
   return new Promise((resolve) => {
     return getAuthManagementToken(requestor, auth0).then((token) => {
-      if (requestor.token && requestor.connection) {
+      if (requestor.token && requestor.connection && !getFullProfile) {
         /// Assuming that the profile already has all it needs from the requestor
         console.info('you got all you need buddy', requestor)
         return resolve(requestor)

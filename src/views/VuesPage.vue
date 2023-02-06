@@ -41,6 +41,12 @@ const onDeleteVue = (vueId: string) => {
 const onViewVue = (vueId: string) => {
   console.log('ViewVue', vueId)
 }
+const onSaveVue = (vueId: string) => {
+  console.log('SaveVue', vueId)
+}
+const onPublishVue = (vueId: string) => {
+  console.log('PublishVue', vueId)
+}
 </script>
 
 <template>
@@ -55,7 +61,12 @@ const onViewVue = (vueId: string) => {
       @view="onViewVue"
     />
     <slide-menu-bottom>
-      <vue-editor class="h-full" :component="componentToEdit" />
+      <vue-editor
+        class="h-full"
+        :component="componentToEdit"
+        @save="onSaveVue"
+        @publish="onPublishVue"
+      />
     </slide-menu-bottom>
   </main>
 </template>

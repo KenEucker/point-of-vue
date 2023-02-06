@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import * as Vue from 'vue'
 import { onMounted, ref, toRefs, watch, computed } from 'vue'
 import { useStorage } from '@vueuse/core'
-import Split from 'split.js'
-import { PovComponent, StorageName, useDarkGlobal } from '../../utilities'
-import MonacoEditor from './MonacoEditor.vue'
-import EditorTabs from './EditorTabs.vue'
+import MonacoEditor from '../vues/MonacoEditor.vue'
 import { useMagicKeys } from '@vueuse/core'
-import VueComponent from './VueComponent.vue'
 import { usePageState, useGithubState } from '../../store/state'
 // import Sass from 'sass.js/dist/sass.sync.js'
 
@@ -27,13 +22,13 @@ const pageState = usePageState()
 /// TODO: clear the storage on log out
 const editorRef = ref()
 
-const onChange = (payload: any) => {
-  // console
-}
+// const onChange = (payload: any) => {
+// console
+// }
 
-const onPlay = () => {}
+// const onPlay = () => {}
 
-const onSave = async () => {}
+// const onSave = async () => {}
 
 const code = computed(() => ({ html: '' }))
 </script>

@@ -30,12 +30,13 @@ export type ActiveTemplate = {
 export type ActiveVue = {
   readonly __typename?: 'ActiveVue';
   readonly assignedAt?: Maybe<Scalars['Date']>;
-  readonly code: Scalars['String'];
   readonly creator: Creator;
   readonly id: Scalars['Int'];
-  readonly status?: Maybe<Scalars['String']>;
-  readonly title: Scalars['String'];
   readonly vue?: Maybe<Vue>;
+};
+
+export type ArchiveGithubVueInput = {
+  readonly oid: Scalars['String'];
 };
 
 export type CreateCreatorInput = {
@@ -45,6 +46,27 @@ export type CreateCreatorInput = {
   readonly handle: Scalars['String'];
   readonly name: Scalars['String'];
   readonly verified?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type CreateGithubTemplateInput = {
+  readonly code: Scalars['String'];
+  readonly compatibility?: InputMaybe<Scalars['String']>;
+  readonly license: Scalars['String'];
+  readonly media?: InputMaybe<ReadonlyArray<Scalars['String']>>;
+  readonly palette?: InputMaybe<ReadonlyArray<InputMaybe<Scalars['String']>>>;
+  readonly tags?: InputMaybe<ReadonlyArray<InputMaybe<Scalars['String']>>>;
+  readonly title: Scalars['String'];
+  readonly version: Scalars['String'];
+};
+
+export type CreateGithubVueInput = {
+  readonly oid: Scalars['String'];
+  readonly query?: InputMaybe<Scalars['String']>;
+  readonly script?: InputMaybe<Scalars['String']>;
+  readonly tags?: InputMaybe<ReadonlyArray<InputMaybe<Scalars['String']>>>;
+  readonly template?: InputMaybe<Scalars['String']>;
+  readonly title: Scalars['String'];
+  readonly vue?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateInteractionInput = {
@@ -317,9 +339,19 @@ export type Mutation = {
   readonly deleteCreator: Creator;
   readonly deleteInteraction: Interaction;
   readonly deletePost: Post;
+  readonly github_archiveTemplate: Template;
+  readonly github_archiveVue: Vue;
+  readonly github_createTemplate: Template;
+  readonly github_createVue: Vue;
+  readonly github_updateTemplate: Template;
+  readonly github_updateVue: Vue;
   readonly publishPost: Post;
+  readonly publishTemplate: Template;
+  readonly publishVue: Vue;
+  readonly submitVue: Vue;
   readonly toggleInteraction: Interaction;
   readonly unPublishPost: Post;
+  readonly unPublishTemplate: Template;
   readonly unVerifyCreator: Creator;
   readonly updateCreator: Creator;
   readonly updatePost: Post;
@@ -360,8 +392,59 @@ export type MutationDeletePostArgs = {
 };
 
 
+export type MutationGithub_ArchiveTemplateArgs = {
+  data?: InputMaybe<UpdateGithubTemplateInput>;
+};
+
+
+export type MutationGithub_ArchiveVueArgs = {
+  data?: InputMaybe<ArchiveGithubVueInput>;
+  from?: InputMaybe<Requestor>;
+};
+
+
+export type MutationGithub_CreateTemplateArgs = {
+  data?: InputMaybe<CreateGithubTemplateInput>;
+};
+
+
+export type MutationGithub_CreateVueArgs = {
+  data?: InputMaybe<CreateGithubVueInput>;
+  from?: InputMaybe<Requestor>;
+};
+
+
+export type MutationGithub_UpdateTemplateArgs = {
+  data?: InputMaybe<UpdateGithubTemplateInput>;
+};
+
+
+export type MutationGithub_UpdateVueArgs = {
+  data?: InputMaybe<UpdateGithubVueInput>;
+  from?: InputMaybe<Requestor>;
+};
+
+
 export type MutationPublishPostArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationPublishTemplateArgs = {
+  id?: InputMaybe<Scalars['Int']>;
+  with?: InputMaybe<PublishTemplateWithInput>;
+};
+
+
+export type MutationPublishVueArgs = {
+  id?: InputMaybe<Scalars['Int']>;
+  with?: InputMaybe<PublishVueWithInput>;
+};
+
+
+export type MutationSubmitVueArgs = {
+  id?: InputMaybe<Scalars['Int']>;
+  with?: InputMaybe<SubmitVueWithInput>;
 };
 
 
@@ -373,6 +456,11 @@ export type MutationToggleInteractionArgs = {
 
 export type MutationUnPublishPostArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationUnPublishTemplateArgs = {
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -444,6 +532,14 @@ export type PostSubscriptionPayload = {
   readonly __typename?: 'PostSubscriptionPayload';
   readonly data?: Maybe<Post>;
   readonly mutation: MutationType;
+};
+
+export type PublishTemplateWithInput = {
+  readonly id: Scalars['Int'];
+};
+
+export type PublishVueWithInput = {
+  readonly id: Scalars['Int'];
 };
 
 export type Query = {
@@ -644,6 +740,10 @@ export type SearchPostsPayload = {
   readonly posts?: Maybe<ReadonlyArray<Post>>;
 };
 
+export type SubmitVueWithInput = {
+  readonly oid: Scalars['String'];
+};
+
 export type Subscription = {
   readonly __typename?: 'Subscription';
   readonly countdown: Scalars['Int'];
@@ -694,9 +794,11 @@ export type Template = {
   readonly __typename?: 'Template';
   readonly activations?: Maybe<ReadonlyArray<Maybe<ActiveTemplate>>>;
   readonly code: Scalars['String'];
+  readonly compatibility?: Maybe<Scalars['String']>;
   readonly createdAt?: Maybe<Scalars['Date']>;
   readonly creator: Creator;
   readonly id: Scalars['Int'];
+  readonly license?: Maybe<Scalars['String']>;
   readonly media?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
   readonly palette?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
   readonly published?: Maybe<Scalars['Boolean']>;
@@ -704,6 +806,7 @@ export type Template = {
   readonly tags?: Maybe<ReadonlyArray<Maybe<Tag>>>;
   readonly title: Scalars['String'];
   readonly updatedAt?: Maybe<Scalars['Date']>;
+  readonly version?: Maybe<Scalars['String']>;
 };
 
 export type TemplateByInput = {
@@ -734,6 +837,25 @@ export type UpdateCreatorInput = {
   readonly website?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateGithubTemplateInput = {
+  readonly code?: InputMaybe<Scalars['String']>;
+  readonly id: Scalars['Int'];
+  readonly media?: InputMaybe<ReadonlyArray<Scalars['String']>>;
+  readonly palette?: InputMaybe<ReadonlyArray<InputMaybe<Scalars['String']>>>;
+  readonly tags?: InputMaybe<ReadonlyArray<InputMaybe<Scalars['String']>>>;
+  readonly title?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateGithubVueInput = {
+  readonly oid: Scalars['String'];
+  readonly query?: InputMaybe<Scalars['String']>;
+  readonly script?: InputMaybe<Scalars['String']>;
+  readonly tags?: InputMaybe<ReadonlyArray<InputMaybe<Scalars['String']>>>;
+  readonly template?: InputMaybe<Scalars['String']>;
+  readonly title?: InputMaybe<Scalars['String']>;
+  readonly vue?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateInteractionInput = {
   readonly creatorId: Scalars['Int'];
   readonly like?: InputMaybe<Scalars['Boolean']>;
@@ -756,14 +878,16 @@ export type UpdatePostInput = {
 export type Vue = {
   readonly __typename?: 'Vue';
   readonly activations?: Maybe<ReadonlyArray<Maybe<ActiveVue>>>;
-  readonly code: Scalars['String'];
+  readonly compatibility?: Maybe<Scalars['String']>;
   readonly createdAt?: Maybe<Scalars['Date']>;
   readonly creator: Creator;
-  readonly id: Scalars['Int'];
+  readonly license?: Maybe<Scalars['String']>;
+  readonly oid: Scalars['String'];
   readonly status?: Maybe<Scalars['String']>;
   readonly tags?: Maybe<ReadonlyArray<Maybe<Tag>>>;
   readonly title: Scalars['String'];
   readonly updatedAt?: Maybe<Scalars['Date']>;
+  readonly version?: Maybe<Scalars['String']>;
 };
 
 export type VueByInput = {
@@ -776,11 +900,11 @@ export type VueByInput = {
 
 export type VueComponent = {
   readonly __typename?: 'VueComponent';
-  readonly name?: Maybe<Scalars['String']>;
   readonly oid: Scalars['String'];
   readonly query?: Maybe<Scalars['String']>;
   readonly script?: Maybe<Scalars['String']>;
   readonly template?: Maybe<Scalars['String']>;
+  readonly title?: Maybe<Scalars['String']>;
   readonly vue?: Maybe<Scalars['String']>;
 };
 
@@ -859,8 +983,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   ActiveTemplate: ResolverTypeWrapper<ActiveTemplate>;
   ActiveVue: ResolverTypeWrapper<ActiveVue>;
+  ArchiveGithubVueInput: ArchiveGithubVueInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CreateCreatorInput: CreateCreatorInput;
+  CreateGithubTemplateInput: CreateGithubTemplateInput;
+  CreateGithubVueInput: CreateGithubVueInput;
   CreateInteractionInput: CreateInteractionInput;
   CreatePostInput: CreatePostInput;
   Creator: ResolverTypeWrapper<Creator>;
@@ -896,18 +1023,23 @@ export type ResolversTypes = {
   PostByInput: PostByInput;
   PostInput: PostInput;
   PostSubscriptionPayload: ResolverTypeWrapper<PostSubscriptionPayload>;
+  PublishTemplateWithInput: PublishTemplateWithInput;
+  PublishVueWithInput: PublishVueWithInput;
   Query: ResolverTypeWrapper<{}>;
   Requestor: Requestor;
   RequestorMirror: ResolverTypeWrapper<RequestorMirror>;
   SearchPostsInput: SearchPostsInput;
   SearchPostsPayload: ResolverTypeWrapper<SearchPostsPayload>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  SubmitVueWithInput: SubmitVueWithInput;
   Subscription: ResolverTypeWrapper<{}>;
   Tag: ResolverTypeWrapper<Tag>;
   Template: ResolverTypeWrapper<Template>;
   TemplateByInput: TemplateByInput;
   Tokens: ResolverTypeWrapper<Tokens>;
   UpdateCreatorInput: UpdateCreatorInput;
+  UpdateGithubTemplateInput: UpdateGithubTemplateInput;
+  UpdateGithubVueInput: UpdateGithubVueInput;
   UpdateInteractionInput: UpdateInteractionInput;
   UpdatePostInput: UpdatePostInput;
   Vue: ResolverTypeWrapper<Vue>;
@@ -920,8 +1052,11 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   ActiveTemplate: ActiveTemplate;
   ActiveVue: ActiveVue;
+  ArchiveGithubVueInput: ArchiveGithubVueInput;
   Boolean: Scalars['Boolean'];
   CreateCreatorInput: CreateCreatorInput;
+  CreateGithubTemplateInput: CreateGithubTemplateInput;
+  CreateGithubVueInput: CreateGithubVueInput;
   CreateInteractionInput: CreateInteractionInput;
   CreatePostInput: CreatePostInput;
   Creator: Creator;
@@ -954,18 +1089,23 @@ export type ResolversParentTypes = {
   PostByInput: PostByInput;
   PostInput: PostInput;
   PostSubscriptionPayload: PostSubscriptionPayload;
+  PublishTemplateWithInput: PublishTemplateWithInput;
+  PublishVueWithInput: PublishVueWithInput;
   Query: {};
   Requestor: Requestor;
   RequestorMirror: RequestorMirror;
   SearchPostsInput: SearchPostsInput;
   SearchPostsPayload: SearchPostsPayload;
   String: Scalars['String'];
+  SubmitVueWithInput: SubmitVueWithInput;
   Subscription: {};
   Tag: Tag;
   Template: Template;
   TemplateByInput: TemplateByInput;
   Tokens: Tokens;
   UpdateCreatorInput: UpdateCreatorInput;
+  UpdateGithubTemplateInput: UpdateGithubTemplateInput;
+  UpdateGithubVueInput: UpdateGithubVueInput;
   UpdateInteractionInput: UpdateInteractionInput;
   UpdatePostInput: UpdatePostInput;
   Vue: Vue;
@@ -987,11 +1127,8 @@ export type ActiveTemplateResolvers<ContextType = any, ParentType extends Resolv
 
 export type ActiveVueResolvers<ContextType = any, ParentType extends ResolversParentTypes['ActiveVue'] = ResolversParentTypes['ActiveVue']> = {
   assignedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['Creator'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   vue?: Resolver<Maybe<ResolversTypes['Vue']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1195,9 +1332,19 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteCreator?: Resolver<ResolversTypes['Creator'], ParentType, ContextType, Partial<MutationDeleteCreatorArgs>>;
   deleteInteraction?: Resolver<ResolversTypes['Interaction'], ParentType, ContextType, Partial<MutationDeleteInteractionArgs>>;
   deletePost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, Partial<MutationDeletePostArgs>>;
+  github_archiveTemplate?: Resolver<ResolversTypes['Template'], ParentType, ContextType, Partial<MutationGithub_ArchiveTemplateArgs>>;
+  github_archiveVue?: Resolver<ResolversTypes['Vue'], ParentType, ContextType, Partial<MutationGithub_ArchiveVueArgs>>;
+  github_createTemplate?: Resolver<ResolversTypes['Template'], ParentType, ContextType, Partial<MutationGithub_CreateTemplateArgs>>;
+  github_createVue?: Resolver<ResolversTypes['Vue'], ParentType, ContextType, Partial<MutationGithub_CreateVueArgs>>;
+  github_updateTemplate?: Resolver<ResolversTypes['Template'], ParentType, ContextType, Partial<MutationGithub_UpdateTemplateArgs>>;
+  github_updateVue?: Resolver<ResolversTypes['Vue'], ParentType, ContextType, Partial<MutationGithub_UpdateVueArgs>>;
   publishPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationPublishPostArgs, 'id'>>;
+  publishTemplate?: Resolver<ResolversTypes['Template'], ParentType, ContextType, Partial<MutationPublishTemplateArgs>>;
+  publishVue?: Resolver<ResolversTypes['Vue'], ParentType, ContextType, Partial<MutationPublishVueArgs>>;
+  submitVue?: Resolver<ResolversTypes['Vue'], ParentType, ContextType, Partial<MutationSubmitVueArgs>>;
   toggleInteraction?: Resolver<ResolversTypes['Interaction'], ParentType, ContextType, RequireFields<MutationToggleInteractionArgs, 'data'>>;
   unPublishPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationUnPublishPostArgs, 'id'>>;
+  unPublishTemplate?: Resolver<ResolversTypes['Template'], ParentType, ContextType, Partial<MutationUnPublishTemplateArgs>>;
   unVerifyCreator?: Resolver<ResolversTypes['Creator'], ParentType, ContextType, RequireFields<MutationUnVerifyCreatorArgs, 'id'>>;
   updateCreator?: Resolver<ResolversTypes['Creator'], ParentType, ContextType, RequireFields<MutationUpdateCreatorArgs, 'data'>>;
   updatePost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationUpdatePostArgs, 'data'>>;
@@ -1292,9 +1439,11 @@ export type TagResolvers<ContextType = any, ParentType extends ResolversParentTy
 export type TemplateResolvers<ContextType = any, ParentType extends ResolversParentTypes['Template'] = ResolversParentTypes['Template']> = {
   activations?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['ActiveTemplate']>>>, ParentType, ContextType>;
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  compatibility?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['Creator'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  license?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   media?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   palette?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   published?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
@@ -1302,6 +1451,7 @@ export type TemplateResolvers<ContextType = any, ParentType extends ResolversPar
   tags?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Tag']>>>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  version?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1315,23 +1465,25 @@ export type TokensResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type VueResolvers<ContextType = any, ParentType extends ResolversParentTypes['Vue'] = ResolversParentTypes['Vue']> = {
   activations?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['ActiveVue']>>>, ParentType, ContextType>;
-  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  compatibility?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   creator?: Resolver<ResolversTypes['Creator'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  license?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  oid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tags?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['Tag']>>>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  version?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type VueComponentResolvers<ContextType = any, ParentType extends ResolversParentTypes['VueComponent'] = ResolversParentTypes['VueComponent']> = {
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   oid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   query?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   script?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   template?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   vue?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

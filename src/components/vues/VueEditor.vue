@@ -30,6 +30,8 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['publish', 'save'])
+
 const githubState = useGithubState()
 const pageState = usePageState()
 /// TODO: clear the storage on log out
@@ -41,6 +43,7 @@ const component = ref({ ...props.component })
 
 if (component.value.oid) {
   githubState.setCodeState({
+    oid: component.value.oid,
     json: component.value.vue,
     html: component.value.template,
     javascript: component.value.script,
@@ -56,6 +59,7 @@ watch(refProps.component, (c: any) => {
 
   if (component.value.oid) {
     githubState.setCodeState({
+      oid: component.value.oid,
       json: component.value.vue ?? '',
       html: component.value.template ?? '',
       javascript: component.value.script ?? '',
@@ -87,13 +91,20 @@ const onPlay = () => {
   console.info('onPlay event setting component and calling render', c)
   component.value = c
   componentRef.value.renderComponent(c)
+  return c
 }
 
 const onSave = async () => {
-  const c = githubState.getComponentFromCodeState
-  console.info('onSave event setting component and calling render', c)
-  component.value = c
-  componentRef.value.renderComponent(c)
+  const c = onPlay()
+  githubState.saveEditingVueComponent()
+
+  emit('save', c)
+}
+
+const onPublish = async () => {
+  const c = onSave()
+
+  emit('publish', c)
 }
 
 onMounted(() => {
@@ -113,7 +124,13 @@ const code = computed({
 <template>
   <div class="flex h-full">
     <div id="editor" class="w-full">
-      <editor-tabs v-model="currentTab" :tabs="tabs" @play="onPlay" @save="onSave" />
+      <editor-tabs
+        v-model="currentTab"
+        :tabs="tabs"
+        @play="onPlay"
+        @save="onSave"
+        @publish="onPublish"
+      />
       <monaco-editor ref="editorRef" v-model="code" :active-tab="currentTab" class="h-full" />
     </div>
     <div id="component" class="w-full h-full">

@@ -40,6 +40,18 @@ export class Template {
     media!: string;
 
     @IsDefined()
+    @IsString()
+    version!: string;
+
+    @IsDefined()
+    @IsString()
+    compatibility!: string;
+
+    @IsDefined()
+    @IsString()
+    license!: string;
+
+    @IsDefined()
     @IsInt()
     creatorId!: number;
 

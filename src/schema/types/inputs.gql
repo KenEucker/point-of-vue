@@ -151,3 +151,59 @@ input ImageAlbumsWhereInput {
 input VuesWhereInput {
   oid: String
 }
+
+input SubmitVueWithInput {
+  oid: String!
+}
+
+input PublishTemplateWithInput {
+  id: Int!
+}
+
+input PublishVueWithInput {
+  id: Int!
+}
+
+input ArchiveGithubVueInput {
+  oid: String!
+}
+
+input UpdateGithubTemplateInput {
+  id: Int!
+  title: String
+  palette: [String]
+  media: [String!]
+  code: String
+  tags: [String]
+}
+
+input CreateGithubTemplateInput {
+  title: String!
+  palette: [String]
+  media: [String!]
+  code: String!
+  version: String!
+  compatibility: String
+  tags: [String]
+  license: String!
+}
+
+input UpdateGithubVueInput {
+  oid: String!
+  title: String
+  query: String
+  script: String
+  template: String
+  vue: String
+  tags: [String]
+}
+
+input CreateGithubVueInput {
+  oid: String!
+  title: String!
+  query: String
+  script: String
+  template: String
+  vue: String
+  tags: [String]
+}

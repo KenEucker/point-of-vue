@@ -1,10 +1,10 @@
-import { IsInt, IsDefined, IsOptional, IsString, IsDate } from "class-validator";
+import { IsString, IsDefined, IsOptional, IsInt, IsDate } from "class-validator";
 import { Creator, ActiveVue, TagsOnVue } from "./";
 
 export class Vue {
     @IsDefined()
-    @IsInt()
-    id!: number;
+    @IsString()
+    oid!: string;
 
     @IsDefined()
     creator!: Creator;
@@ -21,11 +21,19 @@ export class Vue {
 
     @IsDefined()
     @IsString()
-    code!: string;
+    status!: string;
 
     @IsDefined()
     @IsString()
-    status!: string;
+    version!: string;
+
+    @IsDefined()
+    @IsString()
+    compatibility!: string;
+
+    @IsDefined()
+    @IsString()
+    license!: string;
 
     @IsDefined()
     @IsInt()

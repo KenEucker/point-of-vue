@@ -40,8 +40,6 @@ const logout = () => {
   creatorState.logout()
 }
 
-creatorState.checkLogin()
-
 const useLogin = async () => {
   await creatorState.loginWithAuth0()
 }

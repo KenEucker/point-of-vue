@@ -1,4 +1,4 @@
-import { IsDefined, IsInt, IsDate } from "class-validator";
+import { IsDefined, IsString, IsDate } from "class-validator";
 import { Vue, Tag } from "./";
 
 export class TagsOnVue {
@@ -9,8 +9,8 @@ export class TagsOnVue {
     tags!: Tag[];
 
     @IsDefined()
-    @IsInt()
-    vueId!: number;
+    @IsString()
+    vueId!: string;
 
     @IsDefined()
     @IsDate()

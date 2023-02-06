@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, onUnmounted, defineAsyncComponent, createApp } from 'vue'
+import { ref, reactive, onMounted, watch, onUnmounted } from 'vue'
 import PlanetIcon from 'vue-ionicons/dist/md-planet.vue'
 import BaseballIcon from 'vue-ionicons/dist/md-baseball.vue'
 import BasketIcon from 'vue-ionicons/dist/md-basket.vue'
@@ -10,14 +10,14 @@ import HeadsetIcon from 'vue-ionicons/dist/md-headset.vue'
 import PullIcon from 'vue-ionicons/dist/md-git-pull-request.vue'
 import { onClickOutside } from '@vueuse/core'
 import type { PovComponent } from '../../utilities'
-import { loadModule } from 'vue3-sfc-loader'
-import { useGithubState } from '../../store/state'
+// import { loadModule } from 'vue3-sfc-loader'
+import { useRenderState } from '../../store/state'
 import * as Vue from 'vue'
 import * as vueuseMotion from '@vueuse/motion'
 import * as vueuse from '@vueuse/core'
 
 const AppRef = reactive<any>({ app: null })
-const githubState = useGithubState()
+const renderState = useRenderState()
 const props = defineProps({
   component: {
     type: Object,
@@ -78,7 +78,6 @@ const renderComponent = (component?: any) => {
     }
   } else if (componentRef.value && props.variant === 'display') {
     component = component ?? props.component
-    console.info('rendering component', component)
     options = {
       moduleCache: { vue: Vue, '@vueuse/core': vueuse, '@vueuse/motion': vueuseMotion },
       getFile: async () => {
@@ -86,11 +85,10 @@ const renderComponent = (component?: any) => {
           console.error('whyy?', component)
           logs.errors.push('no files to load')
           return ''
-        } else {
-          // console.info('success', component)
         }
+        console.info('rendering component', component)
 
-        const compiled = await githubState.compileComponent(component)
+        const compiled = await renderState.compileVue(component)
         if (compiled.logs) {
           if (compiled.logs.info?.length) {
             logs.info = compiled.logs.info
@@ -117,21 +115,24 @@ const renderComponent = (component?: any) => {
     try {
       /// First do nothing, Mark
       unmountComponentApp()
-      AppRef.app = createApp(
-        defineAsyncComponent(async () => {
-          try {
-            return await loadModule('file.vue', options)
-          } catch (error: any) {
-            console.error('load module error', error)
-            logs.errors.push('compilation error')
-            logs.errors.push(error.message)
 
-            return Promise.resolve()
-          }
-        })
-      )
-      AppRef.app.use(vueuseMotion.MotionPlugin)
-      AppRef.app.mount(componentRef.value)
+      AppRef.app = renderState.createAsyncComponent(component, componentRef)
+
+      // createApp(
+      //   defineAsyncComponent(async () => {
+      //     try {
+      //       return await loadModule('file.vue', options)
+      //     } catch (error: any) {
+      //       console.error('load module error', error)
+      //       logs.errors.push('compilation error')
+      //       logs.errors.push(error.message)
+
+      //       return Promise.resolve()
+      //     }
+      //   })
+      // )
+      // AppRef.app.use(vueuseMotion.MotionPlugin)
+      // AppRef.app.mount(componentRef.value)
     } catch (e: any) {
       console.error('compilation error', e)
       logs.errors.push('compilation error')
@@ -260,7 +261,7 @@ v-for="(log, i) in logs.info" :key="`log-${i}`" class="">{{ log }}</div>
       </div>
       <h2 class="mr-auto">
         <span class="block font-sans text-2xl font-semibold text-gray-900">{{
-          props.component.name
+          props.component.title
         }}</span>
         <span class="block font-light text-gray-800">{{ props.component.category }}</span>
       </h2>
@@ -303,7 +304,7 @@ v-for="(log, i) in logs.info" :key="`log-${i}`" class="">{{ log }}</div>
         >
           <button
             v-for="option in getOptions(props.component as PovComponent)"
-            :key="`${props.component.name}-option-${option}`"
+            :key="`${props.component.title}-option-${option}`"
             class="flex items-center w-full px-3 py-1 sm:px-2 hover:bg-gray-200"
             @click="onStatusButtonClick(option)"
           >

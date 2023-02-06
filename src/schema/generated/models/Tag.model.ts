@@ -35,8 +35,8 @@ export class Tag {
     tagsOnTemplatesTemplateId!: number;
 
     @IsDefined()
-    @IsInt()
-    tagsOnVuesVueId!: number;
+    @IsString()
+    tagsOnVuesVueId!: string;
 
     @IsDefined()
     @IsDate()

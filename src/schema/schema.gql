@@ -1,6 +1,6 @@
 type Query {
   # versions of self
-  # Authenticate self
+  # Authenticated self
   self(from: Requestor): CreatorAccount
   # Unauthenticated? self
   viewer(from: Requestor): RequestorMirror
@@ -11,9 +11,6 @@ type Query {
   # Authenticated Imgur self
   imgur(from: Requestor): CreatorAccount
   
-  # Github repository connection for POV vues
-  github_account(from: Requestor): GitHubAccount!
-  github_vues(from: Requestor, where: VuesWhereInput): [VueComponent!]
 
   # Imgur images request for POV sharing
   images(from: Requestor, where: ImagesWhereInput): [ImgurImage!]
@@ -22,47 +19,105 @@ type Query {
   # Google files for request for POV (storage? tools? pruning?)
   docs(from: Requestor): [Docule!]
 
+  ## Creator ##
+  # Core
   creatorExists(where: CreatorByInput): Boolean
   creator(where: CreatorByInput, id: Int): Creator
   creators(where: CreatorByInput, by: ForOptionsInput): [Creator]
+  # Github Connection
+  github_account(from: Requestor): GitHubAccount!
+  # Google Connection
+  # Imgur Connection
+  
+  ## Interaction ##
+  # Core
   interaction(where: InteractionByInput, id: Int): Interaction
   interactions(where: InteractionByInput, by: ForOptionsInput): [Interaction]
+
+  ## Post ##
+  # Core
   post(where: PostByInput, id: Int): Post
   posts(where: PostByInput, by: ForOptionsInput): [Post]
-  group(where: GroupByInput, id: Int): Group
-  groups(where: GroupByInput, by: ForOptionsInput): [Group]
-  template(where: TemplateByInput, id: Int): Template
-  templates(where: TemplateByInput, by: ForOptionsInput): [Template]
-  vue(where: VueByInput, id: Int): Vue
-  vues(where: VueByInput, by: ForOptionsInput): [Vue]
-
   getPostInteractions(id: Int!): GetPostInteractionsPayload
   searchPosts(search: SearchPostsInput!, by: ForOptionsInput): SearchPostsPayload
+
+  ## Group ##
+  # Core
+  group(where: GroupByInput, id: Int): Group
+  groups(where: GroupByInput, by: ForOptionsInput): [Group]
+
+  ## Template ##
+  # Core
+  template(where: TemplateByInput, id: Int): Template
+  templates(where: TemplateByInput, by: ForOptionsInput): [Template]
+
+  ## Vue ##
+  # Core
+  vue(where: VueByInput, id: Int): Vue
+  vues(where: VueByInput, by: ForOptionsInput): [Vue]
+  # Github Connection
+  github_vues(from: Requestor, where: VuesWhereInput): [VueComponent!]
+
 }
 
 type Mutation {
+  ## Creator ##
+  # Core
   createCreator(creator: CreateCreatorInput!): Creator!
   updateCreator(data: UpdateCreatorInput!, id: Int): Creator!
   deleteCreator(creatorId: Int, where: CreatorByInput): Creator!
   verifyCreator(id: Int!): Creator!
   unVerifyCreator(id: Int!): Creator!
 
+  ## Interaction ##
+  # Core
   createInteraction(interaction: CreateInteractionInput!): Interaction!
   toggleInteraction(data: UpdateInteractionInput!, id: Int): Interaction!
   deleteInteraction(interactionId: Int, where: InteractionByInput): Interaction!
 
+  ## Post ##
+  # Core
   createPost(post: CreatePostInput!): Post!
   updatePost(data: UpdatePostInput!, id: Int): Post!
   deletePost(id: Int, where: PostByInput): Post!
   publishPost(id: Int!): Post!
   unPublishPost(id: Int!): Post!
+
+  ## Template ##
+  # Core
+  publishTemplate(id: Int, with: PublishTemplateWithInput): Template!
+  unPublishTemplate(id: Int): Template!
+  # Github Connection
+  github_createTemplate(data: CreateGithubTemplateInput): Template!
+  github_updateTemplate(data: UpdateGithubTemplateInput): Template!
+  github_archiveTemplate(data: UpdateGithubTemplateInput): Template!
+
+  ## Vue ##
+  # Core
+  publishVue(id: Int, with: PublishVueWithInput): Vue!
+  submitVue(id: Int, with: SubmitVueWithInput): Vue!
+
+  # Github Connection
+  github_createVue(from: Requestor, data: CreateGithubVueInput): Vue!
+  github_updateVue(from: Requestor, data: UpdateGithubVueInput): Vue!
+  github_archiveVue(from: Requestor, data: ArchiveGithubVueInput): Vue!
 }
 
 type Subscription {
+  # Demo 
   countdown(from: Int): Int!
+
+  ## Creator ##
+  # Core
   creator(where: CreatorByInput): CreatorSubscriptionPayload
+
+  ## Interaction ##
+  # Core
   interaction(where: InteractionByInput): InteractionSubscriptionPayload
   interactionDelta(where: InteractionByInput): InteractionDeltaSubscriptionPayload
+
+  ## Post ##
+  # Core
   post(where: PostByInput): PostSubscriptionPayload
 }
 

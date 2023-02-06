@@ -131,12 +131,15 @@ model Template {
   activations ActiveTemplate[]
   tags        TagsOnTemplate?
 
-  title     String
-  published Boolean  @default(false)
-  code      String   @default("")
-  status    String   @default("")
-  palette   String[] @default([])
-  media     String[] @default([])
+  title         String
+  published     Boolean  @default(false)
+  code          String   @default("")
+  status        String   @default("")
+  palette       String[] @default([])
+  media         String[] @default([])
+  version       String   @default("")
+  compatibility String   @default("")
+  license       String   @default("")
 
   creatorId   Int
   createdAt   DateTime      @default(now())
@@ -147,15 +150,17 @@ model Template {
 }
 
 model Vue {
-  id Int @id @default(autoincrement())
+  oid String @id @default(uuid())
 
   creator     Creator     @relation(fields: [creatorId], references: [id])
   activations ActiveVue[]
   tags        TagsOnVue?
 
-  title     String
-  code      String  @default("")
-  status    String  @default("")
+  title         String
+  status        String @default("")
+  version       String @default("")
+  compatibility String @default("")
+  license       String @default("")
 
   creatorId Int
   createdAt DateTime @default(now())
@@ -181,12 +186,10 @@ model ActiveTemplate {
 
 model ActiveVue {
   creator   Creator @relation(fields: [creatorId], references: [id])
-  component Vue     @relation(fields: [vueId], references: [id])
+  component Vue     @relation(fields: [vueId], references: [oid])
 
   creatorId Int
-  vueId     Int
-
-  title String
+  vueId     String
 
   assignedAt DateTime @default(now())
 
@@ -205,7 +208,7 @@ model Tag {
   tagsOnCreatorsCreatorId   Int
   tagsOnPostsPostId         Int
   tagsOnTemplatesTemplateId Int
-  tagsOnVuesVueId           Int
+  tagsOnVuesVueId           String
   createdAt                 DateTime     @default(now())
   updatedAt                 DateTime     @updatedAt
   TagsOnGroup               TagsOnGroup? @relation(fields: [tagsOnGroupGroupId], references: [groupId])
@@ -254,10 +257,10 @@ model TagsOnTemplate {
 }
 
 model TagsOnVue {
-  vue  Vue   @relation(fields: [vueId], references: [id])
+  vue  Vue   @relation(fields: [vueId], references: [oid])
   tags Tag[]
 
-  vueId      Int
+  vueId      String
   assignedAt DateTime @default(now())
 
   @@id([vueId])

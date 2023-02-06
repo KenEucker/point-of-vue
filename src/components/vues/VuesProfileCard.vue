@@ -237,7 +237,7 @@ const developerStats = [
     <div class="flex items-start mb-8 overflow-x-scroll scrolling-touch flex-nowrap">
       <pov-vue-card
         v-for="component in props.components"
-        :key="`component-${component.name}`"
+        :key="`component-${component.title}`"
         class="flex-none w-2/3 mr-8 border rounded-lg md:w-1/3 md:pb-4"
         variant="info"
         :component="component"

@@ -2,30 +2,26 @@ import { VueComponent } from '../schema/generated/types'
 import { apolloClient } from '.'
 import { defineStore } from 'pinia'
 import { gql } from '@apollo/client/core'
-import {
-  getGraphUrl,
-  PovComponent,
-  removeAllAndSomeTagsFromHtml,
-  removeNodesWithKeywords,
-  trimAndRemoveQueryWrap,
-} from '../utilities'
+import { PovComponent } from '../utilities'
 // import Sass from 'sass.js/dist/sass.sync.js'
 import { useCreatorState } from './creator'
 import { watch } from 'vue'
 
 export const getInitialGithubState = (): {
+  account: any
   code: any
+  editingComponentOid: string | null
   componentFromCodeState: any
-  credentials: { creatorToken?: string; githubToken?: string }
-  vuesFetched: boolean
+  credentials: string | null
   vues: Array<VueComponent>
   vueComponents: Array<PovComponent>
-  account: any
+  vuesFetched: boolean
 } => ({
   account: null,
   code: {},
+  editingComponentOid: null,
   componentFromCodeState: null,
-  credentials: {},
+  credentials: null,
   vues: [],
   vueComponents: [],
   vuesFetched: false,
@@ -38,26 +34,43 @@ export const useGithubState = defineStore({
     vuesHaveBeenFetched: (s) => s.vuesFetched,
     getAccount: (s) => s.account,
     getVues: (s) => s.vues,
+    getEditingComponentOid: (s) => s.editingComponentOid,
     getCodeState: (s) => s.code,
     getComponentFromCodeState: (s) => s.componentFromCodeState,
     getVueComponents: (s) => s.vueComponents,
   },
   actions: {
+    getVueByOid(oid: string) {
+      return this.vues.find((vue) => vue.oid === oid)
+    },
+
     setCodeState(newState: any) {
       console.info('setting new code state', newState)
       this.code = newState
-      this.setComponentFromCodeState(this.code)
+      this.setComponentFromCodeState(this.code, newState.oid)
+      if (newState.oid) {
+        this.editingComponentOid = newState.oid
+      }
     },
 
-    setComponentFromCodeState(code: any) {
+    setComponentFromCodeState(code: any, oid?: string) {
       const updatedComponentValues = code.json?.length ? JSON.parse(code.json) : {}
+      if (oid) {
+        this.editingComponentOid = oid
+      } else {
+        oid = this.editingComponentOid!
+      }
       this.componentFromCodeState = {
-        name: updatedComponentValues.name,
+        oid,
+        title: this.getVueByOid(oid)?.title, // CANNOT UPDATE TITLE AFTER CREATION
         background: updatedComponentValues.background,
         icon: updatedComponentValues.icon,
         status: 'good', /// TODO: calculate this,
         category: updatedComponentValues.category,
         description: updatedComponentValues.description,
+        version: updatedComponentValues.version,
+        compatability: updatedComponentValues.compatability,
+        license: updatedComponentValues.license,
         vue: code.json ?? '',
         template: code.html ?? '',
         script: code.javascript ?? '',
@@ -66,222 +79,76 @@ export const useGithubState = defineStore({
       console.info('parsing code into component', code, this.componentFromCodeState)
     },
 
+    async saveEditingVueComponent() {
+      const component = this.componentFromCodeState
+      const updateVueForCreatorQuery = gql`
+        mutation StoreGithub_updateVue($token: String!, $component: UpdateGithubVueInput) {
+          github_updateVue(from: { token: $token }, data: $component) {
+            oid
+            version
+          }
+        }
+      `
+
+      console.info('saving vue', component)
+      const { data, errors } = await apolloClient.mutate({
+        mutation: updateVueForCreatorQuery,
+        variables: {
+          token: this.credentials,
+          component: {
+            oid: component.oid,
+            title: component.title,
+            query: component.query,
+            script: component.script,
+            template: component.template,
+            vue: component.vue,
+          },
+        },
+      })
+      if (data?.github_updateVue?.length && !errors) {
+        console.log('updated vue', data.github_updateVue)
+      } else if (errors) {
+        console.error('update errors', errors)
+      }
+
+      // const componentsIndex = this.vueComponents.findIndex(
+      //   (c: PovComponent) => c.oid === component.oid
+      // )
+      // const vuesIndex = this.vues.findIndex((c: VueComponent) => c.oid === component.oid)
+      // if (componentsIndex > -1) {
+      //   this.vueComponents[componentsIndex] = component
+      // } else {
+      //   this.vueComponents.push(component)
+      // }
+      // if (vuesIndex > -1) {
+      //   this.vues[vuesIndex] = component
+      // }
+    },
+
     getVueComponent(oid: string): PovComponent | undefined {
       return this.vueComponents.find((c: PovComponent) => c.oid === oid)
     },
 
     hasCredentials() {
-      if (this.credentials?.creatorToken?.length && this.credentials?.githubToken?.length) {
+      if (this.credentials?.length) {
         return true
       }
 
       const creatorState = useCreatorState()
       const credentials = creatorState.getCreatorCredentials
 
-      if (credentials.creatorToken && credentials.github) {
-        this.credentials = {
-          creatorToken: credentials.creatorToken,
-          githubToken: credentials.github,
-        }
+      if (credentials.github) {
+        this.credentials = credentials.github
         return true
       } else {
         return false
       }
     },
 
-    async compileComponent(
-      payload: any
-    ): Promise<{ output: string; logs: { errors: string[]; info: string[] } }> {
-      let dataRequest
-      let info: string[] = []
-      let errors: string[] = []
-      let normalizedHTML = ''
-      let normalizedJS = ''
-      let stringifiedData = '{}'
-      let normalizedJson = '{}'
-
-      if (payload.query.trim().length) {
-        /// check for bad stuff here
-        const query = trimAndRemoveQueryWrap(payload.query)
-        const options = {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.credentials.creatorToken}`,
-          },
-          body: JSON.stringify({
-            query: `query {${query}}`,
-          }),
-        }
-
-        dataRequest = await fetch(getGraphUrl(), options)
-          .then((res) => res.json())
-          .catch((err) => {
-            // this.logs.error(err)
-            console.error('data fetch error', { err })
-            errors.push(err.message)
-          })
-
-        if (!dataRequest || dataRequest?.errors) {
-          errors = errors.concat(
-            dataRequest.errors.reduce(
-              (o: string[], v: any) => {
-                o.push(`line ${v.locations[0].line}:${v.locations[0].column} -- ${v.message}`)
-                return o
-              },
-              ['query errors']
-            )
-          )
-        } else {
-          stringifiedData = JSON.stringify(dataRequest?.data ?? {})
-        }
-      }
-
-      if (!errors.length) {
-        const htmlNormalized = removeAllAndSomeTagsFromHtml(
-          payload.template,
-          ['head', 'link', 'script', 'style'],
-          ['body', 'html']
-        )
-        const jsNormalized = removeNodesWithKeywords(payload.script, [
-          'window',
-          'alert',
-          'import',
-          'fetch',
-          'require',
-          'console.log',
-        ])
-
-        const htmlLinesWereRemoved = htmlNormalized.removed.length
-        const jsLinesWereRemoved = jsNormalized.removed.length
-        if (jsLinesWereRemoved || htmlLinesWereRemoved) {
-          info.push('Lines with the following keywords were removed during compilation')
-
-          if (htmlLinesWereRemoved) {
-            info = info.concat([' template ', ...htmlNormalized.removed])
-          }
-          if (jsLinesWereRemoved) {
-            info = info.concat([' script ', ...jsNormalized.removed])
-          }
-        }
-
-        normalizedHTML = htmlNormalized.output
-        normalizedJS = jsNormalized.output
-        /// TODO: check this payload value
-        normalizedJson = payload.vue?.length ?? '{}'
-      }
-      /// Add tailwind
-      // console.log({ Sass })
-      // let css = ''
-      // Sass.preloadFiles('://', 'styles', ['tailwind.css'])
-      // await Sass.compile(
-      //   `
-      // @tailwind base;
-      // @tailwind components;
-      // @tailwind utilities;`,
-      //   (s) => {
-      //     console.log({ s })
-      //     return (css = s)
-      //   }
-      // )
-      // console.log({ css })
-
-      return {
-        output: `
-        <template>
-          <div class="flex justify-center">
-            <div class="block p-6 rounded-lg shadow-lg bg-white max-w-sm">
-              ${normalizedHTML}
-            </div>
-          </div>
-        </template>
-        <style scoped>
-          @tailwind base;
-          @tailwind components;
-          @tailwind utilities;
-        </style>
-        <script setup>
-          /// Auto Import
-          import { onMounted, ref, computed } from 'vue'
-          import { useMotion } from '@vueuse/motion'
-
-          /// Hydration
-          const query = ${stringifiedData}
-          const vue = ${normalizedJson}
-          
-          /// Script
-          ${normalizedJS}
-
-          // onMounted(() => {
-            // console.log('window.tailwindCSS', window.tailwindCSS)
-            // window.tailwindCSS.refresh()
-          // })
-        </script>`,
-        /// Feature disabled
-        //   <style scoped>
-        //     ${payload.css}
-        //   </style>
-        // `
-        logs: {
-          info,
-          errors,
-        },
-      }
-    },
-
-    compileComponentHTML(payload: Record<string, any>, isDark?: boolean) {
-      return `<html class="${isDark ? 'dark' : ''}">
-        <head>
-            <style id="_style">${payload.css}</style>
-            <script type="module" id="_script">
-                ${payload.script}
-                window.addEventListener('message', function(event) {
-                    console.log(event)
-                    if (event.data === 'theme-dark') {
-                        document.documentElement.classList.add('dark')
-                    } else if (event.data === 'theme-light') {
-                        document.documentElement.classList.remove('dark')
-                    }
-                })
-            </script>
-            <script>
-              
-              const options = {
-                method: "post",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": \`Bearer ${this.credentials.creatorToken}\`
-                },
-                body: JSON.stringify({
-                  query: \`${payload.query}\`
-                })
-              };
-          
-              fetch('${getGraphUrl()}', options)
-                .then(res => res.json())
-                .then((d) => {
-                  console.log({d})
-                  /// Call Render Method
-                  document.getElementById('data').innerText = JSON.stringify(d?.data, null, 2)
-                });
-            </script>
-        </head>
-        <body>
-            <div id="_html">
-              ${payload.template}
-            </div>
-            <div>
-              <h1>DATA</h1>
-              <pre id="data"></pre>
-            </div>
-        </body>
-    </html`
-    },
-
     async fetchVues(oid?: string) {
       if (this.vuesFetched) {
         return Promise.resolve(this.vues)
-      } else if (!this.credentials.githubToken?.length) {
+      } else if (!this.credentials?.length) {
         return Promise.resolve([])
       }
 
@@ -289,7 +156,7 @@ export const useGithubState = defineStore({
         query StoreFetchGithub_Vues($token: String!, $oid: String) {
           github_vues(from: { token: $token }, where: { oid: $oid }) {
             oid
-            name
+            title
             query
             script
             template
@@ -299,7 +166,7 @@ export const useGithubState = defineStore({
       `
       const { data, error: queryError } = await apolloClient.query({
         query: fetchVuesForCreatorQuery,
-        variables: { token: this.credentials.githubToken, oid },
+        variables: { token: this.credentials, oid },
       })
       if (data?.github_vues?.length && !queryError) {
         this.vuesFetched = true
@@ -308,7 +175,7 @@ export const useGithubState = defineStore({
           const vueComponentJson = JSON.parse(v.vue ?? '{}')
           return {
             oid: v.oid,
-            name: vueComponentJson.name ?? v.name ?? '',
+            title: vueComponentJson.title ?? v.title ?? '',
             vue: v.vue,
             script: v.script,
             template: v.template,
@@ -373,7 +240,7 @@ export const useGithubState = defineStore({
       `
       const { data, error: queryError } = await apolloClient.query({
         query: fetchGithubAccountForCreatorQuery,
-        variables: { token: this.credentials.githubToken },
+        variables: { token: this.credentials },
       })
       if (data?.github_account && !queryError) {
         this.account = data.github_account

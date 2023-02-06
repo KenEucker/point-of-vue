@@ -59,6 +59,9 @@ export const useCreatorState = defineStore({
     getCreatorId: (s) => (s.loggedIn ? (s.signedUp ? s.creator?.id : 0) : -1),
   },
   actions: {
+    async init() {
+      this.checkLogin()
+    },
     async creatorSignup(creator: Creator) {
       const SignUpCreatorQuery = gql`
         mutation SignUpCreator($creator: CreateCreatorInput!) {

@@ -5,6 +5,7 @@ import { usePovState } from './pov'
 import { useInteractionsState } from './interactions'
 import { useImagesState } from './images'
 import { useGithubState } from './github'
+import { useRenderState } from './render'
 
 export {
   useCreatorState,
@@ -14,4 +15,5 @@ export {
   useInteractionsState,
   useImagesState,
   useGithubState,
+  useRenderState,
 }

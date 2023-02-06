@@ -13,12 +13,8 @@ export class ActiveVue {
     creatorId!: number;
 
     @IsDefined()
-    @IsInt()
-    vueId!: number;
-
-    @IsDefined()
     @IsString()
-    title!: string;
+    vueId!: string;
 
     @IsDefined()
     @IsDate()
