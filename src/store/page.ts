@@ -3,6 +3,7 @@ import { useStorage } from '@vueuse/core'
 import { useWindowSize } from '@vueuse/core'
 import { useCreatorState } from './creator'
 import { getLastFunctionName } from '../utilities'
+import { useNotificationStore } from '@dafcoe/vue-notification'
 
 const leftMenuOpen = useStorage('leftMenuOpen', false)
 const rightMenuOpen = useStorage('rightMenuOpen', false)
@@ -10,6 +11,8 @@ const bottomMenuOpen = useStorage('bottomMenuOpen', false)
 const disableAbout = useStorage('disableAbout', false)
 const debugMode = useStorage('debugMode', false)
 const { width, height } = useWindowSize()
+
+const { setNotification } = useNotificationStore()
 
 /// Take over logging
 const ogInfo = console.info
@@ -25,6 +28,7 @@ export const getInitialPageState = (): {
   logs: { info: string[]; error: string[]; history: any[] }
   pageComponents: Map<string, string[]>
   pageName: string
+  notificationsPosition: string
   metaData: any
   frameUrl: string
   disableAbout: boolean
@@ -36,6 +40,7 @@ export const getInitialPageState = (): {
   rightMenuOpen: rightMenuOpen.value,
   bottomMenuOpen: bottomMenuOpen.value,
   pageComponents: new Map(),
+  notificationsPosition: 'top-right',
   logs: { info: [], error: [], history: [] },
   about: { title: 'About this page', body: ['no about information for this page', 'sorry'] },
   metaData: {},
@@ -64,6 +69,7 @@ export const usePageState = defineStore('usePageState', {
         .split('?')[0],
     getPageName: (s) => s.pageName,
     getMetaData: (s) => s.metaData,
+    getNotificationsPosition: (s) => s.notificationsPosition,
     getLeftMenuComponents: (s) => {
       const pageComponents = s.pageComponents.get(s.pageName)
       if (!pageComponents) {
@@ -163,6 +169,16 @@ export const usePageState = defineStore('usePageState', {
         }
       }
       return (this.metaData = { ...this.metaData, ...meta })
+    },
+    setNotification(message: string, opts = {}) {
+      setNotification({
+        type: 'success',
+        duration: 3000,
+        showIcon: true,
+        appearance: 'glass',
+        ...opts,
+        message,
+      })
     },
     toggleAboutSidebar() {
       disableAbout.value = this.disableAbout = !this.disableAbout

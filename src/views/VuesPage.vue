@@ -6,6 +6,7 @@ import VueEditor from '../components/vues/VueEditor.vue'
 import { useCreatorState, useGithubState, usePageState } from '../store/state'
 import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
+import { PovComponent } from '../utilities'
 
 const creatorState = useCreatorState()
 const githubState = useGithubState()
@@ -41,11 +42,11 @@ const onDeleteVue = (vueId: string) => {
 const onViewVue = (vueId: string) => {
   console.log('ViewVue', vueId)
 }
-const onSaveVue = (vueId: string) => {
-  console.log('SaveVue', vueId)
+const onSaveVue = (vue: PovComponent) => {
+  pageState.setNotification(`Your Vue [${vue.title}] has been saved`)
 }
-const onPublishVue = (vueId: string) => {
-  console.log('PublishVue', vueId)
+const onPublishVue = (vue: any) => {
+  pageState.setNotification(`Your Vue [${vue.title}] has been submitted to be published`)
 }
 </script>
 

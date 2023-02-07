@@ -4,6 +4,7 @@ import { DefaultApolloClient } from '@vue/apollo-composable'
 import 'vue-ionicons/ionicons.css'
 import './styles/app.scss'
 import 'vue3-emoji-picker/css'
+import '@dafcoe/vue-notification/dist/vue-notification.css'
 
 import App from './App.vue'
 

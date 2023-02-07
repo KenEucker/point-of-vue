@@ -92,43 +92,41 @@ export const useGithubState = defineStore({
       `
 
       console.info('saving vue', component)
-      const { data, errors } = await apolloClient.mutate({
-        mutation: updateVueForCreatorQuery,
-        variables: {
-          token: this.credentials,
-          component: {
-            id: component.id,
-            query: component.query,
-            script: component.script,
-            template: component.template,
-            vue: component.vue,
+      try {
+        const { data, errors } = await apolloClient.mutate({
+          mutation: updateVueForCreatorQuery,
+          variables: {
+            token: this.credentials,
+            component: {
+              id: component.id,
+              query: component.query,
+              script: component.script,
+              template: component.template,
+              vue: component.vue,
+            },
           },
-        },
-      })
-
-      if (data?.github_updateVue?.id?.length && !errors) {
-        console.log('updated vue', component)
-
-        const componentsIndex = this.vueComponents.findIndex(
-          (c: PovComponent) => c.id === component.id
-        )
-        const vuesIndex = this.vues.findIndex((c: VueComponent) => c.id === component.id)
-        if (componentsIndex > -1) {
-          this.vueComponents[componentsIndex] = component
-        } else {
-          this.vueComponents.push(component)
-        }
-        if (vuesIndex > -1) {
-          this.vues[vuesIndex] = component
-        }
-        console.log({
-          componentsIndex,
-          vuesIndex,
-          c: this.vueComponents[componentsIndex],
-          v: this.vues[vuesIndex],
         })
-      } else if (errors) {
-        console.error('update errors', errors)
+
+        if (data?.github_updateVue?.id?.length && !errors) {
+          const componentsIndex = this.vueComponents.findIndex(
+            (c: PovComponent) => c.id === component.id
+          )
+          const vuesIndex = this.vues.findIndex((c: VueComponent) => c.id === component.id)
+          if (componentsIndex > -1) {
+            this.vueComponents[componentsIndex] = component
+          } else {
+            this.vueComponents.push(component)
+          }
+          if (vuesIndex > -1) {
+            this.vues[vuesIndex] = component
+          }
+        } else if (errors) {
+          console.error('update errors', errors)
+        }
+
+        return errors
+      } catch (e: any) {
+        return [e.message]
       }
     },
 

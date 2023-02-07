@@ -3,6 +3,9 @@ import AppLayout from './components/layout/AppLayout.vue'
 import HeaderBar from './components/page/HeaderBar.vue'
 import SlideMenuLeft from './components/page/SlideMenuLeft.vue'
 import SlideMenuRight from './components/page/SlideMenuRight.vue'
+
+import { VueNotificationList } from '@dafcoe/vue-notification'
+
 import { useRouter } from 'vue-router'
 import { usePageState, usePovState, useCreatorState } from './store/state'
 
@@ -38,6 +41,7 @@ povState.init()
       <slide-menu-right> </slide-menu-right>
     </template>
     <template #body>
+      <vue-notification-list :position="pageState.getNotificationsPosition"></vue-notification-list>
       <router-view :key="$route.fullPath"></router-view>
     </template>
   </app-layout>

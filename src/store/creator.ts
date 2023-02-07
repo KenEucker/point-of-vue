@@ -299,7 +299,6 @@ export const useCreatorState = defineStore({
 
       if (data?.self) {
         this.creator = data.self.creator
-        console.log({ creator: this.creator })
         if (this.creator) {
           storedId.value = this.creator.id
           storedEmail.value = this.creator.email

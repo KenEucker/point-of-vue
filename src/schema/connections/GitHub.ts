@@ -76,7 +76,6 @@ const updateGithubContent = async (
       console.error(e.message)
     })
 
-  console.log({ data, owner, repo, path })
   const { sha } = data
 
   // Github adds a trailing line
@@ -367,10 +366,8 @@ export const Mutation = {
 
     if (!vue) {
       console.error('Vue not found', where)
-      throw new Error('Vue not found')
+      throw new GraphQLError('Vue not found')
     }
-
-    console.log({ vue })
 
     const committer = {
       name: identity.name,
@@ -444,15 +441,10 @@ export const Mutation = {
       vue.license = parsedVueJson.license
       vue.compatibility = parsedVueJson.compatibility
 
-      const updateSuccess = await prisma.vue.update({
+      return await prisma.vue.update({
         where: { id: vue.id },
         data: vue,
       })
-      console.log({ updateSuccess })
-
-      if (updateSuccess) {
-        return vue
-      }
     }
 
     return null

@@ -96,15 +96,28 @@ const onPlay = () => {
 
 const onSave = async () => {
   const c = onPlay()
-  githubState.saveEditingVueComponent()
 
-  emit('save', c)
+  return githubState.saveEditingVueComponent().then((errors: any) => {
+    if (errors?.length > 0) {
+      const message = 'Error saving Vue'
+      console.error(message, errors)
+      pageState.setNotification(`${message} - ${errors.join(' - ')}`, { type: 'alert' })
+    } else {
+      emit('save', c)
+    }
+  })
 }
 
 const onPublish = async () => {
   const c = onSave()
 
+  // githubState.saveEditingVueComponent().then((errors: any) => {
+  // if (errors?.length > 0) {
+  // console.error('errors saving component', errors)
+  // } else {
   emit('publish', c)
+  // }
+  // })
 }
 
 onMounted(() => {
