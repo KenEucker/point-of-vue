@@ -1,6 +1,6 @@
 import auth0Client from 'auth0'
 import { JwtVerifier, getTokenFromHeader } from '@serverless-jwt/jwt-verifier'
-import { Creator } from '../generated/types'
+import { Creator, ForOptionsInput } from '../generated/types'
 
 export const auth0Configured = process.env.AUTH0_DOMAIN && process.env.AUTH0_CID
 export const povCreatorRepoName = 'point-of-vue--vues'
@@ -180,3 +180,12 @@ export const getIdentityProfile = (
     })
   })
 }
+
+export const getDefaultQueryOptions = (by: ForOptionsInput) => ({
+  take: by?.take ?? 20,
+  skip: by?.skip ?? 0,
+  cursor: by?.cursor,
+  orderBy: {
+    id: by?.orderById ?? 'desc',
+  },
+})
