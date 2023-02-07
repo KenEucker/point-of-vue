@@ -1,12 +1,37 @@
 # Point Of Vue
 
-Point Of Vue is a web 3 social sharing network for the programmable web. POV integrates with second-party APIs (second party are APIs you have access to as a user)
+## A social network
 
-# Stack
+Point Of Vue is a web 3 social sharing network for the programmable web. POV integrates with second-party APIs (second party are APIs you have access to as a user with an access token) to open up the world-wide web and make it personally tailored for your point of view: the apps/platforms/websites that you use while on the internet. Connecting all of these APIs together, creators on the Point Of Vue platform can share much more than simple text posts with one another: https://pointofvue.org/posts.
+
+## A globe of data
+
+The Point Of Vue Globe is the combination of the data that connects creators on the Point Of Vue platform and the components developed by creators for use on the platform consuming that data. The schema is public and most of the queries do not require authentication. You can use the playground directly or within the app at https://pointofvue.org/graph.
+
+## A library of web components
+
+The Point Of Vue Globe library contains core components maintained by the Point Of Vue dev team as well as all of the published Vue components from creators on the Point Of Vue platform. This component library can be used within pages on the Point Of Vue platform leveraging data from both creator pages as well as visitors to those pages, giving creators the ability to build and share rich, interactive, experiences on Point Of Vue.
+
+# Live Demo
+
+Demo: https://pointofvue.org
+
+This demo is deployed on Render.com using a postgres db service, a webserver service (for graphql-yoga), another webserver service for the studio (optional), and a static service for the client. The demo does not contain any changes made after December 31, 2022. All of the new development that has been completed since then is not deployed to the demo as of February 2023.
+
+# Roadmap
+
+Please see our open issues where you can get a sense for what is on the table as far as development of the Point Of Vue platform goes. You can contribute in more ways than just software development, as well! After launch, we hope to have a more concrete roadmap of features and a timeline of when those features can be implemented.
+
+Funding, upon launch, will be crucial to the success of this open-source project and a model for Creators on the Point Of Vue platform to be awarded monetarily for their works is our primary funding goal, before funding the platform itself. Obviously, investment in the latter begets results in the former, so please consider sponsoring this project.
+
+
+# Development
+
+## The Stack
 
 Vite + TypeScript + Vue3 + GraphQl + Prisma + Pinia + TailwindCss
 
-# Contributing
+## Contributing
 
 This project was created as a demo and I don't have anything set up for 
 contributors at the moment. If someone is feeling adventurous you're welcomed to try and follow the steps below to get up and running yourself.
@@ -15,11 +40,11 @@ Right now it has two modes: demo (unauthenticated) and authenticated (using Auth
 
 With the authenticated mode you will need both an Auth0 application as well as an Auth0 API, the settings of which are included below. In demo mode you can login with an email for an existing creator (which requires creating an creator with Prisma Studio) and create posts. 
 
-The post interactions are fully wired up. You can register a new creator and update creator settings. You can create and delete posts but you cannot edit or share posts, yet.
+The post interactions are fully wired up. You can register a new creator and update creator settings. You can create and delete posts but you cannot edit or share posts, yet. You can edit Vues as a creator logged in through Github (authed) and publish them to the point-of-vue globe. You cannot edit page templates at this time.
 
-Three integrations are in the works at the moment: GitHub (vues), Imgur (images), Google (threads). The Vues page is semi functional but all three integrations are lacking any mutations in the graphql API as of January 2023.
+Three integrations are in the works at the moment: GitHub (vues), Imgur (images), Google (threads). The Vues page is semi functional but the other two integrations are lacking any mutations in the graphql API as of February 2023. Vues have mutations but no subsriptions at this time.
 
-# Setup
+## Setup
 
 This is a rough draft giude to setting up Point-Of-Vue on your machine for local development.
 
@@ -60,15 +85,10 @@ This is a rough draft giude to setting up Point-Of-Vue on your machine for local
 - http://localhost:8100/graphql  -- [playground]
 - http://localhost:8200          -- [studio]
 
-# Live Demo
-
-Demo: https://point-of-vue-web.onrender.com/
-
-This demo is deployed on Render.com using a postgres db service, a webserver service (for graphql-yoga), another webserver service for the studio (optional), and a static service for the client.
 
 # Thanks for reading!
 
-This open source project was made possible by the following platforms and open source projects
+This open source project was made possible by the following platforms and open source projects. Please consider sponsoring this project or any of the other projects linked. Open-Source Software is only Free if you have the time to make it.
 
 <div>
     <div>

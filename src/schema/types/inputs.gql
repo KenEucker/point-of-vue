@@ -152,10 +152,6 @@ input VuesWhereInput {
   id: String
 }
 
-input SubmitVueWithInput {
-  id: String!
-}
-
 input PublishTemplateWithInput {
   id: Int!
 }
@@ -206,4 +202,16 @@ input CreateGithubVueInput {
   template: String
   vue: String
   tags: [String]
+}
+
+input SubmitGithubVueInput {
+  id: String!
+  title: String!
+  version: String!
+  category: String
+  license: String
+  query: String
+  script: String
+  template: String
+  vue: String
 }

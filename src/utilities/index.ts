@@ -39,6 +39,7 @@ export enum StorageName {
 export interface PovComponent {
   id: string
   title: string
+  version: string
   category?: string
   vues?: number
   status?: string

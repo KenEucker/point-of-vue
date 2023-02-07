@@ -94,10 +94,10 @@ type Mutation {
 
   ## Vue ##
   # Core
-  publishVue(id: Int, with: PublishVueWithInput): Vue!
-  submitVue(id: Int, with: SubmitVueWithInput): Vue!
 
   # Github Connection
+  github_publishVue(from: Requestor, with: PublishVueWithInput): Vue!
+  github_submitVue(from: Requestor, data: SubmitGithubVueInput): GithubSubmitVuePayload!
   github_createVue(from: Requestor, data: CreateGithubVueInput): Vue!
   github_updateVue(from: Requestor, data: UpdateGithubVueInput): Vue!
   github_archiveVue(from: Requestor, data: ArchiveGithubVueInput): Vue!

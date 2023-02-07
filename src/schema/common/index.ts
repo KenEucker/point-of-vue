@@ -4,6 +4,10 @@ import { Creator, ForOptionsInput } from '../generated/types'
 
 export const auth0Configured = process.env.AUTH0_DOMAIN && process.env.AUTH0_CID
 export const povCreatorRepoName = 'point-of-vue--vues'
+export const povGlobeRepoName = 'point-of-vue-globe'
+export const povGlobeOwnerName = 'KenEucker'
+export const povGlobeDefaultCategory = 'uncategorized'
+export const povGlobeDefaultLicense = 'AGPL-3.0-or-later'
 
 let auth0ManagementToken: string | null = null
 const auth0UserCache = new Map()
@@ -189,3 +193,8 @@ export const getDefaultQueryOptions = (by: ForOptionsInput) => ({
     id: by?.orderById ?? 'desc',
   },
 })
+
+/// TODO: make this an enum
+export const getLicenseText = (license: string) => {
+  return license
+}

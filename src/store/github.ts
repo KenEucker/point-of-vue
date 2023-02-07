@@ -130,6 +130,53 @@ export const useGithubState = defineStore({
       }
     },
 
+    async publishEditingVueComponent() {
+      const submitVueForCreatorQuery = gql`
+        mutation StoreGithub_submitVue($token: String!, $component: SubmitGithubVueInput) {
+          github_submitVue(from: { token: $token }, data: $component) {
+            title
+            url
+            errors
+          }
+        }
+      `
+      const component = this.componentFromCodeState
+
+      console.info('submitting vue', component.id)
+      try {
+        const { data, errors } = await apolloClient.mutate({
+          mutation: submitVueForCreatorQuery,
+          variables: {
+            token: this.credentials,
+            component: {
+              id: component.id,
+              title: component.title,
+              query: component.query,
+              script: component.script,
+              template: component.template,
+              version: component.version,
+              vue: component.vue,
+            },
+          },
+        })
+
+        if (data?.github_submitVue?.title && !(errors || data.errors)) {
+          const componentsIndex = this.vueComponents.findIndex(
+            (c: PovComponent) => c.id === component.id
+          )
+          if (componentsIndex > -1) {
+            this.vueComponents[componentsIndex].version = data?.github_submitVue.version
+          }
+        } else if (errors || data.errors) {
+          console.error('submit errors', errors ?? data.errors)
+        }
+
+        return errors ?? data.errors
+      } catch (e: any) {
+        return [e.message]
+      }
+    },
+
     getVueComponent(id: string): PovComponent | undefined {
       return this.vueComponents.find((c: PovComponent) => c.id === id)
     },

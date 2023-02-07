@@ -109,15 +109,17 @@ const onSave = async () => {
 }
 
 const onPublish = async () => {
-  const c = onSave()
+  const c = onPlay()
 
-  // githubState.saveEditingVueComponent().then((errors: any) => {
-  // if (errors?.length > 0) {
-  // console.error('errors saving component', errors)
-  // } else {
-  emit('publish', c)
-  // }
-  // })
+  return githubState.saveEditingVueComponent().then((errors: any) => {
+    if (errors?.length > 0) {
+      console.error('errors saving component', errors)
+    } else {
+      return githubState.publishEditingVueComponent().then((errors: any) => {
+        emit('publish', c)
+      })
+    }
+  })
 }
 
 onMounted(() => {

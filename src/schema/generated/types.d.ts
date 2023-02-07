@@ -201,6 +201,13 @@ export type GitHubAccount = {
   readonly website?: Maybe<Scalars['String']>;
 };
 
+export type GithubSubmitVuePayload = {
+  readonly __typename?: 'GithubSubmitVuePayload';
+  readonly errors?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly title?: Maybe<Scalars['String']>;
+  readonly url?: Maybe<Scalars['String']>;
+};
+
 export type GoogleAccount = {
   readonly __typename?: 'GoogleAccount';
   readonly avatar?: Maybe<Scalars['String']>;
@@ -343,12 +350,12 @@ export type Mutation = {
   readonly github_archiveVue: Vue;
   readonly github_createTemplate: Template;
   readonly github_createVue: Vue;
+  readonly github_publishVue: Vue;
+  readonly github_submitVue: GithubSubmitVuePayload;
   readonly github_updateTemplate: Template;
   readonly github_updateVue: Vue;
   readonly publishPost: Post;
   readonly publishTemplate: Template;
-  readonly publishVue: Vue;
-  readonly submitVue: Vue;
   readonly toggleInteraction: Interaction;
   readonly unPublishPost: Post;
   readonly unPublishTemplate: Template;
@@ -414,6 +421,18 @@ export type MutationGithub_CreateVueArgs = {
 };
 
 
+export type MutationGithub_PublishVueArgs = {
+  from?: InputMaybe<Requestor>;
+  with?: InputMaybe<PublishVueWithInput>;
+};
+
+
+export type MutationGithub_SubmitVueArgs = {
+  data?: InputMaybe<SubmitGithubVueInput>;
+  from?: InputMaybe<Requestor>;
+};
+
+
 export type MutationGithub_UpdateTemplateArgs = {
   data?: InputMaybe<UpdateGithubTemplateInput>;
 };
@@ -433,18 +452,6 @@ export type MutationPublishPostArgs = {
 export type MutationPublishTemplateArgs = {
   id?: InputMaybe<Scalars['Int']>;
   with?: InputMaybe<PublishTemplateWithInput>;
-};
-
-
-export type MutationPublishVueArgs = {
-  id?: InputMaybe<Scalars['Int']>;
-  with?: InputMaybe<PublishVueWithInput>;
-};
-
-
-export type MutationSubmitVueArgs = {
-  id?: InputMaybe<Scalars['Int']>;
-  with?: InputMaybe<SubmitVueWithInput>;
 };
 
 
@@ -740,8 +747,16 @@ export type SearchPostsPayload = {
   readonly posts?: Maybe<ReadonlyArray<Post>>;
 };
 
-export type SubmitVueWithInput = {
+export type SubmitGithubVueInput = {
+  readonly category?: InputMaybe<Scalars['String']>;
   readonly id: Scalars['String'];
+  readonly license?: InputMaybe<Scalars['String']>;
+  readonly query?: InputMaybe<Scalars['String']>;
+  readonly script?: InputMaybe<Scalars['String']>;
+  readonly template?: InputMaybe<Scalars['String']>;
+  readonly title: Scalars['String'];
+  readonly version: Scalars['String'];
+  readonly vue?: InputMaybe<Scalars['String']>;
 };
 
 export type Subscription = {
@@ -1000,6 +1015,7 @@ export type ResolversTypes = {
   ForOptionsInput: ForOptionsInput;
   GetPostInteractionsPayload: ResolverTypeWrapper<GetPostInteractionsPayload>;
   GitHubAccount: ResolverTypeWrapper<GitHubAccount>;
+  GithubSubmitVuePayload: ResolverTypeWrapper<GithubSubmitVuePayload>;
   GoogleAccount: ResolverTypeWrapper<GoogleAccount>;
   Group: ResolverTypeWrapper<Group>;
   GroupByInput: GroupByInput;
@@ -1031,7 +1047,7 @@ export type ResolversTypes = {
   SearchPostsInput: SearchPostsInput;
   SearchPostsPayload: ResolverTypeWrapper<SearchPostsPayload>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  SubmitVueWithInput: SubmitVueWithInput;
+  SubmitGithubVueInput: SubmitGithubVueInput;
   Subscription: ResolverTypeWrapper<{}>;
   Tag: ResolverTypeWrapper<Tag>;
   Template: ResolverTypeWrapper<Template>;
@@ -1069,6 +1085,7 @@ export type ResolversParentTypes = {
   ForOptionsInput: ForOptionsInput;
   GetPostInteractionsPayload: GetPostInteractionsPayload;
   GitHubAccount: GitHubAccount;
+  GithubSubmitVuePayload: GithubSubmitVuePayload;
   GoogleAccount: GoogleAccount;
   Group: Group;
   GroupByInput: GroupByInput;
@@ -1097,7 +1114,7 @@ export type ResolversParentTypes = {
   SearchPostsInput: SearchPostsInput;
   SearchPostsPayload: SearchPostsPayload;
   String: Scalars['String'];
-  SubmitVueWithInput: SubmitVueWithInput;
+  SubmitGithubVueInput: SubmitGithubVueInput;
   Subscription: {};
   Tag: Tag;
   Template: Template;
@@ -1229,6 +1246,13 @@ export type GitHubAccountResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type GithubSubmitVuePayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['GithubSubmitVuePayload'] = ResolversParentTypes['GithubSubmitVuePayload']> = {
+  errors?: Resolver<Maybe<ReadonlyArray<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type GoogleAccountResolvers<ContextType = any, ParentType extends ResolversParentTypes['GoogleAccount'] = ResolversParentTypes['GoogleAccount']> = {
   avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1336,12 +1360,12 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   github_archiveVue?: Resolver<ResolversTypes['Vue'], ParentType, ContextType, Partial<MutationGithub_ArchiveVueArgs>>;
   github_createTemplate?: Resolver<ResolversTypes['Template'], ParentType, ContextType, Partial<MutationGithub_CreateTemplateArgs>>;
   github_createVue?: Resolver<ResolversTypes['Vue'], ParentType, ContextType, Partial<MutationGithub_CreateVueArgs>>;
+  github_publishVue?: Resolver<ResolversTypes['Vue'], ParentType, ContextType, Partial<MutationGithub_PublishVueArgs>>;
+  github_submitVue?: Resolver<ResolversTypes['GithubSubmitVuePayload'], ParentType, ContextType, Partial<MutationGithub_SubmitVueArgs>>;
   github_updateTemplate?: Resolver<ResolversTypes['Template'], ParentType, ContextType, Partial<MutationGithub_UpdateTemplateArgs>>;
   github_updateVue?: Resolver<ResolversTypes['Vue'], ParentType, ContextType, Partial<MutationGithub_UpdateVueArgs>>;
   publishPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationPublishPostArgs, 'id'>>;
   publishTemplate?: Resolver<ResolversTypes['Template'], ParentType, ContextType, Partial<MutationPublishTemplateArgs>>;
-  publishVue?: Resolver<ResolversTypes['Vue'], ParentType, ContextType, Partial<MutationPublishVueArgs>>;
-  submitVue?: Resolver<ResolversTypes['Vue'], ParentType, ContextType, Partial<MutationSubmitVueArgs>>;
   toggleInteraction?: Resolver<ResolversTypes['Interaction'], ParentType, ContextType, RequireFields<MutationToggleInteractionArgs, 'data'>>;
   unPublishPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationUnPublishPostArgs, 'id'>>;
   unPublishTemplate?: Resolver<ResolversTypes['Template'], ParentType, ContextType, Partial<MutationUnPublishTemplateArgs>>;
@@ -1498,6 +1522,7 @@ export type Resolvers<ContextType = any> = {
   Docule?: DoculeResolvers<ContextType>;
   GetPostInteractionsPayload?: GetPostInteractionsPayloadResolvers<ContextType>;
   GitHubAccount?: GitHubAccountResolvers<ContextType>;
+  GithubSubmitVuePayload?: GithubSubmitVuePayloadResolvers<ContextType>;
   GoogleAccount?: GoogleAccountResolvers<ContextType>;
   Group?: GroupResolvers<ContextType>;
   ImgurAccount?: ImgurAccountResolvers<ContextType>;

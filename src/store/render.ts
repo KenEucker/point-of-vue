@@ -7,10 +7,14 @@ import {
 } from '../utilities'
 import { useCreatorState } from './creator'
 import { loadModule } from 'vue3-sfc-loader'
-import { createApp, defineAsyncComponent, Ref, ref } from 'vue'
+import { createApp, defineAsyncComponent, Ref, ref, watch } from 'vue'
 import * as Vue from 'vue'
 import * as vueuseMotion from '@vueuse/motion'
 import * as vueuse from '@vueuse/core'
+import { useQuery, useLazyQuery } from '@vue/apollo-composable'
+import { gql } from '@apollo/client/core'
+import * as PointOfVueGlobe from 'point-of-vue-globe-lib'
+import { PointOfVuePlugin } from 'point-of-vue-globe-lib'
 
 export const getInitialRenderState = (): {
   credentials: string | null
@@ -27,7 +31,11 @@ export const useRenderState = defineStore({
       // if (c) component or code object
       if (typeof c === 'string') {
         options = {
-          moduleCache: { vue: Vue, '@vueuse/core': vueuse, '@vueuse/motion': vueuseMotion },
+          moduleCache: {
+            vue: Vue,
+            '@vueuse/core': vueuse,
+            '@vueuse/motion': vueuseMotion,
+          },
           getFile: async () => c,
           addStyle: async (textContent: any) => {
             // console.log({ textContent })
@@ -79,6 +87,7 @@ export const useRenderState = defineStore({
 
       /// Add core plugins
       app.use(vueuseMotion.MotionPlugin)
+      app.use(PointOfVuePlugin)
       app.mount(r.value)
 
       return app
@@ -227,88 +236,157 @@ export const useRenderState = defineStore({
       }
     },
 
-    async compileTemplate(
-      template: string
-    ): Promise<{ output: string; logs: { errors: string[]; info: string[] } }> {
-      let dataRequest
-      let info: string[] = []
-      const errors: string[] = []
-      let normalizedHTML = ''
-
-      if (template.length) {
-        /// check for bad stuff here
-
-        const htmlNormalized = removeAllAndSomeTagsFromHtml(
-          template,
-          ['head', 'link', 'script', 'style'],
-          ['body', 'html']
-        )
-
-        const htmlLinesWereRemoved = htmlNormalized.removed.length
-        if (htmlLinesWereRemoved) {
-          info.push('Lines with the following keywords were removed during compilation')
-
-          if (htmlLinesWereRemoved) {
-            info = info.concat([' template ', ...htmlNormalized.removed])
-          }
-        }
-
-        normalizedHTML = htmlNormalized.output
-      }
-
-      return {
-        output: `
-        <template>
-          <div class="flex justify-center">
-            <div class="block p-6 rounded-lg shadow-lg bg-white max-w-sm">
-              ${normalizedHTML}
-            </div>
-          </div>
-        </template>
-        <style scoped>
-          @tailwind base;
-          @tailwind components;
-          @tailwind utilities;
-        </style>
-        <script setup>
-          /// Auto Import
-          import { onMounted, ref, computed } from 'vue'
-          import { useMotion } from '@vueuse/motion'
-        </script>`,
-        /// Feature disabled
-        //   <style scoped>
-        //     ${payload.css}
-        //   </style>
-        // `
-        logs: {
-          info,
-          errors,
+    createAsyncTemplate(c: string, r: Ref) {
+      const options = {
+        moduleCache: {
+          vue: Vue,
+          '@vueuse/core': vueuse,
+          'point-of-vue-globe-lib': PointOfVueGlobe,
+        },
+        getFile: async () => c,
+        addStyle: async (textContent: any) => {
+          // console.log({ textContent })
         },
       }
+
+      const app = createApp(
+        defineAsyncComponent(async () => {
+          try {
+            return await loadModule('file.vue', options)
+          } catch (error: any) {
+            console.error('load module error', error)
+
+            return Promise.resolve()
+          }
+        })
+      )
+
+      /// Add core plugins
+      app.use(PointOfVuePlugin)
+      app.mount(r.value)
+
+      return app
+    },
+
+    async compileTemplate(
+      template: string,
+      handle: string
+    ): Promise<{ output: string; logs: { errors: string[]; info: string[] } }> {
+      return new Promise((resolve) => {
+        let info: string[] = []
+        const errors: string[] = []
+        let normalizedHTML = ''
+        let stringifiedCreatorData = '{}'
+        let stringifiedViewerData = '{}'
+
+        const creatorByHandleQuery = gql`
+          query CreatorByHandle($handle: String!) {
+            creator(where: { handle: $handle }) {
+              id
+              name
+              email
+              handle
+              avatar
+              status
+              verified
+              banner
+              website
+            }
+            viewer {
+              ip
+            }
+          }
+        `
+
+        const creator = ref<any>({})
+        const {
+          result: creatorResult,
+          loading: creatorLoading,
+          error: creatorError,
+        } = useQuery(creatorByHandleQuery, { handle })
+
+        watch(creatorResult, (r) => {
+          if (r?.creator) {
+            stringifiedCreatorData = JSON.stringify(r.creator)
+          }
+          if (r.viewer) {
+            stringifiedViewerData = JSON.stringify(r.viewer)
+          }
+
+          if (template.length) {
+            /// check for bad stuff here
+
+            const htmlNormalized = removeAllAndSomeTagsFromHtml(
+              template,
+              ['head', 'link', 'script', 'style'],
+              ['body', 'html']
+            )
+
+            const htmlLinesWereRemoved = htmlNormalized.removed.length
+            if (htmlLinesWereRemoved) {
+              info.push('Lines with the following keywords were removed during compilation')
+
+              if (htmlLinesWereRemoved) {
+                info = info.concat([' template ', ...htmlNormalized.removed])
+              }
+            }
+
+            normalizedHTML = htmlNormalized.output
+
+            return resolve({
+              output: `
+            <template>
+              <div class="flex justify-center">
+                <div class="block p-6 rounded-lg shadow-lg bg-white max-w-sm">
+                  ${normalizedHTML}
+                </div>
+              </div>
+            </template>
+            <style scoped>
+              @tailwind base;
+              @tailwind components;
+              @tailwind utilities;
+            </style>
+            <script setup>
+              /// Auto Import
+              import { useMotion } from '@vueuse/motion'
+    
+              /// Hydration
+              const creator = ${stringifiedCreatorData}
+              const viewer = ${stringifiedViewerData}
+            </script>`,
+              logs: {
+                info,
+                errors,
+              },
+            })
+          }
+        })
+      })
     },
 
     compileComponentHTML(payload: Record<string, any>, isDark?: boolean): string {
       return `<html class="${isDark ? 'dark' : ''}">
         <head>
-            <style id="_style">${payload.css}</style>
-            <script type="module" id="_script">
-                ${payload.script}
-                window.addEventListener('message', function(event) {
-                    console.log(event)
-                    if (event.data === 'theme-dark') {
-                        document.documentElement.classList.add('dark')
-                    } else if (event.data === 'theme-light') {
-                        document.documentElement.classList.remove('dark')
-                    }
-                })
-            </script>
-            <script>
-              
-              const options = {
-                method: "post",
+        <style id="_style">${payload.css}</style>
+        <script type="module" id="_script">
+        ${payload.script}
+        window.addEventListener('message', function(event) {
+          console.log(event)
+          if (event.data === 'theme-dark') {
+            document.documentElement.classList.add('dark')
+          } else if (event.data === 'theme-light') {
+            document.documentElement.classList.remove('dark')
+          }
+        })
+        </script>
+        <script>
+        
+        const options = {
+          method: "post",
                 headers: {
                   "Content-Type": "application/json",
-                  "Authorization": \`Bearer ${this.credentials.creatorToken}\`
+                  "Authorization": \`Bearer ${this.credentials}\`
                 },
                 body: JSON.stringify({
                   query: \`${payload.query}\`

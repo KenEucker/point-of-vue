@@ -1,0 +1,5 @@
+type GithubSubmitVuePayload {
+    title: String
+    errors: [String]
+    url: String
+}
