@@ -24,7 +24,7 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
-  oid: {
+  id: {
     type: String,
     default: '',
   },
@@ -41,9 +41,9 @@ const editorRef = ref()
 const refProps: any = toRefs(props)
 const component = ref({ ...props.component })
 
-if (component.value.oid) {
+if (component.value.id) {
   githubState.setCodeState({
-    oid: component.value.oid,
+    id: component.value.id,
     json: component.value.vue,
     html: component.value.template,
     javascript: component.value.script,
@@ -57,9 +57,9 @@ watch(refProps.component, (c: any) => {
   // unmount previously mounted component
   componentRef.value.unmountComponentApp(c)
 
-  if (component.value.oid) {
+  if (component.value.id) {
     githubState.setCodeState({
-      oid: component.value.oid,
+      id: component.value.id,
       json: component.value.vue ?? '',
       html: component.value.template ?? '',
       javascript: component.value.script ?? '',

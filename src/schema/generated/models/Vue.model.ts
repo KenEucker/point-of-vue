@@ -1,49 +1,49 @@
-import { IsString, IsDefined, IsOptional, IsInt, IsDate } from "class-validator";
-import { Creator, ActiveVue, TagsOnVue } from "./";
+import { IsString, IsDefined, IsOptional, IsInt, IsDate } from 'class-validator'
+import { Creator, ActiveVue, TagsOnVue } from './'
 
 export class Vue {
-    @IsDefined()
-    @IsString()
-    oid!: string;
+  @IsDefined()
+  @IsString()
+  id!: string
 
-    @IsDefined()
-    creator!: Creator;
+  @IsDefined()
+  creator!: Creator
 
-    @IsDefined()
-    activations!: ActiveVue[];
+  @IsDefined()
+  activations!: ActiveVue[]
 
-    @IsOptional()
-    tags?: TagsOnVue;
+  @IsOptional()
+  tags?: TagsOnVue
 
-    @IsDefined()
-    @IsString()
-    title!: string;
+  @IsDefined()
+  @IsString()
+  title!: string
 
-    @IsDefined()
-    @IsString()
-    status!: string;
+  @IsDefined()
+  @IsString()
+  status!: string
 
-    @IsDefined()
-    @IsString()
-    version!: string;
+  @IsDefined()
+  @IsString()
+  version!: string
 
-    @IsDefined()
-    @IsString()
-    compatibility!: string;
+  @IsDefined()
+  @IsString()
+  compatibility!: string
 
-    @IsDefined()
-    @IsString()
-    license!: string;
+  @IsDefined()
+  @IsString()
+  license!: string
 
-    @IsDefined()
-    @IsInt()
-    creatorId!: number;
+  @IsDefined()
+  @IsInt()
+  creatorId!: number
 
-    @IsDefined()
-    @IsDate()
-    createdAt!: Date;
+  @IsDefined()
+  @IsDate()
+  createdAt!: Date
 
-    @IsDefined()
-    @IsDate()
-    updatedAt!: Date;
+  @IsDefined()
+  @IsDate()
+  updatedAt!: Date
 }

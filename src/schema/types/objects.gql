@@ -79,7 +79,7 @@ type CreatorAccount {
 
 # Github Integration
 type VueComponent {
-  oid: String!
+  id: String!
   title: String
   vue: String
   template: String
@@ -215,7 +215,7 @@ type Template {
 }
 
 type Vue {
-  oid: String!
+  id: String!
   
   creator: Creator!
   activations: [ActiveVue]

@@ -10,7 +10,7 @@ import { watch } from 'vue'
 export const getInitialGithubState = (): {
   account: any
   code: any
-  editingComponentOid: string | null
+  editingComponentId: string | null
   componentFromCodeState: any
   credentials: string | null
   vues: Array<VueComponent>
@@ -19,7 +19,7 @@ export const getInitialGithubState = (): {
 } => ({
   account: null,
   code: {},
-  editingComponentOid: null,
+  editingComponentId: null,
   componentFromCodeState: null,
   credentials: null,
   vues: [],
@@ -34,35 +34,36 @@ export const useGithubState = defineStore({
     vuesHaveBeenFetched: (s) => s.vuesFetched,
     getAccount: (s) => s.account,
     getVues: (s) => s.vues,
-    getEditingComponentOid: (s) => s.editingComponentOid,
+    getEditingComponentId: (s) => s.editingComponentId,
     getCodeState: (s) => s.code,
     getComponentFromCodeState: (s) => s.componentFromCodeState,
     getVueComponents: (s) => s.vueComponents,
   },
   actions: {
-    getVueByOid(oid: string) {
-      return this.vues.find((vue) => vue.oid === oid)
+    getVueById(id: string) {
+      return this.vues.find((vue) => vue.id === id)
     },
 
     setCodeState(newState: any) {
       console.info('setting new code state', newState)
       this.code = newState
-      this.setComponentFromCodeState(this.code, newState.oid)
-      if (newState.oid) {
-        this.editingComponentOid = newState.oid
+      this.setComponentFromCodeState(this.code, newState.id)
+      if (newState.id) {
+        this.editingComponentId = newState.id
       }
     },
 
-    setComponentFromCodeState(code: any, oid?: string) {
+    setComponentFromCodeState(code: any, id?: string) {
       const updatedComponentValues = code.json?.length ? JSON.parse(code.json) : {}
-      if (oid) {
-        this.editingComponentOid = oid
+      if (id) {
+        this.editingComponentId = id
       } else {
-        oid = this.editingComponentOid!
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        id = this.editingComponentId!
       }
       this.componentFromCodeState = {
-        oid,
-        title: this.getVueByOid(oid)?.title, // CANNOT UPDATE TITLE AFTER CREATION
+        id,
+        title: this.getVueById(id)?.title, // CANNOT UPDATE TITLE AFTER CREATION
         background: updatedComponentValues.background,
         icon: updatedComponentValues.icon,
         status: 'good', /// TODO: calculate this,
@@ -84,7 +85,7 @@ export const useGithubState = defineStore({
       const updateVueForCreatorQuery = gql`
         mutation StoreGithub_updateVue($token: String!, $component: UpdateGithubVueInput) {
           github_updateVue(from: { token: $token }, data: $component) {
-            oid
+            id
             version
           }
         }
@@ -96,8 +97,7 @@ export const useGithubState = defineStore({
         variables: {
           token: this.credentials,
           component: {
-            oid: component.oid,
-            title: component.title,
+            id: component.id,
             query: component.query,
             script: component.script,
             template: component.template,
@@ -105,28 +105,35 @@ export const useGithubState = defineStore({
           },
         },
       })
-      if (data?.github_updateVue?.length && !errors) {
-        console.log('updated vue', data.github_updateVue)
+
+      if (data?.github_updateVue?.id?.length && !errors) {
+        console.log('updated vue', component)
+
+        const componentsIndex = this.vueComponents.findIndex(
+          (c: PovComponent) => c.id === component.id
+        )
+        const vuesIndex = this.vues.findIndex((c: VueComponent) => c.id === component.id)
+        if (componentsIndex > -1) {
+          this.vueComponents[componentsIndex] = component
+        } else {
+          this.vueComponents.push(component)
+        }
+        if (vuesIndex > -1) {
+          this.vues[vuesIndex] = component
+        }
+        console.log({
+          componentsIndex,
+          vuesIndex,
+          c: this.vueComponents[componentsIndex],
+          v: this.vues[vuesIndex],
+        })
       } else if (errors) {
         console.error('update errors', errors)
       }
-
-      // const componentsIndex = this.vueComponents.findIndex(
-      //   (c: PovComponent) => c.oid === component.oid
-      // )
-      // const vuesIndex = this.vues.findIndex((c: VueComponent) => c.oid === component.oid)
-      // if (componentsIndex > -1) {
-      //   this.vueComponents[componentsIndex] = component
-      // } else {
-      //   this.vueComponents.push(component)
-      // }
-      // if (vuesIndex > -1) {
-      //   this.vues[vuesIndex] = component
-      // }
     },
 
-    getVueComponent(oid: string): PovComponent | undefined {
-      return this.vueComponents.find((c: PovComponent) => c.oid === oid)
+    getVueComponent(id: string): PovComponent | undefined {
+      return this.vueComponents.find((c: PovComponent) => c.id === id)
     },
 
     hasCredentials() {
@@ -145,7 +152,7 @@ export const useGithubState = defineStore({
       }
     },
 
-    async fetchVues(oid?: string) {
+    async fetchVues(id?: string) {
       if (this.vuesFetched) {
         return Promise.resolve(this.vues)
       } else if (!this.credentials?.length) {
@@ -153,9 +160,9 @@ export const useGithubState = defineStore({
       }
 
       const fetchVuesForCreatorQuery = gql`
-        query StoreFetchGithub_Vues($token: String!, $oid: String) {
-          github_vues(from: { token: $token }, where: { oid: $oid }) {
-            oid
+        query StoreFetchGithub_Vues($token: String!, $id: String) {
+          github_vues(from: { token: $token }, where: { id: $id }) {
+            id
             title
             query
             script
@@ -166,15 +173,15 @@ export const useGithubState = defineStore({
       `
       const { data, error: queryError } = await apolloClient.query({
         query: fetchVuesForCreatorQuery,
-        variables: { token: this.credentials, oid },
+        variables: { token: this.credentials, id },
       })
       if (data?.github_vues?.length && !queryError) {
         this.vuesFetched = true
-        this.vues = data.github_vues
+        this.vues = [...data.github_vues]
         this.vueComponents = this.vues.map((v) => {
           const vueComponentJson = JSON.parse(v.vue ?? '{}')
           return {
-            oid: v.oid,
+            id: v.id,
             title: vueComponentJson.title ?? v.title ?? '',
             vue: v.vue,
             script: v.script,

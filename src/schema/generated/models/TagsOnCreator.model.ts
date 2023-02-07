@@ -1,18 +1,18 @@
-import { IsDefined, IsInt, IsDate } from "class-validator";
-import { Creator, Tag } from "./";
+import { IsDefined, IsInt, IsDate } from 'class-validator'
+import { Creator, Tag } from './'
 
 export class TagsOnCreator {
-    @IsDefined()
-    creator!: Creator;
+  @IsDefined()
+  creator!: Creator
 
-    @IsDefined()
-    tags!: Tag[];
+  @IsDefined()
+  tags!: Tag[]
 
-    @IsDefined()
-    @IsInt()
-    creatorId!: number;
+  @IsDefined()
+  @IsInt()
+  creatorId!: number
 
-    @IsDefined()
-    @IsDate()
-    assignedAt!: Date;
+  @IsDefined()
+  @IsDate()
+  assignedAt!: Date
 }

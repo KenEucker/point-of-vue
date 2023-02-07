@@ -1,18 +1,18 @@
-import { IsDefined, IsString, IsDate } from "class-validator";
-import { Vue, Tag } from "./";
+import { IsDefined, IsString, IsDate } from 'class-validator'
+import { Vue, Tag } from './'
 
 export class TagsOnVue {
-    @IsDefined()
-    vue!: Vue;
+  @IsDefined()
+  vue!: Vue
 
-    @IsDefined()
-    tags!: Tag[];
+  @IsDefined()
+  tags!: Tag[]
 
-    @IsDefined()
-    @IsString()
-    vueId!: string;
+  @IsDefined()
+  @IsString()
+  vueId!: string
 
-    @IsDefined()
-    @IsDate()
-    assignedAt!: Date;
+  @IsDefined()
+  @IsDate()
+  assignedAt!: Date
 }

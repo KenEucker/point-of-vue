@@ -1,5 +1,6 @@
 import auth0Client from 'auth0'
 import { JwtVerifier, getTokenFromHeader } from '@serverless-jwt/jwt-verifier'
+import { Creator } from '../generated/types'
 
 export const auth0Configured = process.env.AUTH0_DOMAIN && process.env.AUTH0_CID
 export const povCreatorRepoName = 'point-of-vue--vues'
@@ -138,6 +139,16 @@ export const getIdentityProfile = (
               (i: { connection: string }) => i.connection === requestor.connection
             )?.access_token
           }
+          if (getFullProfile) {
+            return prisma.creator
+              .findUnique({
+                where: { email: requestor.email },
+              })
+              .then((creator: Creator) => {
+                resolve({ ...requestor, ...profile, ...creator })
+              })
+          }
+
           /// All fields, requested for authentication
           return resolve({ ...requestor, ...profile })
         }

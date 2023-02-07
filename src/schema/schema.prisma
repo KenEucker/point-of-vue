@@ -150,7 +150,7 @@ model Template {
 }
 
 model Vue {
-  oid String @id @default(uuid())
+  id String @id @default(uuid())
 
   creator     Creator     @relation(fields: [creatorId], references: [id])
   activations ActiveVue[]
@@ -186,7 +186,7 @@ model ActiveTemplate {
 
 model ActiveVue {
   creator   Creator @relation(fields: [creatorId], references: [id])
-  component Vue     @relation(fields: [vueId], references: [oid])
+  component Vue     @relation(fields: [vueId], references: [id])
 
   creatorId Int
   vueId     String
@@ -257,7 +257,7 @@ model TagsOnTemplate {
 }
 
 model TagsOnVue {
-  vue  Vue   @relation(fields: [vueId], references: [oid])
+  vue  Vue   @relation(fields: [vueId], references: [id])
   tags Tag[]
 
   vueId      String

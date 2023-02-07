@@ -37,9 +37,9 @@ export const useRenderState = defineStore({
         options = {
           moduleCache: { vue: Vue, '@vueuse/core': vueuse, '@vueuse/motion': vueuseMotion },
           getFile: async () => {
-            console.info('rendering component', c)
-
             const compiled = await this.compileVue(c)
+
+            console.info('rendering component', c, compiled)
             if (compiled.logs) {
               if (compiled.logs.info?.length) {
                 // logs.info = compiled.logs.info

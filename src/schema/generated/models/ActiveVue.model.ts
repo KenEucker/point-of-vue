@@ -1,22 +1,22 @@
-import { IsDefined, IsInt, IsString, IsDate } from "class-validator";
-import { Creator, Vue } from "./";
+import { IsDefined, IsInt, IsString, IsDate } from 'class-validator'
+import { Creator, Vue } from './'
 
 export class ActiveVue {
-    @IsDefined()
-    creator!: Creator;
+  @IsDefined()
+  creator!: Creator
 
-    @IsDefined()
-    component!: Vue;
+  @IsDefined()
+  component!: Vue
 
-    @IsDefined()
-    @IsInt()
-    creatorId!: number;
+  @IsDefined()
+  @IsInt()
+  creatorId!: number
 
-    @IsDefined()
-    @IsString()
-    vueId!: string;
+  @IsDefined()
+  @IsString()
+  vueId!: string
 
-    @IsDefined()
-    @IsDate()
-    assignedAt!: Date;
+  @IsDefined()
+  @IsDate()
+  assignedAt!: Date
 }

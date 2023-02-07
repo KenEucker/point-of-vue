@@ -166,23 +166,23 @@ const onStatusButtonClick = (option: string) => {
   /// It's a hack eat hack world out there
   switch (option) {
     case 'edit':
-      emit('edit', props.component.oid)
+      emit('edit', props.component.id)
       break
 
     case 'view':
-      emit('view', props.component.oid)
+      emit('view', props.component.id)
       break
 
     case 'archive':
-      emit('archive', props.component.oid)
+      emit('archive', props.component.id)
       break
 
     case 'delete':
-      emit('delete', props.component.oid)
+      emit('delete', props.component.id)
       break
 
     case 'logs':
-      emit('logs', props.component.oid)
+      emit('logs', props.component.id)
       break
   }
 }
