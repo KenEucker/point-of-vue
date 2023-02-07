@@ -14,7 +14,9 @@ The Point Of Vue Globe library contains core components maintained by the Point 
 
 # Live Demo
 
-Demo: https://pointofvue.org
+Demo: https://point-of-vue-web.onrender.com/
+
+(soon to be https://pointofvue.org, when we switch over to the new code)
 
 This demo is deployed on Render.com using a postgres db service, a webserver service (for graphql-yoga), another webserver service for the studio (optional), and a static service for the client. The demo does not contain any changes made after December 31, 2022. All of the new development that has been completed since then is not deployed to the demo as of February 2023.
 
