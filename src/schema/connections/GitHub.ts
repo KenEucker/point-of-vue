@@ -1,4 +1,3 @@
-import { GitHubAccount } from '../generated/types'
 import { GraphQLError } from 'graphql'
 
 import Client, { auth, gql, getMethod } from '@github-graph/api'
@@ -73,7 +72,7 @@ const updateGithubContent = async (
       repo,
       file_path: path,
     })
-    .catch((e) => {
+    .catch((e: any) => {
       console.error(e.message)
     })
 
@@ -99,7 +98,7 @@ const updateGithubContent = async (
     .then(() => {
       return true
     })
-    .catch((e) => {
+    .catch((e: any) => {
       console.error(e.message)
       return false
     })
