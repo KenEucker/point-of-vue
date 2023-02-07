@@ -78,6 +78,9 @@ CREATE TABLE "Template" (
     "status" TEXT NOT NULL DEFAULT '',
     "palette" TEXT[] DEFAULT ARRAY[]::TEXT[],
     "media" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "version" TEXT NOT NULL DEFAULT '',
+    "compatibility" TEXT NOT NULL DEFAULT '',
+    "license" TEXT NOT NULL DEFAULT '',
     "creatorId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -87,11 +90,12 @@ CREATE TABLE "Template" (
 
 -- CreateTable
 CREATE TABLE "Vue" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "published" BOOLEAN NOT NULL DEFAULT false,
-    "code" TEXT NOT NULL DEFAULT '',
     "status" TEXT NOT NULL DEFAULT '',
+    "version" TEXT NOT NULL DEFAULT '',
+    "compatibility" TEXT NOT NULL DEFAULT '',
+    "license" TEXT NOT NULL DEFAULT '',
     "creatorId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -113,8 +117,7 @@ CREATE TABLE "ActiveTemplate" (
 -- CreateTable
 CREATE TABLE "ActiveVue" (
     "creatorId" INTEGER NOT NULL,
-    "vueId" INTEGER NOT NULL,
-    "title" TEXT NOT NULL,
+    "vueId" TEXT NOT NULL,
     "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "ActiveVue_pkey" PRIMARY KEY ("creatorId")
@@ -127,7 +130,7 @@ CREATE TABLE "Tag" (
     "tagsOnCreatorsCreatorId" INTEGER NOT NULL,
     "tagsOnPostsPostId" INTEGER NOT NULL,
     "tagsOnTemplatesTemplateId" INTEGER NOT NULL,
-    "tagsOnVuesVueId" INTEGER NOT NULL,
+    "tagsOnVuesVueId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "tagsOnGroupGroupId" INTEGER,
@@ -169,7 +172,7 @@ CREATE TABLE "TagsOnTemplate" (
 
 -- CreateTable
 CREATE TABLE "TagsOnVue" (
-    "vueId" INTEGER NOT NULL,
+    "vueId" TEXT NOT NULL,
     "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "TagsOnVue_pkey" PRIMARY KEY ("vueId")
