@@ -3,12 +3,15 @@ import * as Vue from 'vue'
 import { onMounted, ref, toRefs, watch, computed } from 'vue'
 import { useStorage } from '@vueuse/core'
 import Split from 'split.js'
-import { PovComponent, StorageName, useDarkGlobal } from '../../utilities'
+import { StorageName, useDarkGlobal } from '../../utilities'
 import MonacoEditor from './MonacoEditor.vue'
 import EditorTabs from './EditorTabs.vue'
 import { useMagicKeys } from '@vueuse/core'
 import VueComponent from './VueComponent.vue'
 import { usePageState, useGithubState } from '../../store/state'
+import MultiForm from '../atomic/MultiForm.vue'
+import Popper from 'vue3-popper'
+
 // import Sass from 'sass.js/dist/sass.sync.js'
 
 const tabs = {
@@ -38,6 +41,7 @@ const pageState = usePageState()
 const currentTab = useStorage(StorageName.ACTIVE_TAB, 'vue')
 const componentRef = ref()
 const editorRef = ref()
+const showPublish = ref(false)
 const refProps: any = toRefs(props)
 const component = ref({ ...props.component })
 
@@ -138,13 +142,63 @@ const code = computed({
 
 <template>
   <div class="flex h-full">
+    <popper
+      :show="showPublish"
+      placement="bottom"
+      class="fixed z-50 -translate-x-1/2 -translate-y-1/2 border-slate-900 top-1/2 left-1/2 w-96"
+    >
+      <template #default></template>
+      <template #content>
+        <multi-form
+          class="max-w-md m-auto w-96"
+          title="Submit Vue For Publishing"
+          :fields="[
+            [
+              {
+                name: 'title',
+                label: 'Vue Title',
+                type: 'text',
+                value: component.title,
+              },
+              {
+                name: 'description',
+                label: 'Description',
+                type: 'text',
+                value: component.description,
+              },
+              {
+                name: 'tags',
+                label: 'Tags',
+                type: 'list',
+                value: component.tags,
+              },
+            ],
+            [
+              {
+                name: 'description',
+                label: 'Description',
+                type: 'text',
+                value: component.description,
+              },
+              {
+                name: 'tags',
+                label: 'Tags',
+                type: 'list',
+                value: component.tags,
+              },
+            ],
+          ]"
+          @submit="onPublish"
+        />
+      </template>
+    </popper>
     <div id="editor" class="w-full">
       <editor-tabs
         v-model="currentTab"
         :tabs="tabs"
         @play="onPlay"
         @save="onSave"
-        @publish="onPublish"
+        @publish="showPublish = true"
       />
       <monaco-editor ref="editorRef" v-model="code" :active-tab="currentTab" class="h-full" />
     </div>
